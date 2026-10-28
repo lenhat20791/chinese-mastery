@@ -1,5 +1,6 @@
 import os
 import datetime
+import streamlit as st
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -16,26 +17,64 @@ DB_FILE = "chinese_mastery.db"
 
 def get_drive_service():
     """
-    Xác thực bằng tài khoản Google cá nhân thông qua OAuth 2.0.
-    Lần đầu tiên chạy sẽ tự động bật trình duyệt để bạn bấm Cho phép.
-    Từ các lần sau sẽ tự động dùng token.json đã lưu trên máy.
+    Xác thực Google Drive: Ưu tiên đọc từ st.secrets (trên mây), 
+    nếu không có thì dùng file token.json / credentials.json cục bộ (trên máy tính).
     """
     creds = None
-    if os.path.exists(TOKEN_FILE):
+
+    # 1. Kiểm tra xem có cấu hình trong Streamlit Secrets không (Khi chạy trên mây)
+    if "google_token" in st.secrets and "google_credentials" in st.secrets:
+        try:
+            token_info = dict(st.secrets["google_token"])
+            creds = Credentials.from_authorized_user_info(token_info, SCOPES)
+        except Exception as e:
+            print(f"Lỗi đọc token từ secrets: {e}")
+
+    # 2. Nếu không có trong secrets, thử đọc từ file token.json cục bộ
+    elif os.path.exists(TOKEN_FILE):
         creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
-        
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
+
+    # 3. Kiểm tra tính hợp lệ của token, nếu hết hạn thì refresh
+    if creds and creds.expired and creds.refresh_token:
+        try:
             creds.refresh(Request())
-        else:
-            if not os.path.exists(CREDENTIALS_FILE):
+        except Exception as e:
+            creds = None
+
+    # 4. Nếu vẫn không có creds hợp lệ và đang chạy máy tính cá nhân -> Dùng flow đăng nhập local
+    if not creds or not creds.valid:
+        if os.path.exists(CREDENTIALS_FILE):
+            try:
+                flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
+                creds = flow.run_local_server(port=0)
+                # Lưu token lại trên máy cá nhân
+                with open(TOKEN_FILE, 'w', encoding='utf-8') as token:
+                    token.write(creds.to_json())
+            except Exception as e:
                 return None
-            flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
-            creds = flow.run_local_server(port=0)
-            
-        # Lưu token lại cho những lần chạy sau
-        with open(TOKEN_FILE, 'w', encoding='utf-8') as token:
-            token.write(creds.to_json())
+        elif "google_credentials" in st.secrets:
+            # Trường hợp chạy trên mây nhưng token hết hạn và cần dùng thông tin client từ secrets
+            try:
+                cred_info = dict(st.secrets["google_credentials"])
+                # Có thể tái tạo từ refresh token trong secrets nếu có
+                if "google_token" in st.secrets and "refresh_token" in st.secrets["google_token"]:
+                    token_info = dict(st.secrets["google_token"])
+                    creds = Credentials(
+                        token=token_info.get("token"),
+                        refresh_token=token_info.get("refresh_token"),
+                        token_uri=token_info.get("token_uri"),
+                        client_id=cred_info.get("client_id"),
+                        client_secret=cred_info.get("client_secret"),
+                        scopes=SCOPES
+                    )
+                    creds.refresh(Request())
+            except Exception as e:
+                return None
+        else:
+            return None
+
+    if not creds:
+        return None
 
     return build('drive', 'v3', credentials=creds)
 
@@ -46,7 +85,7 @@ def backup_to_drive(current_day):
     try:
         service = get_drive_service()
         if not service:
-            return False, "Không tìm thấy file credentials.json trong thư mục dự án!"
+            return False, "Không thể xác thực tài khoản Google Drive!"
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         file_name = f"backup_chinese_day_{current_day}_{timestamp}.db"
@@ -89,7 +128,7 @@ def restore_latest_from_drive():
     try:
         service = get_drive_service()
         if not service:
-            return False, "Không tìm thấy file credentials.json!"
+            return False, "Không thể xác thực tài khoản Google Drive!"
 
         query = f"'{DRIVE_FOLDER_ID}' in parents and trashed = false and name contains 'backup_chinese_'"
         results = service.files().list(
