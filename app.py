@@ -216,7 +216,10 @@ today_words = load_day_words(st.session_state.user["current_day"])
 total_words = len(today_words)
 
 # Biến phát âm âm thanh Web Speech
+# Biến phát âm âm thanh Web Speech
 speak_text = ""
+current_hanzi = ""     # Thêm biến lưu từ vựng hiện tại
+current_example = ""   # Thêm biến lưu câu ví dụ hiện tại
 
 # --- SIDEBAR: CẢNH GIỚI & TU TIÊN ---
 with st.sidebar:
@@ -327,7 +330,8 @@ with tab_study:
             word = today_words[st.session_state.card_idx]
             st.progress((st.session_state.card_idx) / total_words)
             st.caption(f"Tiến độ Chặng 1: Từ {st.session_state.card_idx + 1} / {total_words}")
-
+            current_hanzi = word.get('hanzi', '')
+            current_example = word.get('example_zh', '')
             if st.session_state.sub_phase == 'flashcard':
                 # --- PHA HẤP THỤ ---
                 with st.container():
@@ -346,6 +350,15 @@ with tab_study:
                     </div>
                     """, unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
+                
+                # BẮT ĐẦU CHÈN 2 NÚT PHÁT ÂM VÀO ĐÂY
+                col_audio1, col_audio2 = st.columns(2)
+                with col_audio1:
+                    st.button("🔊 Nghe Từ Vựng", key="btn_audio_word_1", use_container_width=True)
+                with col_audio2:
+                    st.button("🔊 Nghe Câu Ví Dụ", key="btn_audio_ex_1", use_container_width=True)
+                st.write("") # Tạo khoảng trống
+                # KẾT THÚC CHÈN
 
                 if st.button("👁️ Đã Nhớ -> Kiểm Tra Thực Chiến", use_container_width=True, type="primary"):
                     st.session_state.current_options = get_hanzi_options(word)
@@ -413,7 +426,9 @@ with tab_study:
             word = today_words[st.session_state.shadowing_idx]
             st.progress((st.session_state.shadowing_idx) / total_words)
             st.caption(f"Tiến độ Chặng 2: Câu {st.session_state.shadowing_idx + 1} / {total_words}")
-
+            
+            current_hanzi = word.get('hanzi', '')
+            current_example = word.get('example_zh', '')
             speak_text = word['example_zh']
 
             with st.container():
@@ -429,9 +444,13 @@ with tab_study:
                 st.markdown("</div>", unsafe_allow_html=True)
 
             st.write("")
-            col_sh_audio, col_sh_reveal, col_sh_next = st.columns([1, 1, 1])
-            with col_sh_audio:
-                st.button("🔊 Nghe Lại Câu", key="btn_shadowing_audio", use_container_width=True)
+            col_sh_audio1, col_sh_audio2 = st.columns(2)
+            with col_sh_audio1:
+                st.button("🔊 Nghe Từ Vựng", key="btn_sh_word", use_container_width=True)
+            with col_sh_audio2:
+                st.button("🔊 Nghe Câu Ví Dụ", key="btn_sh_ex", use_container_width=True)
+
+            col_sh_reveal, col_sh_next = st.columns(2)
             with col_sh_reveal:
                 if st.button("👁️ Hiện Pinyin (Space)", key="btn_shadowing_reveal", use_container_width=True):
                     st.session_state.shadowing_revealed = True
@@ -454,6 +473,15 @@ with tab_study:
             word = today_words[st.session_state.cloze_idx]
             st.progress((st.session_state.cloze_idx) / total_words)
             st.caption(f"Tiến độ Chặng 3: Câu {st.session_state.cloze_idx + 1} / {total_words}")
+            
+            current_hanzi = word.get('hanzi', '')
+            current_example = word.get('example_zh', '')
+
+            col_cloze_audio1, col_cloze_audio2 = st.columns(2)
+            with col_cloze_audio1:
+                st.button("🔊 Nghe Từ Vựng", key="btn_cloze_word", use_container_width=True)
+            with col_cloze_audio2:
+                st.button("🔊 Nghe Câu Ví Dụ", key="btn_cloze_ex", use_container_width=True)
 
             st.markdown(f"<div class='cloze-sentence'>{word['example_cloze']}</div>", unsafe_allow_html=True)
             st.markdown(f"💡 **Gợi ý từ cần điền:** {word['meaning_vi']} *(Âm Hán Việt: {word['hanviet']})*")
@@ -897,13 +925,24 @@ js_handler = f"""
     {f"playAudio('{speak_text}');" if speak_text else ""}
 
     const doc = window.parent.document;
-    
-    // Lắng nghe mọi cú click trên giao diện, nếu click trúng nút "Nghe Lại Câu" thì phát âm
-    doc.addEventListener('click', function(e) {{
-        if (e.target && e.target.innerText && e.target.innerText.includes('Nghe Lại Câu')) {{
-            playAudio('{speak_text}');
+        
+        // Xóa listener cũ (nếu có) để tránh bị vang tiếng (echo) do Streamlit chèn nhiều iframe
+        if (doc.audioClickListener) {{
+            doc.removeEventListener('click', doc.audioClickListener);
         }}
-    }});
+
+        // Lắng nghe click để nhận diện xem đang bấm nút Từ hay nút Câu
+        doc.audioClickListener = function(e) {{
+            if (e.target && e.target.innerText) {{
+                if (e.target.innerText.includes('Nghe Từ Vựng')) {{
+                    playAudio('{current_hanzi}');
+                }} else if (e.target.innerText.includes('Nghe Câu Ví Dụ')) {{
+                    playAudio('{current_example}');
+                }}
+            }}
+        }};
+        
+        doc.addEventListener('click', doc.audioClickListener);
 
     doc.onkeydown = function(e) {{
         // Phím Space: Lật thẻ hoặc Hiện Pinyin ở Chặng 2
