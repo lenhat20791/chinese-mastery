@@ -350,7 +350,22 @@ with tab_study:
                     </div>
                     """, unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
-                
+                # --- BẮT ĐẦU CHÈN CHIẾT TỰ ---
+                chiet_tu_data = word.get('chiet_tu')
+                if chiet_tu_data:
+                    import json
+                    try:
+                        # Parse chuỗi JSON từ database thành Dictionary
+                        ct_dict = json.loads(chiet_tu_data) if isinstance(chiet_tu_data, str) else chiet_tu_data
+                        with st.expander("💡 Mẹo nhớ Hán tự (Bộ thủ & Chiết tự)"):
+                            # Hiển thị từng bộ thủ
+                            for comp in ct_dict.get('components', []):
+                                st.markdown(f"🔹 **{comp.get('radical', '')}** ({comp.get('name', '')}): {comp.get('meaning', '')}")
+                            # Hiển thị câu chuyện
+                            st.info(f"📖 **Gợi nhớ:** {ct_dict.get('story', '')}")
+                    except Exception as e:
+                        st.caption("Dữ liệu chiết tự đang được cập nhật...")
+                # --- KẾT THÚC CHÈN CHIẾT TỰ ---
                 # BẮT ĐẦU CHÈN 2 NÚT PHÁT ÂM VÀO ĐÂY
                 col_audio1, col_audio2 = st.columns(2)
                 with col_audio1:
