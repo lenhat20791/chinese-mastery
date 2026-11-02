@@ -263,6 +263,25 @@ def get_tribulation_cost(is_major_breakthrough=False):
         return base_cost * 3  # Đột phá cảnh giới lớn tốn kém gấp 3 (105 Linh lực)
     
     return base_cost
+def count_learned_words(current_day):
+    """Số từ đã học hoặc đang học (tính đến ngày hiện tại)."""
+    conn = get_db()
+    total = conn.execute("SELECT COUNT(*) FROM vocab WHERE study_day <= ?", (current_day,)).fetchone()[0]
+    conn.close()
+    return total
+
+
+def get_learned_words(current_day, limit, offset):
+    """Một trang từ đã học, ngày mới nhất lên đầu."""
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT * FROM vocab WHERE study_day <= ? ORDER BY study_day DESC, id ASC LIMIT ? OFFSET ?",
+        (current_day, limit, offset),
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
 def get_hanzi_options(correct_word, limit=4):
     """Sinh 4 đáp án chữ Hán (1 đúng, 3 sai ngẫu nhiên) cho test nhanh."""
     conn = get_db()

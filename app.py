@@ -23,6 +23,7 @@ from database import (
     get_recent_words_for_exam
 )
 from exam_engine import generate_tribulation_exam
+from extra_tabs import render_notebook, render_pronunciation, render_radicals
 from backup_manager import backup_to_drive, restore_latest_from_drive
 # --- CẤU HÌNH TRANG ---
 st.set_page_config(
@@ -181,7 +182,16 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-tab_study, tab_stats = st.tabs(["⚔️ Tu Luyện Hàng Ngày", "📊 Tâm Ma Bảng & Thống Kê"])
+tab_study, tab_stats, tab_notebook, tab_pron, tab_radicals = st.tabs(
+    ["⚔️ Tu Luyện Hàng Ngày", "📊 Tâm Ma Bảng & Thống Kê", "📒 Sổ Tay", "🗣️ Tập Phát Âm", "🧩 Bộ Thủ"]
+)
+
+with tab_notebook:
+    render_notebook(st.session_state.user["current_day"])
+with tab_pron:
+    render_pronunciation()
+with tab_radicals:
+    render_radicals()
 
 # =========================================================================
 # TAB 1: TU LUYỆN HÀNG NGÀY
@@ -213,11 +223,10 @@ with tab_study:
             else:
                 st.button("⚡ Lôi Kiếp (Không đủ Linh Lực)", disabled=True, use_container_width=True)
         
-        st.stop() # Lệnh này chặn không cho vẽ tiếp giao diện Flashcard bên dưới
     # =========================================================================
     # CHẶNG 1: FLASHCARD (HẤP THỤ & LUYỆN HÓA)
     # =========================================================================
-    if st.session_state.phase == "FLASHCARD":
+    elif st.session_state.phase == "FLASHCARD":
         st.subheader("📚 Chặng 1: Nạp Từ Vựng Phản Xạ & Luyện Hóa")
         if st.session_state.card_idx < total_words:
             word = today_words[st.session_state.card_idx]
