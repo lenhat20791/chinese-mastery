@@ -1,5 +1,5 @@
-import sqlite3
 import random
+import sqlite3
 
 DB_PATH = "chinese_mastery.db"
 
@@ -58,18 +58,6 @@ def advance_user_day(new_day=None):
     conn.commit()
     conn.close()
 
-# Danh sách 8 Đại Cảnh Giới tương ứng với các giai đoạn 10 ngày
-MAJOR_REALMS = [
-    "Luyện Khí Kỳ",
-    "Trúc Cơ Kỳ",
-    "Kim Đan Kỳ",
-    "Nguyên Anh Kỳ",
-    "Hóa Thần Kỳ",
-    "Luyện Hư Kỳ",
-    "Hợp Thể Kỳ",
-    "Đại Thừa Kỳ"
-]
-
 def promote_user_realm():
     """
     Tăng 1 tiểu tầng cảnh giới (Ví dụ: Luyện Khí Kỳ Tầng 1 -> Tầng 2).
@@ -93,25 +81,6 @@ def promote_user_realm():
     conn.close()
     return updated_realm_name
 
-def breakthrough_major_realm(current_day):
-    """
-    Đột phá Đại Cảnh Giới sau khi vượt qua Đại Khảo 10 ngày.
-    Reset tiểu tầng về 1 và lên Đại Cảnh Giới kế tiếp.
-    """
-    conn = get_db()
-    cursor = conn.cursor()
-    stage_idx = min(len(MAJOR_REALMS) - 1, current_day // 10)
-    new_realm_name = f"{MAJOR_REALMS[stage_idx]} Tầng 1"
-    
-    cursor.execute("""
-        UPDATE user_progress
-        SET realm_level = 1, current_realm = ?
-        WHERE id = 1
-    """, (new_realm_name,))
-    conn.commit()
-    conn.close()
-    return new_realm_name
-
 def record_exam_result(exam_type, stage_number, total_q, correct_q, is_passed, weak_words=""):
     """
     Ghi lịch sử thi đúng theo schema của bảng exam_history.
@@ -134,52 +103,30 @@ def load_day_words(day):
     conn.close()
     return words
 
+FEEDBACK_ACTIONS = {
+    # action: (cột đếm, trạng thái, có gắn cờ Tâm Ma không)
+    1: ("failed_count", "FAILED", True),
+    2: ("vague_count", "VAGUE", True),
+    3: ("mastered_count", "MASTERED", False),
+}
+
 def record_feedback(vocab_id, action):
     # 1 = FAILED, 2 = VAGUE, 3 = MASTERED
+    if action not in FEEDBACK_ACTIONS:
+        return
+    count_col, status, is_demon = FEEDBACK_ACTIONS[action]
     conn = get_db()
-    cursor = conn.cursor()
-    if action == 1:
-        cursor.execute("""
-            UPDATE word_mastery 
-            SET review_count = review_count + 1,
-                failed_count = failed_count + 1,
-                last_status = 'FAILED',
-                is_inner_demon = 1,
-                last_reviewed_at = CURRENT_TIMESTAMP
-            WHERE vocab_id = ?
-        """, (vocab_id,))
-    elif action == 2:
-        cursor.execute("""
-            UPDATE word_mastery 
-            SET review_count = review_count + 1,
-                vague_count = vague_count + 1,
-                last_status = 'VAGUE',
-                is_inner_demon = 1,
-                last_reviewed_at = CURRENT_TIMESTAMP
-            WHERE vocab_id = ?
-        """, (vocab_id,))
-    elif action == 3:
-        cursor.execute("""
-            UPDATE word_mastery 
-            SET review_count = review_count + 1,
-                mastered_count = mastered_count + 1,
-                last_status = 'MASTERED',
-                last_reviewed_at = CURRENT_TIMESTAMP
-            WHERE vocab_id = ?
-        """, (vocab_id,))
+    conn.execute(f"""
+        UPDATE word_mastery
+        SET review_count = review_count + 1,
+            {count_col} = {count_col} + 1,
+            last_status = ?,
+            is_inner_demon = CASE WHEN ? THEN 1 ELSE is_inner_demon END,
+            last_reviewed_at = CURRENT_TIMESTAMP
+        WHERE vocab_id = ?
+    """, (status, is_demon, vocab_id))
     conn.commit()
     conn.close()
-
-def get_review_options(correct_word):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT meaning_vi FROM vocab WHERE id != ? ORDER BY RANDOM() LIMIT 3", (correct_word["id"],))
-    distractors = [row["meaning_vi"] for row in cursor.fetchall()]
-    conn.close()
-    
-    options = distractors + [correct_word["meaning_vi"]]
-    random.shuffle(options)
-    return options
 
 def get_inner_demons(limit=4):
     conn = get_db()
@@ -225,15 +172,6 @@ def get_recent_words_for_exam(current_day, days_back=3, limit=8):
     conn.close()
     return rows
 
-def save_exam_record(exam_type, target_day, score, passed, details_json=""):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO exam_history (exam_type, target_day, score, passed, details)
-        VALUES (?, ?, ?, ?, ?)
-    """, (exam_type, target_day, score, 1 if passed else 0, details_json))
-    conn.commit()
-    conn.close()
 def get_cultivation_stats():
     """
     Lấy số liệu thống kê tổng quan về tiến độ học và trạng thái từ vựng.
@@ -327,7 +265,6 @@ def get_tribulation_cost(is_major_breakthrough=False):
     return base_cost
 def get_hanzi_options(correct_word, limit=4):
     """Sinh 4 đáp án chữ Hán (1 đúng, 3 sai ngẫu nhiên) cho test nhanh."""
-    import random
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""

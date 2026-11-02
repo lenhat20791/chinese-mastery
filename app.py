@@ -1,5 +1,7 @@
-import streamlit as st
 import datetime
+import json
+
+import streamlit as st
 import streamlit.components.v1 as components
 from database import (
     load_user_progress,
@@ -7,19 +9,18 @@ from database import (
     advance_user_day,
     load_day_words,
     record_feedback,
-    get_review_options,
     exorcise_inner_demon,
     promote_user_realm,
-    breakthrough_major_realm,
     record_exam_result,
     get_cultivation_stats,
     get_all_demons_detailed,
     get_recent_exam_history,
     set_bottleneck_state,
     get_tribulation_cost,
-    get_hanzi_options
+    get_hanzi_options,
+    get_recent_words_for_exam
 )
-from exam_engine import generate_mini_exam, generate_major_exam, generate_tribulation_exam
+from exam_engine import generate_tribulation_exam
 from backup_manager import backup_to_drive, restore_latest_from_drive
 # --- CẤU HÌNH TRANG ---
 st.set_page_config(
@@ -151,75 +152,85 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 # --- KHỞI TẠO SESSION STATE ---
-if "user" not in st.session_state:
-    st.session_state.user = load_user_progress()
+BIG_BUTTON_CSS = """
+<style>
+    div[data-testid="stButton"] button { padding: 15px 0px !important; border-radius: 12px !important; min-height: 70px !important; }
+    div[data-testid="stButton"] button p, div[data-testid="stButton"] button div, div[data-testid="stButton"] button span {
+        font-size: 32px !important; font-weight: 900 !important; letter-spacing: 12px !important; color: #0f172a !important;
+    }
+</style>
+"""
 
-if "phase" not in st.session_state:
-    st.session_state.phase = "FLASHCARD" 
+# Trạng thái mặc định; factory để tránh dùng chung list giữa các lần reset
+SESSION_DEFAULTS = {
+    "user": load_user_progress,
+    "phase": lambda: "FLASHCARD",
+    "failed_today": list,        # Sổ đen các từ sai trong ngày
+    "review_queue": list,        # Hàng đợi ôn tập Chặng 4
+    "current_review_options": list,
+    "exam_questions": list,
+    "exam_idx": lambda: 0,
+    "exam_score": lambda: 0,
+    "exam_completed": lambda: False,
+    "exam_type": lambda: "MINI_3D",  # "MINI_3D" | "MAJOR_10D" | "LÔI KIẾP"
+    "card_idx": lambda: 0,
+    "shadowing_idx": lambda: 0,
+    "shadowing_revealed": lambda: False,
+    "cloze_idx": lambda: 0,
+    "cloze_status": lambda: None,    # None, "CORRECT", "INCORRECT"
+    "session_start": datetime.datetime.now,
+    "sub_phase": lambda: "flashcard",  # 'flashcard' (Hấp thụ) | 'quiz' (Luyện hóa)
+    "current_options": list,
+}
+for _key, _factory in SESSION_DEFAULTS.items():
+    if _key not in st.session_state:
+        st.session_state[_key] = _factory()
 
-if "failed_today" not in st.session_state:
-    st.session_state.failed_today = []  # Danh sách ghi sổ đen các từ sai trong ngày
 
-if "review_queue" not in st.session_state:
-    st.session_state.review_queue = []  # Hàng đợi ôn tập cho Chặng 4
-
-if "current_review_options" not in st.session_state:
-    st.session_state.current_review_options = []
-
-# Biến phục vụ Kỳ Khảo Thí (Exam State)
-if "exam_questions" not in st.session_state:
-    st.session_state.exam_questions = []
-
-if "exam_idx" not in st.session_state:
+def start_exam(is_major, exam_type):
+    """Sinh đề Lôi Kiếp, đặt lại trạng thái thi và chuyển sang màn hình thi."""
+    st.session_state.exam_questions = generate_tribulation_exam(
+        st.session_state.user["current_day"], is_major_breakthrough=is_major
+    )
     st.session_state.exam_idx = 0
-
-if "exam_score" not in st.session_state:
     st.session_state.exam_score = 0
-
-if "exam_completed" not in st.session_state:
     st.session_state.exam_completed = False
+    st.session_state.exam_result_saved = False
+    st.session_state.exam_type = exam_type
+    st.session_state.phase = "loi_kiep"
 
-if "exam_type" not in st.session_state:
-    st.session_state.exam_type = "MINI_3D"  # "MINI_3D" hoặc "MAJOR_10D"
 
-if "card_idx" not in st.session_state:
+def go_next_day():
+    """Sang ngày mới: lưu ngày vào DB và đặt lại toàn bộ tiến độ trong ngày."""
+    advance_user_day()
+    st.session_state.user["current_day"] += 1
     st.session_state.card_idx = 0
-
-if "is_flipped" not in st.session_state:
-    st.session_state.is_flipped = False
-
-if "shadowing_idx" not in st.session_state:
     st.session_state.shadowing_idx = 0
-
-if "shadowing_revealed" not in st.session_state:
-    st.session_state.shadowing_revealed = False
-
-if "cloze_idx" not in st.session_state:
     st.session_state.cloze_idx = 0
-
-if "cloze_status" not in st.session_state:
-    st.session_state.cloze_status = None  # None, "CORRECT", "INCORRECT"
-
-if "session_start" not in st.session_state:
+    st.session_state.sub_phase = "flashcard"
+    st.session_state.shadowing_revealed = False
+    st.session_state.cloze_status = None
+    st.session_state.failed_today = []
+    st.session_state.review_queue = []
+    st.session_state.current_review_options = []
     st.session_state.session_start = datetime.datetime.now()
 
-if 'sub_phase' not in st.session_state:
-    st.session_state.sub_phase = 'flashcard' # Trạng thái thẻ: 'flashcard' (Hấp thụ) hoặc 'quiz' (Luyện hóa)
+def audio_buttons(key_prefix):
+    """Hai nút phát âm; JS ở cuối file bắt click theo nội dung nút."""
+    col_word, col_ex = st.columns(2)
+    with col_word:
+        st.button("🔊 Nghe Từ Vựng", key=f"btn_{key_prefix}_word", use_container_width=True)
+    with col_ex:
+        st.button("🔊 Nghe Câu Ví Dụ", key=f"btn_{key_prefix}_ex", use_container_width=True)
 
-if 'current_options' not in st.session_state:
-    st.session_state.current_options = []
-
-if 'earned_energy_today' not in st.session_state:
-    st.session_state.earned_energy_today = 0
 
 today_words = load_day_words(st.session_state.user["current_day"])
 total_words = len(today_words)
 
-# Biến phát âm âm thanh Web Speech
-# Biến phát âm âm thanh Web Speech
+# Biến phục vụ phát âm Web Speech (JS ở cuối file)
 speak_text = ""
-current_hanzi = ""     # Thêm biến lưu từ vựng hiện tại
-current_example = ""   # Thêm biến lưu câu ví dụ hiện tại
+current_hanzi = ""
+current_example = ""
 
 # --- SIDEBAR: CẢNH GIỚI & TU TIÊN ---
 with st.sidebar:
@@ -247,39 +258,6 @@ with st.sidebar:
     st.markdown(f"{'👉' if st.session_state.phase == 'SHADOWING' else '✅' if st.session_state.phase in ['CLOZE', 'COMPLETED'] else '⚪'} **Chặng 2:** Luyện Đọc Cả Câu (Shadowing)")
     st.markdown(f"{'👉' if st.session_state.phase == 'CLOZE' else '✅' if st.session_state.phase == 'COMPLETED' else '⚪'} **Chặng 3:** Gõ Bàn Phím Điền Khuyết")
 
-    st.divider()
-    # ==========================================
-    # 🛠️ DEVELOPER MODE - BẢNG HACK ĐỂ TEST APP
-    # ==========================================
-    with st.expander("🛠️ MENU HACK (DÀNH CHO DEV)"):
-        if st.button("💰 Hack +100 Linh Lực", use_container_width=True):
-            update_user_energy(100)
-            st.session_state.user['spiritual_energy'] += 100
-            st.toast("Đã buff 100 Linh Lực!", icon="💉")
-            st.rerun()
-            
-        if st.button("⏩ Tua nhanh +1 Ngày", use_container_width=True):
-            advance_user_day()
-            st.session_state.user['current_day'] += 1
-            st.session_state.phase = "FLASHCARD"  # Reset về học bài mới
-            st.session_state.card_idx = 0
-            st.toast(f"Đã sang Ngày {st.session_state.user['current_day']}!", icon="⏩")
-            st.rerun()
-            
-        if st.button("🔒 Ép kẹt Bình Cảnh (Tẩu Hỏa)", use_container_width=True):
-            set_bottleneck_state(True)
-            st.session_state.user['is_bottleneck'] = True
-            st.session_state.phase = "FLASHCARD" # Ép tải lại trang chính để rào chắn chặn lại
-            st.toast("Đã rơi vào Bình Cảnh!", icon="🚨")
-            st.rerun()
-            
-        if st.button("🔓 Gỡ Bình Cảnh (Clear Bug)", use_container_width=True):
-            set_bottleneck_state(False)
-            st.session_state.user['is_bottleneck'] = False
-            st.toast("Đã gỡ rào chắn Bình Cảnh!", icon="✅")
-            st.rerun()
-
-# --- TIÊU ĐỀ CHÍNH ---
 # --- TIÊU ĐỀ CHÍNH & HỆ THỐNG TAB ---
 st.title("🎯 Thực Chiến Tiếng Trung Công Sở")
 
@@ -303,19 +281,14 @@ with tab_study:
         col1, col2 = st.columns(2)
         with col1:
             if st.button("🧘 Bế Quan Tu Luyện (Cày Linh Lực)", use_container_width=True):
-                st.session_state.phase = 'be_quan' # Màn hình này ta sẽ code sau
+                st.session_state.phase = 'be_quan'
                 st.rerun()
         with col2:
             if user['spiritual_energy'] >= loi_kiep_cost:
                 if st.button("⚡ Kích Hoạt Lôi Kiếp", type="primary", use_container_width=True):
                     update_user_energy(-loi_kiep_cost) # Trừ phí
                     st.session_state.user['spiritual_energy'] -= loi_kiep_cost # Cập nhật tạm UI
-                    st.session_state.exam_questions = generate_tribulation_exam(user['current_day'], False)
-                    st.session_state.exam_idx = 0
-                    st.session_state.exam_score = 0
-                    st.session_state.exam_completed = False
-                    st.session_state.exam_type = "LÔI KIẾP"
-                    st.session_state.phase = "loi_kiep" # Màn hình Lôi Kiếp ta sẽ code sau
+                    start_exam(False, "LÔI KIẾP")
                     st.rerun()
             else:
                 st.button("⚡ Lôi Kiếp (Không đủ Linh Lực)", disabled=True, use_container_width=True)
@@ -350,31 +323,18 @@ with tab_study:
                     </div>
                     """, unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
-                # --- BẮT ĐẦU CHÈN CHIẾT TỰ ---
                 chiet_tu_data = word.get('chiet_tu')
                 if chiet_tu_data:
-                    import json
                     try:
-                        # Parse chuỗi JSON từ database thành Dictionary
                         ct_dict = json.loads(chiet_tu_data) if isinstance(chiet_tu_data, str) else chiet_tu_data
                         with st.expander("💡 Mẹo nhớ Hán tự (Bộ thủ & Chiết tự)"):
-                            # Hiển thị từng bộ thủ
                             for comp in ct_dict.get('components', []):
                                 st.markdown(f"🔹 **{comp.get('radical', '')}** ({comp.get('name', '')}): {comp.get('meaning', '')}")
-                            # Hiển thị câu chuyện
                             st.info(f"📖 **Gợi nhớ:** {ct_dict.get('story', '')}")
-                    except Exception as e:
+                    except (ValueError, AttributeError):
                         st.caption("Dữ liệu chiết tự đang được cập nhật...")
-                # --- KẾT THÚC CHÈN CHIẾT TỰ ---
-                # BẮT ĐẦU CHÈN 2 NÚT PHÁT ÂM VÀO ĐÂY
-                col_audio1, col_audio2 = st.columns(2)
-                with col_audio1:
-                    st.button("🔊 Nghe Từ Vựng", key="btn_audio_word_1", use_container_width=True)
-                with col_audio2:
-                    st.button("🔊 Nghe Câu Ví Dụ", key="btn_audio_ex_1", use_container_width=True)
-                st.write("") # Tạo khoảng trống
-                # KẾT THÚC CHÈN
-
+                audio_buttons("flash")
+                st.write("")
                 if st.button("👁️ Đã Nhớ -> Kiểm Tra Thực Chiến", use_container_width=True, type="primary"):
                     st.session_state.current_options = get_hanzi_options(word)
                     st.session_state.sub_phase = 'quiz'
@@ -383,27 +343,7 @@ with tab_study:
             elif st.session_state.sub_phase == 'quiz':
                 # --- PHA LUYỆN HÓA ---
                 
-                # 1. TIÊM CSS ĐỂ ĐỘ ĐỘC QUYỀN CÁC NÚT ĐÁP ÁN (To, Đậm, Giãn chữ)
-                st.markdown("""
-                <style>
-                    /* Bắt thẳng vào testid cốt lõi của nút Streamlit */
-                    div[data-testid="stButton"] button {
-                        padding: 15px 0px !important; 
-                        border-radius: 12px !important;
-                        min-height: 70px !important; /* Ép nút cao lên */
-                    }
-                    
-                    /* Nhắm thẳng vào tất cả thẻ chữ bên trong nút */
-                    div[data-testid="stButton"] button p, 
-                    div[data-testid="stButton"] button div, 
-                    div[data-testid="stButton"] button span {
-                        font-size: 32px !important; /* Chữ cực to */
-                        font-weight: 900 !important; /* Đen đậm nét */
-                        letter-spacing: 12px !important; /* Giãn cách rõ ràng */
-                        color: #0f172a !important;
-                    }
-                </style>
-                """, unsafe_allow_html=True)
+                st.markdown(BIG_BUTTON_CSS, unsafe_allow_html=True)
 
                 st.warning("⚔️ **THỰC CHIẾN:** Hãy chọn chữ Hán đúng với nghĩa dưới đây!")
                 st.markdown(f"<h3 style='text-align: center; margin-bottom: 20px;'>{word['meaning_vi']}</h3>", unsafe_allow_html=True)
@@ -420,7 +360,7 @@ with tab_study:
                                 st.session_state.card_idx += 1
                                 st.session_state.sub_phase = 'flashcard'
                             else:
-                                record_feedback(word['id'], "failed")
+                                record_feedback(word['id'], 1)
                                 if word not in st.session_state.failed_today:
                                     st.session_state.failed_today.append(word)
                                 st.error("❌ Sai! Tâm Ma trỗi dậy. Bắt đầu học lại từ này!")
@@ -459,11 +399,7 @@ with tab_study:
                 st.markdown("</div>", unsafe_allow_html=True)
 
             st.write("")
-            col_sh_audio1, col_sh_audio2 = st.columns(2)
-            with col_sh_audio1:
-                st.button("🔊 Nghe Từ Vựng", key="btn_sh_word", use_container_width=True)
-            with col_sh_audio2:
-                st.button("🔊 Nghe Câu Ví Dụ", key="btn_sh_ex", use_container_width=True)
+            audio_buttons("sh")
 
             col_sh_reveal, col_sh_next = st.columns(2)
             with col_sh_reveal:
@@ -492,11 +428,7 @@ with tab_study:
             current_hanzi = word.get('hanzi', '')
             current_example = word.get('example_zh', '')
 
-            col_cloze_audio1, col_cloze_audio2 = st.columns(2)
-            with col_cloze_audio1:
-                st.button("🔊 Nghe Từ Vựng", key="btn_cloze_word", use_container_width=True)
-            with col_cloze_audio2:
-                st.button("🔊 Nghe Câu Ví Dụ", key="btn_cloze_ex", use_container_width=True)
+            audio_buttons("cloze")
 
             st.markdown(f"<div class='cloze-sentence'>{word['example_cloze']}</div>", unsafe_allow_html=True)
             st.markdown(f"💡 **Gợi ý từ cần điền:** {word['meaning_vi']} *(Âm Hán Việt: {word['hanviet']})*")
@@ -593,15 +525,7 @@ with tab_study:
             st.write("**Chọn chữ Hán đúng với nghĩa dưới đây:**")
             st.markdown(f"<h3 style='text-align: center; margin-bottom: 20px;'>{current_word['meaning_vi']}</h3>", unsafe_allow_html=True)
 
-            # 1. TIÊM CSS NÚT KHỔNG LỒ
-            st.markdown("""
-            <style>
-                div[data-testid="stButton"] button { padding: 15px 0px !important; border-radius: 12px !important; min-height: 70px !important; }
-                div[data-testid="stButton"] button p, div[data-testid="stButton"] button div, div[data-testid="stButton"] button span {
-                    font-size: 32px !important; font-weight: 900 !important; letter-spacing: 12px !important; color: #0f172a !important;
-                }
-            </style>
-            """, unsafe_allow_html=True)
+            st.markdown(BIG_BUTTON_CSS, unsafe_allow_html=True)
 
             # 2. VẼ 4 NÚT ĐÁP ÁN CHỮ HÁN
             cols = st.columns(2)
@@ -634,11 +558,7 @@ with tab_study:
             if st.button("⚡ Tiến vào Lôi Kiếp", type="primary", use_container_width=True):
                 update_user_energy(-loi_kiep_cost)
                 st.session_state.user['spiritual_energy'] -= loi_kiep_cost
-                st.session_state.exam_questions = generate_tribulation_exam(user['current_day'], False)
-                st.session_state.exam_idx = 0
-                st.session_state.exam_score = 0
-                st.session_state.exam_completed = False
-                st.session_state.phase = 'loi_kiep'
+                start_exam(False, "LÔI KIẾP")
                 st.session_state.pop('be_quan_word', None)
                 st.rerun()
         
@@ -647,7 +567,6 @@ with tab_study:
         # Lấy 1 từ ngẫu nhiên để test cày điểm
         if 'be_quan_word' not in st.session_state or st.session_state.be_quan_word is None:
             # Lấy ngẫu nhiên 1 từ trong lịch sử học
-            from database import get_recent_words_for_exam
             words = get_recent_words_for_exam(user['current_day'], user['current_day'], 1)
             if words:
                 st.session_state.be_quan_word = words[0]
@@ -658,15 +577,7 @@ with tab_study:
             st.warning("⚔️ **THỰC CHIẾN:** Chọn chữ Hán đúng để nhận Linh Lực!")
             st.markdown(f"<h3 style='text-align: center; margin-bottom: 20px;'>{bq_word['meaning_vi']}</h3>", unsafe_allow_html=True)
             
-            # CSS nới rộng nút
-            st.markdown("""
-            <style>
-                div[data-testid="stButton"] button { padding: 15px 0px !important; border-radius: 12px !important; min-height: 70px !important; }
-                div[data-testid="stButton"] button p, div[data-testid="stButton"] button div, div[data-testid="stButton"] button span {
-                    font-size: 32px !important; font-weight: 900 !important; letter-spacing: 12px !important; color: #0f172a !important;
-                }
-            </style>
-            """, unsafe_allow_html=True)
+            st.markdown(BIG_BUTTON_CSS, unsafe_allow_html=True)
             
             cols = st.columns(2)
             for i, opt in enumerate(st.session_state.be_quan_options):
@@ -704,15 +615,7 @@ with tab_study:
             
             st.markdown(f"<h3 style='text-align: center; margin: 30px 0;'>{q['question_text']}</h3>", unsafe_allow_html=True)
             
-            # CSS nút to 
-            st.markdown("""
-            <style>
-                div[data-testid="stButton"] button { padding: 15px 0px !important; border-radius: 12px !important; min-height: 70px !important; }
-                div[data-testid="stButton"] button p, div[data-testid="stButton"] button div, div[data-testid="stButton"] button span {
-                    font-size: 32px !important; font-weight: 900 !important; letter-spacing: 12px !important; color: #0f172a !important;
-                }
-            </style>
-            """, unsafe_allow_html=True)
+            st.markdown(BIG_BUTTON_CSS, unsafe_allow_html=True)
             
             cols = st.columns(2)
             for i, opt in enumerate(q["options"]):
@@ -733,29 +636,28 @@ with tab_study:
             score = st.session_state.exam_score
             pass_pct = 0.85 # Tỉ lệ yêu cầu: 85% mới được qua
             is_passed = (score >= int(total_q * pass_pct))
-            
+
+            # Chỉ ghi nhận kết quả & thăng cấp 1 lần (màn hình này chạy lại sau mỗi lần bấm nút)
+            if not st.session_state.exam_result_saved:
+                record_exam_result(st.session_state.exam_type, st.session_state.user["current_day"], total_q, score, is_passed)
+                set_bottleneck_state(not is_passed)
+                st.session_state.user['is_bottleneck'] = not is_passed
+                if is_passed:
+                    st.session_state.user['current_realm'] = promote_user_realm()
+                    go_next_day()
+                st.session_state.exam_result_saved = True
+
             st.markdown(f"<h2 style='text-align:center;'>Kết quả Lôi Kiếp: {score}/{total_q}</h2>", unsafe_allow_html=True)
             
             if is_passed:
                 st.balloons()
                 st.success("🎉 ĐỘT PHÁ THÀNH CÔNG! Tâm ma tan biến, tu vi tăng tiến.")
-                
-                # Mở khóa Bình Cảnh, thăng cấp
-                set_bottleneck_state(False)
-                st.session_state.user['is_bottleneck'] = False
-                new_realm = promote_user_realm()
-                st.session_state.user['current_realm'] = new_realm
-                
-                if st.button("🚀 Chinh phục Cảnh Giới Mới", type="primary", use_container_width=True):
+                st.info(f"📅 Bạn đã sang Ngày {st.session_state.user['current_day']}.")
+                if st.button("🚀 Bắt đầu bài học ngày mới", type="primary", use_container_width=True):
                     st.session_state.phase = "FLASHCARD"
                     st.rerun()
             else:
                 st.error("💥 ĐỘT PHÁ THẤT BẠI! Căn cơ chưa vững, Linh Lực tiêu tán. Trở về Bình Cảnh.")
-                
-                # Khóa Bình Cảnh
-                set_bottleneck_state(True)
-                st.session_state.user['is_bottleneck'] = True
-                
                 if st.button("🧘 Quay lại Bế Quan tu luyện", use_container_width=True):
                     st.session_state.phase = "FLASHCARD" # Trả về màn hình chính để bị chặn bởi rào chắn
                     st.rerun()
@@ -783,43 +685,19 @@ with tab_study:
             if curr_d % 10 == 0:
                 if st.button("👑 ĐỘT PHÁ: TIẾN VÀO ĐẠI THIÊN KIẾP (10 NGÀY)", use_container_width=True):
                     update_user_energy(elapsed)
-                    st.session_state.exam_type = "MAJOR_10D"
-                    # Đổi sang dùng hàm sinh đề Lôi Kiếp mới (50 câu)
-                    st.session_state.exam_questions = generate_tribulation_exam(curr_d, is_major_breakthrough=True)
-                    st.session_state.exam_idx = 0
-                    st.session_state.exam_score = 0
-                    st.session_state.exam_completed = False
-                    st.session_state.phase = "loi_kiep" # Trỏ về màn hình Lôi Kiếp mới
+                    start_exam(True, "MAJOR_10D")  # 50 câu
                     st.rerun()
-                    
+
             elif curr_d % 3 == 0:
                 if st.button("⚡ ĐỘT PHÁ: TIẾN VÀO TIỂU THIÊN KIẾP (3 NGÀY)", use_container_width=True):
                     update_user_energy(elapsed)
-                    st.session_state.exam_type = "MINI_3D"
-                    # Đổi sang dùng hàm sinh đề Lôi Kiếp mới (20 câu)
-                    st.session_state.exam_questions = generate_tribulation_exam(curr_d, is_major_breakthrough=False)
-                    st.session_state.exam_idx = 0
-                    st.session_state.exam_score = 0
-                    st.session_state.exam_completed = False
-                    st.session_state.phase = "loi_kiep" # Trỏ về màn hình Lôi Kiếp mới
+                    start_exam(False, "MINI_3D")  # 20 câu
                     st.rerun()
-                    
             else:
                 if st.button("🚀 Sang Bài Học Ngày Tiếp Theo", use_container_width=True):
                     update_user_energy(elapsed)
-                    advance_user_day()
-                    st.session_state.user["current_day"] += 1
+                    go_next_day()
                     st.session_state.phase = "FLASHCARD"
-                    st.session_state.card_idx = 0
-                    st.session_state.shadowing_idx = 0
-                    st.session_state.cloze_idx = 0
-                    st.session_state.is_flipped = False
-                    st.session_state.shadowing_revealed = False
-                    st.session_state.cloze_status = None
-                    st.session_state.failed_today = []
-                    st.session_state.review_queue = []
-                    st.session_state.current_review_options = []
-                    st.session_state.session_start = datetime.datetime.now()
                     st.rerun()
 
 # =========================================================================
@@ -892,31 +770,31 @@ with tab_stats:
         )
     else:
         st.caption("Chưa có lịch sử thi cử nào được ghi nhận.")
-        st.divider()
-        st.markdown("### ☁️ Đồng Bộ & An Toàn Dữ Liệu (Google Drive)")
-        st.caption("Chính sách an toàn: Hệ thống tự động duy trì 2 bản sao lưu của 2 ngày học gần nhất.")
-        
-        col_bk1, col_bk2 = st.columns(2)
-        with col_bk1:
-            if st.button("📤 Sao Lưu Tiến Độ Lên Drive", use_container_width=True):
-                with st.spinner("Đang đóng gói và đồng bộ lên Google Drive..."):
-                    success, msg = backup_to_drive(st.session_state.user["current_day"])
-                    if success:
-                        st.success(msg)
-                    else:
-                        st.error(msg)
-                        
-        with col_bk2:
-            if st.button("📥 Khôi Phục Bản Mới Nhất Từ Drive", use_container_width=True):
-                with st.spinner("Đang tải dữ liệu từ Google Drive và ghi đè..."):
-                    success, msg = restore_latest_from_drive()
-                    if success:
-                        st.success(msg)
-                        # Xóa sạch trạng thái session cũ và reset trang về trạng thái mới
-                        st.session_state.clear()
-                        st.rerun()
-                    else:
-                        st.error(msg)
+    st.divider()
+    st.markdown("### ☁️ Đồng Bộ & An Toàn Dữ Liệu (Google Drive)")
+    st.caption("Chính sách an toàn: Hệ thống tự động duy trì 2 bản sao lưu của 2 ngày học gần nhất.")
+    
+    col_bk1, col_bk2 = st.columns(2)
+    with col_bk1:
+        if st.button("📤 Sao Lưu Tiến Độ Lên Drive", use_container_width=True):
+            with st.spinner("Đang đóng gói và đồng bộ lên Google Drive..."):
+                success, msg = backup_to_drive(st.session_state.user["current_day"])
+                if success:
+                    st.success(msg)
+                else:
+                    st.error(msg)
+                
+    with col_bk2:
+        if st.button("📥 Khôi Phục Bản Mới Nhất Từ Drive", use_container_width=True):
+            with st.spinner("Đang tải dữ liệu từ Google Drive và ghi đè..."):
+                success, msg = restore_latest_from_drive()
+                if success:
+                    st.success(msg)
+                    # Xóa sạch trạng thái session cũ và reset trang về trạng thái mới
+                    st.session_state.clear()
+                    st.rerun()
+                else:
+                    st.error(msg)
 # =========================================================================
 # CHẠY NGẦM: BẮT PHÍM TẮT & PHÁT ÂM QUA WEB SPEECH API (ĐẶT Ở CUỐI FILE)
 # =========================================================================
@@ -937,48 +815,32 @@ js_handler = f"""
         synth.speak(utter);
     }}
 
-    {f"playAudio('{speak_text}');" if speak_text else ""}
+    {f"playAudio({json.dumps(speak_text)});" if speak_text else ""}
 
     const doc = window.parent.document;
-        
-        // Xóa listener cũ (nếu có) để tránh bị vang tiếng (echo) do Streamlit chèn nhiều iframe
-        if (doc.audioClickListener) {{
-            doc.removeEventListener('click', doc.audioClickListener);
-        }}
 
-        // Lắng nghe click để nhận diện xem đang bấm nút Từ hay nút Câu
-        doc.audioClickListener = function(e) {{
-            if (e.target && e.target.innerText) {{
-                if (e.target.innerText.includes('Nghe Từ Vựng')) {{
-                    playAudio('{current_hanzi}');
-                }} else if (e.target.innerText.includes('Nghe Câu Ví Dụ')) {{
-                    playAudio('{current_example}');
-                }}
+    // Xóa listener cũ để tránh vang tiếng do Streamlit chèn nhiều iframe
+    if (doc.audioClickListener) {{
+        doc.removeEventListener('click', doc.audioClickListener);
+    }}
+
+    // Nhận diện nút Từ hay nút Câu theo nội dung nút
+    doc.audioClickListener = function(e) {{
+        if (e.target && e.target.innerText) {{
+            if (e.target.innerText.includes('Nghe Từ Vựng')) {{
+                playAudio({json.dumps(current_hanzi)});
+            }} else if (e.target.innerText.includes('Nghe Câu Ví Dụ')) {{
+                playAudio({json.dumps(current_example)});
             }}
-        }};
-        
-        doc.addEventListener('click', doc.audioClickListener);
+        }}
+    }};
+    doc.addEventListener('click', doc.audioClickListener);
 
+    // Phím Space: Hiện Pinyin ở Chặng 2
     doc.onkeydown = function(e) {{
-        // Phím Space: Lật thẻ hoặc Hiện Pinyin ở Chặng 2
         if (e.code === 'Space') {{
-            const btnFlip = doc.getElementById('btn_flip_card');
-            const btnReveal = doc.getElementById('btn_shadowing_reveal');
-            if (btnFlip) btnFlip.click();
+            const btnReveal = doc.querySelector('.st-key-btn_shadowing_reveal button');
             if (btnReveal) btnReveal.click();
-        }}
-        // Phím 1, 2, 3 ở Chặng 1 Flashcard
-        if (e.key === '1') {{
-            const btnFailed = doc.getElementById('btn_failed');
-            if (btnFailed) btnFailed.click();
-        }}
-        if (e.key === '2') {{
-            const btnVague = doc.getElementById('btn_vague');
-            if (btnVague) btnVague.click();
-        }}
-        if (e.key === '3') {{
-            const btnMastered = doc.getElementById('btn_mastered');
-            if (btnMastered) btnMastered.click();
         }}
     }};
 </script>

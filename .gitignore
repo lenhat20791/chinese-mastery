@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+credentials.json
+token.json
+temp_restore.db
+.streamlit/secrets.toml
+makemehanzi_dict.txt
