@@ -5,6 +5,8 @@ from pathlib import Path
 
 import streamlit as st
 import streamlit.components.v1 as components
+from admin_panel import render_admin_panel
+from auth import logout, require_login
 from database import (
     load_user_progress,
     update_user_energy,
@@ -20,11 +22,13 @@ from database import (
     set_bottleneck_state,
     get_tribulation_cost,
     get_hanzi_options,
-    get_recent_words_for_exam
+    get_recent_words_for_exam,
+    get_vocab_by_ids,
+    load_session_snapshot,
+    save_session_snapshot,
 )
 from exam_engine import generate_tribulation_exam
 from extra_tabs import render_notebook, render_pronunciation, render_radicals
-from backup_manager import backup_to_drive, restore_latest_from_drive
 # --- CẤU HÌNH TRANG ---
 st.set_page_config(
     page_title="Thực Chiến Tiếng Trung - Phản Xạ Nhanh",
@@ -38,6 +42,9 @@ LOGO_B64 = base64.b64encode((Path(__file__).parent / "logo_cropped.png").read_by
 # --- GIAO DIỆN: CSS nằm ở style.css ---
 with open(Path(__file__).parent / "style.css", encoding="utf-8") as _css:
     st.markdown(f"<style>{_css.read()}</style>", unsafe_allow_html=True)
+
+# --- ĐĂNG NHẬP: chưa đăng nhập thì dừng tại đây ---
+require_login()
 
 # --- KHỞI TẠO SESSION STATE ---
 
@@ -77,6 +84,7 @@ def start_exam(is_major, exam_type):
     st.session_state.exam_completed = False
     st.session_state.exam_result_saved = False
     st.session_state.exam_type = exam_type
+    st.session_state.exam_major = is_major
     st.session_state.phase = "loi_kiep"
 
 
@@ -94,6 +102,60 @@ def go_next_day():
     st.session_state.review_queue = []
     st.session_state.current_review_options = []
     st.session_state.session_start = datetime.datetime.now()
+
+def session_snapshot():
+    """Vị trí buổi học hiện tại, lưu lên DB để F5 hoặc đổi thiết bị không mất tiến trình."""
+    s = st.session_state
+    phase = s.phase
+    if phase == "loi_kiep" and s.exam_completed:
+        phase = "FLASHCARD"  # kết quả thi đã được ghi (sang ngày mới hoặc Bình Cảnh)
+    return {
+        "day": s.user["current_day"],
+        "phase": phase,
+        "card_idx": s.card_idx,
+        "shadowing_idx": s.shadowing_idx,
+        "cloze_idx": s.cloze_idx,
+        "sub_phase": s.sub_phase,
+        "failed_today": [w["id"] for w in s.failed_today],
+        "review_queue": [w["id"] for w in s.review_queue],
+        "exam_type": s.exam_type,
+        "exam_major": s.get("exam_major", False),
+    }
+
+
+def restore_session():
+    """Nạp lại vị trí buổi học đã lưu (nếu còn đúng ngày). Bài thi dở dang sẽ được làm lại từ đầu."""
+    s = st.session_state
+    snap = load_session_snapshot()
+    if not snap or snap.get("day") != s.user["current_day"]:
+        s._saved_snap = None
+        return
+    s.card_idx = snap.get("card_idx", 0)
+    s.shadowing_idx = snap.get("shadowing_idx", 0)
+    s.cloze_idx = snap.get("cloze_idx", 0)
+    s.sub_phase = snap.get("sub_phase", "flashcard")
+    s.failed_today = get_vocab_by_ids(snap.get("failed_today", []))
+    s.review_queue = get_vocab_by_ids(snap.get("review_queue", []))
+    phase = snap.get("phase", "FLASHCARD")
+    if phase == "loi_kiep":
+        start_exam(snap.get("exam_major", False), snap.get("exam_type", "MINI_3D"))
+    else:
+        s.phase = phase
+    if s.phase == "REVIEW" and s.review_queue:
+        s.current_review_options = get_hanzi_options(s.review_queue[0])
+    if s.sub_phase == "quiz":
+        words = load_day_words(s.user["current_day"])
+        if s.card_idx < len(words):
+            s.current_options = get_hanzi_options(words[s.card_idx])
+        else:
+            s.sub_phase = "flashcard"
+    s._saved_snap = session_snapshot()
+
+
+if not st.session_state.get("_restored"):
+    restore_session()
+    st.session_state._restored = True
+
 
 def audio_buttons(key_prefix):
     """Hai nút phát âm; JS ở cuối file bắt click theo nội dung nút."""
@@ -167,6 +229,11 @@ with st.sidebar:
         index=0,
         format_func=lambda x: f"Tốc độ {x}x",
     )
+    st.divider()
+    st.caption(f"👤 Đang đăng nhập: **{st.session_state.auth_name}**")
+    if st.button("🚪 Đăng xuất", use_container_width=True):
+        logout()
+        st.rerun()
 
 # --- BANNER & HỆ THỐNG TAB ---
 st.markdown(
@@ -182,9 +249,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-tab_study, tab_stats, tab_notebook, tab_pron, tab_radicals = st.tabs(
-    ["⚔️ Tu Luyện Hàng Ngày", "📊 Tâm Ma Bảng & Thống Kê", "📒 Sổ Tay", "🗣️ Tập Phát Âm", "🧩 Bộ Thủ"]
-)
+TAB_LABELS = ["⚔️ Tu Luyện Hàng Ngày", "📊 Tâm Ma Bảng & Thống Kê", "📒 Sổ Tay", "🗣️ Tập Phát Âm", "🧩 Bộ Thủ"]
+if st.session_state.auth_is_admin:
+    TAB_LABELS.append("👑 Quản Lý")
+tabs = st.tabs(TAB_LABELS)
+tab_study, tab_stats, tab_notebook, tab_pron, tab_radicals = tabs[:5]
+
+if st.session_state.auth_is_admin:
+    with tabs[5]:
+        render_admin_panel()
 
 with tab_notebook:
     render_notebook(st.session_state.user["current_day"])
@@ -712,31 +785,7 @@ with tab_stats:
         )
     else:
         st.caption("Chưa có lịch sử thi cử nào được ghi nhận.")
-    st.divider()
-    st.markdown("### ☁️ Đồng Bộ & An Toàn Dữ Liệu (Google Drive)")
-    st.caption("Chính sách an toàn: Hệ thống tự động duy trì 2 bản sao lưu của 2 ngày học gần nhất.")
-    
-    col_bk1, col_bk2 = st.columns(2)
-    with col_bk1:
-        if st.button("📤 Sao Lưu Tiến Độ Lên Drive", use_container_width=True):
-            with st.spinner("Đang đóng gói và đồng bộ lên Google Drive..."):
-                success, msg = backup_to_drive(st.session_state.user["current_day"])
-                if success:
-                    st.success(msg)
-                else:
-                    st.error(msg)
-                
-    with col_bk2:
-        if st.button("📥 Khôi Phục Bản Mới Nhất Từ Drive", use_container_width=True):
-            with st.spinner("Đang tải dữ liệu từ Google Drive và ghi đè..."):
-                success, msg = restore_latest_from_drive()
-                if success:
-                    st.success(msg)
-                    # Xóa sạch trạng thái session cũ và reset trang về trạng thái mới
-                    st.session_state.clear()
-                    st.rerun()
-                else:
-                    st.error(msg)
+
 # =========================================================================
 # CHẠY NGẦM: BẮT PHÍM TẮT & PHÁT ÂM QUA WEB SPEECH API (ĐẶT Ở CUỐI FILE)
 # =========================================================================
@@ -788,3 +837,9 @@ js_handler = f"""
 </script>
 """
 components.html(js_handler, height=0)
+
+# Lưu vị trí buổi học khi có thay đổi (để F5 không mất tiến trình)
+_snap = session_snapshot()
+if _snap != st.session_state.get("_saved_snap"):
+    save_session_snapshot(_snap)
+    st.session_state._saved_snap = _snap

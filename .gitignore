@@ -5,3 +5,4 @@ token.json
 temp_restore.db
 .streamlit/secrets.toml
 makemehanzi_dict.txt
+user_data.db
