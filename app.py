@@ -1,5 +1,7 @@
+import base64
 import datetime
 import json
+from pathlib import Path
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -25,141 +27,18 @@ from backup_manager import backup_to_drive, restore_latest_from_drive
 # --- CẤU HÌNH TRANG ---
 st.set_page_config(
     page_title="Thực Chiến Tiếng Trung - Phản Xạ Nhanh",
-    page_icon="⚔️",
+    page_icon="logo_cropped.png",
     layout="wide"
 )
 
-# --- CSS ĐỊNH DẠNG GIAO DIỆN & CHỮ TO ---
-st.markdown("""
-<style>
-    /* Ẩn container iframe chạy ngầm */
-    div[data-testid="stCustomComponentV1"] {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        width: 0px !important;
-        height: 0px !important;
-        overflow: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-        border: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
+TOTAL_DAYS = 74
+LOGO_B64 = base64.b64encode((Path(__file__).parent / "logo_cropped.png").read_bytes()).decode()
 
-    .realm-badge {
-        font-size: 1.15rem;
-        font-weight: 700;
-        color: #d97706;
-        background: #fef3c7;
-        padding: 6px 14px;
-        border-radius: 8px;
-        border: 1px solid #f59e0b;
-        display: inline-block;
-        margin-bottom: 10px;
-    }
+# --- GIAO DIỆN: CSS nằm ở style.css ---
+with open(Path(__file__).parent / "style.css", encoding="utf-8") as _css:
+    st.markdown(f"<style>{_css.read()}</style>", unsafe_allow_html=True)
 
-    .vocab-card {
-        background-color: #ffffff;
-        border-radius: 16px;
-        padding: 40px 20px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        border: 1px solid #e2e8f0;
-        text-align: center;
-        margin-top: 15px;
-        margin-bottom: 25px;
-    }
-
-    .hanzi-display {
-        font-size: 5.5rem !important;
-        font-weight: 800 !important;
-        color: #0f172a !important;
-        letter-spacing: 0.35em !important;
-        line-height: 1.2 !important;
-        margin-bottom: 15px !important;
-        text-align: center !important;
-    }
-
-    .pinyin-display {
-        font-size: 1.8rem;
-        color: #2563eb;
-        font-weight: 600;
-        margin-bottom: 10px;
-    }
-
-    .hanviet-badge {
-        background-color: #ede9fe;
-        color: #6d28d9;
-        font-size: 1.15rem;
-        font-weight: 600;
-        padding: 6px 14px;
-        border-radius: 6px;
-        display: inline-block;
-        margin-bottom: 15px;
-    }
-
-    .meaning-display {
-        font-size: 1.4rem;
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 20px;
-    }
-
-    .example-box {
-        background-color: #f8fafc;
-        border-left: 4px solid #3b82f6;
-        padding: 16px;
-        text-align: left;
-        border-radius: 6px;
-        margin-top: 15px;
-    }
-
-    .example-zh {
-        font-size: 1.35rem;
-        color: #0f172a;
-        font-weight: 600;
-        margin-bottom: 6px;
-    }
-
-    .example-pinyin {
-        font-size: 1.1rem;
-        color: #64748b;
-        margin-bottom: 6px;
-    }
-
-    .example-vi {
-        font-size: 1.15rem;
-        color: #334155;
-    }
-
-    .cloze-sentence {
-        font-size: clamp(1.4rem, 4vw, 1.8rem);
-        color: #1e293b;
-        font-weight: 600;
-        line-height: 1.6;
-        background: #f1f5f9;
-        padding: 20px;
-        border-radius: 8px;
-        border: 1px dashed #94a3b8;
-        margin: 15px 0;
-    }
-
-    .pinyin-hidden {
-        filter: blur(8px);
-        user-select: none;
-        transition: filter 0.3s ease;
-    }
-</style>
-""", unsafe_allow_html=True)
 # --- KHỞI TẠO SESSION STATE ---
-BIG_BUTTON_CSS = """
-<style>
-    div[data-testid="stButton"] button { padding: 15px 0px !important; border-radius: 12px !important; min-height: 70px !important; }
-    div[data-testid="stButton"] button p, div[data-testid="stButton"] button div, div[data-testid="stButton"] button span {
-        font-size: 32px !important; font-weight: 900 !important; letter-spacing: 12px !important; color: #0f172a !important;
-    }
-</style>
-"""
 
 # Trạng thái mặc định; factory để tránh dùng chung list giữa các lần reset
 SESSION_DEFAULTS = {
@@ -232,34 +111,75 @@ speak_text = ""
 current_hanzi = ""
 current_example = ""
 
+PHASE_ORDER = ["FLASHCARD", "SHADOWING", "CLOZE"]
+STAGES = [
+    ("Flashcard Lật Thẻ", "FLASHCARD"),
+    ("Luyện Đọc Cả Câu (Shadowing)", "SHADOWING"),
+    ("Gõ Bàn Phím Điền Khuyết", "CLOZE"),
+]
+
+
+def stepper_html(phase):
+    """Danh sách 3 chặng với trạng thái xong / đang học / chưa tới."""
+    items = []
+    for n, (label, key) in enumerate(STAGES, start=1):
+        if phase == key:
+            cls, mark = "active", str(n)
+        elif phase == "COMPLETED" or (phase in PHASE_ORDER and PHASE_ORDER.index(key) < PHASE_ORDER.index(phase)):
+            cls, mark = "done", "✓"
+        else:
+            cls, mark = "", str(n)
+        items.append(f"<li class='{cls}'><span class='dot'>{mark}</span>{label}</li>")
+    return "<ul class='stepper'>" + "".join(items) + "</ul>"
+
+
 # --- SIDEBAR: CẢNH GIỚI & TU TIÊN ---
 with st.sidebar:
-    st.title("⚡ Tu Tiên Bảng")
-    st.markdown(f"<div class='realm-badge'>Cảnh giới: {st.session_state.user['current_realm']}</div>", unsafe_allow_html=True)
-    
+    user = st.session_state.user
     elapsed_minutes = max(1, int((datetime.datetime.now() - st.session_state.session_start).total_seconds() / 60))
-    total_energy = st.session_state.user["spiritual_energy"] + elapsed_minutes
-    
-    st.metric(label="✨ Tổng Linh Lực", value=f"{total_energy} Điểm", delta=f"+{elapsed_minutes} phút hôm nay")
-    st.metric(label="📅 Ngày tu luyện", value=f"Ngày {st.session_state.user['current_day']} / 74")
-    
-    st.divider()
-    # Thêm menu chọn tốc độ đọc
-    st.session_state.speech_rate = st.selectbox(
-        "🎧 Tốc độ phát âm:", 
-        options=[1.0, 0.85, 0.75], 
-        index=0,  # Đổi index thành 0 để mặc định chọn 1.0x (bình thường)
-        format_func=lambda x: f"Tốc độ {x}x"
-    )
-    
-    st.divider()
-    st.markdown("**Lộ trình buổi học 3 chặng:**")
-    st.markdown(f"{'👉' if st.session_state.phase == 'FLASHCARD' else '✅'} **Chặng 1:** Flashcard Lật Thẻ")
-    st.markdown(f"{'👉' if st.session_state.phase == 'SHADOWING' else '✅' if st.session_state.phase in ['CLOZE', 'COMPLETED'] else '⚪'} **Chặng 2:** Luyện Đọc Cả Câu (Shadowing)")
-    st.markdown(f"{'👉' if st.session_state.phase == 'CLOZE' else '✅' if st.session_state.phase == 'COMPLETED' else '⚪'} **Chặng 3:** Gõ Bàn Phím Điền Khuyết")
+    total_energy = user["spiritual_energy"] + elapsed_minutes
+    cost = get_tribulation_cost(is_major_breakthrough=False)
+    energy_pct = min(100, int(total_energy / cost * 100))
+    day_pct = min(100, int(user["current_day"] / TOTAL_DAYS * 100))
 
-# --- TIÊU ĐỀ CHÍNH & HỆ THỐNG TAB ---
-st.title("🎯 Thực Chiến Tiếng Trung Công Sở")
+    st.markdown(
+        f"""
+        <div class='hero-card'>
+            <div class='realm-badge'>⚡ {user['current_realm']}</div>
+            <div class='stat-row'><span>✨ Linh Lực</span><b>{total_energy}</b></div>
+            <div class='bar gold'><span style='width:{energy_pct}%'></span></div>
+            <div class='stat-row'><span>📅 Ngày tu luyện</span><b>{user['current_day']} / {TOTAL_DAYS}</b></div>
+            <div class='bar'><span style='width:{day_pct}%'></span></div>
+            <div class='stat-row'><span>⏱️ Hôm nay</span><b>+{elapsed_minutes} phút</b></div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("**Lộ trình buổi học**")
+    st.markdown(stepper_html(st.session_state.phase), unsafe_allow_html=True)
+
+    st.divider()
+    st.session_state.speech_rate = st.selectbox(
+        "🎧 Tốc độ phát âm",
+        options=[1.0, 0.85, 0.75],
+        index=0,
+        format_func=lambda x: f"Tốc độ {x}x",
+    )
+
+# --- BANNER & HỆ THỐNG TAB ---
+st.markdown(
+    f"""
+    <div class='hero'>
+        <img src='data:image/png;base64,{LOGO_B64}' alt='HSK'>
+        <div>
+            <div class='hero-title'>Thực Chiến Tiếng Trung Công Sở</div>
+            <div class='hero-sub'>Phản xạ nhanh · Nhớ lâu · Tu luyện mỗi ngày</div>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 tab_study, tab_stats = st.tabs(["⚔️ Tu Luyện Hàng Ngày", "📊 Tâm Ma Bảng & Thống Kê"])
 
@@ -307,22 +227,20 @@ with tab_study:
             current_example = word.get('example_zh', '')
             if st.session_state.sub_phase == 'flashcard':
                 # --- PHA HẤP THỤ ---
-                with st.container():
-                    st.markdown("<div class='vocab-card'>", unsafe_allow_html=True)
-                    st.markdown(f"<div class='hanzi-display'>{word['hanzi']}</div>", unsafe_allow_html=True)
-                    
-                    speak_text = word['hanzi']
-                    st.markdown(f"<div class='pinyin-display'>{word['pinyin']}</div>", unsafe_allow_html=True)
-                    st.markdown(f"<div class='hanviet-badge'>Âm Hán Việt: {word['hanviet']}</div>", unsafe_allow_html=True)
-                    st.markdown(f"<div class='meaning-display'>{word['meaning_vi']}</div>", unsafe_allow_html=True)
-                    st.markdown(f"""
-                    <div class='example-box'>
-                        <div class='example-zh'>📌 {word['example_zh']}</div>
-                        <div class='example-pinyin'>{word['example_pinyin']}</div>
-                        <div class='example-vi'>{word['example_vi']}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.markdown("</div>", unsafe_allow_html=True)
+                speak_text = word['hanzi']
+                st.markdown(
+                    "<div class='vocab-card'>"
+                    f"<div class='hanzi-display'>{word['hanzi']}</div>"
+                    f"<div class='pinyin-display'>{word['pinyin']}</div>"
+                    f"<div class='hanviet-badge'>Âm Hán Việt: {word['hanviet']}</div>"
+                    f"<div class='meaning-display'>{word['meaning_vi']}</div>"
+                    "<div class='example-box'>"
+                    f"<div class='example-zh'>📌 {word['example_zh']}</div>"
+                    f"<div class='example-pinyin'>{word['example_pinyin']}</div>"
+                    f"<div class='example-vi'>{word['example_vi']}</div>"
+                    "</div></div>",
+                    unsafe_allow_html=True,
+                )
                 chiet_tu_data = word.get('chiet_tu')
                 if chiet_tu_data:
                     try:
@@ -343,10 +261,9 @@ with tab_study:
             elif st.session_state.sub_phase == 'quiz':
                 # --- PHA LUYỆN HÓA ---
                 
-                st.markdown(BIG_BUTTON_CSS, unsafe_allow_html=True)
 
                 st.warning("⚔️ **THỰC CHIẾN:** Hãy chọn chữ Hán đúng với nghĩa dưới đây!")
-                st.markdown(f"<h3 style='text-align: center; margin-bottom: 20px;'>{word['meaning_vi']}</h3>", unsafe_allow_html=True)
+                st.markdown(f"<div class='quiz-prompt'>{word['meaning_vi']}</div>", unsafe_allow_html=True)
                 
                 cols = st.columns(2)
                 for i, opt in enumerate(st.session_state.current_options):
@@ -386,18 +303,17 @@ with tab_study:
             current_example = word.get('example_zh', '')
             speak_text = word['example_zh']
 
-            with st.container():
-                st.markdown("<div class='vocab-card'>", unsafe_allow_html=True)
-                st.markdown(f"<div class='hanzi-display' style='font-size: clamp(1.8rem, 4.5vw, 2.5rem); margin-bottom: 15px;'>{word['example_zh']}</div>", unsafe_allow_html=True)
-                
-                pinyin_class = "" if st.session_state.shadowing_revealed else "pinyin-hidden"
-                st.markdown(f"<div class='pinyin-display {pinyin_class}'>{word['example_pinyin']}</div>", unsafe_allow_html=True)
-                st.markdown(f"<div class='meaning-display' style='color: #475569; font-size: 1.15rem;'>{word['example_vi']}</div>", unsafe_allow_html=True)
-                
-                if not st.session_state.shadowing_revealed:
-                    st.caption("🎧 Lắng nghe âm thanh và đọc nhại theo 1-2 lần. Bấm Space để đối soát Pinyin.")
-                st.markdown("</div>", unsafe_allow_html=True)
-
+            pinyin_class = "" if st.session_state.shadowing_revealed else "pinyin-hidden"
+            st.markdown(
+                "<div class='vocab-card'>"
+                f"<div class='hanzi-display' style='font-size: clamp(1.8rem, 4.5vw, 2.5rem);'>{word['example_zh']}</div>"
+                f"<div class='pinyin-display {pinyin_class}'>{word['example_pinyin']}</div>"
+                f"<div class='meaning-display' style='font-size: 1.15rem;'>{word['example_vi']}</div>"
+                "</div>",
+                unsafe_allow_html=True,
+            )
+            if not st.session_state.shadowing_revealed:
+                st.caption("🎧 Lắng nghe âm thanh và đọc nhại theo 1-2 lần. Bấm Space để đối soát Pinyin.")
             st.write("")
             audio_buttons("sh")
 
@@ -523,9 +439,8 @@ with tab_study:
             st.caption(f"Số từ còn lại trong hàng đợi: {len(st.session_state.review_queue)}")
 
             st.write("**Chọn chữ Hán đúng với nghĩa dưới đây:**")
-            st.markdown(f"<h3 style='text-align: center; margin-bottom: 20px;'>{current_word['meaning_vi']}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<div class='quiz-prompt'>{current_word['meaning_vi']}</div>", unsafe_allow_html=True)
 
-            st.markdown(BIG_BUTTON_CSS, unsafe_allow_html=True)
 
             # 2. VẼ 4 NÚT ĐÁP ÁN CHỮ HÁN
             cols = st.columns(2)
@@ -575,9 +490,8 @@ with tab_study:
         if st.session_state.get('be_quan_word'):
             bq_word = st.session_state.be_quan_word
             st.warning("⚔️ **THỰC CHIẾN:** Chọn chữ Hán đúng để nhận Linh Lực!")
-            st.markdown(f"<h3 style='text-align: center; margin-bottom: 20px;'>{bq_word['meaning_vi']}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<div class='quiz-prompt'>{bq_word['meaning_vi']}</div>", unsafe_allow_html=True)
             
-            st.markdown(BIG_BUTTON_CSS, unsafe_allow_html=True)
             
             cols = st.columns(2)
             for i, opt in enumerate(st.session_state.be_quan_options):
@@ -613,9 +527,8 @@ with tab_study:
             st.progress((curr_idx) / total_q)
             st.caption(f"Đạo lôi thứ {curr_idx + 1} / {total_q} | Sinh tử kiếp")
             
-            st.markdown(f"<h3 style='text-align: center; margin: 30px 0;'>{q['question_text']}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<div class='quiz-prompt'>{q['question_text']}</div>", unsafe_allow_html=True)
             
-            st.markdown(BIG_BUTTON_CSS, unsafe_allow_html=True)
             
             cols = st.columns(2)
             for i, opt in enumerate(q["options"]):
@@ -717,7 +630,20 @@ with tab_stats:
         st.metric("⚠️ Mang Máng", f"{stats['vague']} từ")
     with col_m4:
         st.metric("🔥 Tâm Ma Đang Bám", f"{stats['demons']} từ", delta_color="inverse")
-        
+
+    st.progress(min(stats["learned"] / max(stats["total_vocab"], 1), 1.0))
+    if stats["learned"] > 0:
+        st.caption("Phân bố mức độ ghi nhớ")
+        st.bar_chart(
+            {
+                "Làm chủ": stats["mastered"],
+                "Mang máng": stats["vague"],
+                "Sai": stats["failed"],
+                "Tâm ma": stats["demons"],
+            },
+            color="#8a0f8f",
+            height=220,
+        )        
     st.divider()
     
     st.markdown("### 📜 Danh Sách Tâm Ma Cần Trảm (Sổ Đen)")
@@ -754,6 +680,13 @@ with tab_stats:
     st.markdown("### 🏆 Lịch Sử Khảo Thí Thiên Kiếp")
     exams = get_recent_exam_history()
     if len(exams) > 0:
+        st.line_chart(
+            {"Điểm (%)": [e["score_percent"] for e in reversed(exams)]},
+            color="#b7791f",
+            height=180,
+        )
+        for e in exams:
+            e["is_passed"] = "✅ Đạt" if e["is_passed"] else "❌ Rớt"
         st.dataframe(
             exams,
             column_config={
@@ -762,7 +695,7 @@ with tab_stats:
                 "total_questions": "Tổng Câu",
                 "correct_answers": "Số Câu Đúng",
                 "score_percent": st.column_config.NumberColumn("Điểm (%)", format="%.1f%%"),
-                "is_passed": "Kết Quả (1: Đạt)",
+                "is_passed": "Kết Quả",
                 "taken_at": "Thời Gian"
             },
             use_container_width=True,
