@@ -59,6 +59,37 @@ header[data-testid="stHeader"] { background: transparent; }
 .hero-title { font-size: 1.6rem; font-weight: 700; line-height: 1.2; }
 .hero-sub { font-size: 0.95rem; opacity: 0.85; margin-top: 2px; }
 
+/* ---------- Ô nhập liệu: nền trắng, chữ tối ---------- */
+div[data-baseweb="input"],
+div[data-baseweb="textarea"] {
+    background-color: #ffffff !important;
+    border: 2px solid #c9a0dc !important;
+    border-radius: 10px !important;
+}
+div[data-baseweb="base-input"] {
+    background-color: #ffffff !important;
+    border: none !important;
+}
+div[data-baseweb="input"]:focus-within,
+div[data-baseweb="textarea"]:focus-within {
+    border-color: #e040fb !important;
+    box-shadow: 0 0 0 3px rgba(224, 64, 251, 0.3);
+}
+.stApp div[data-baseweb="input"] input,
+.stApp div[data-baseweb="textarea"] textarea {
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+    -webkit-text-fill-color: #1a1a1a !important;
+    caret-color: #8a0f8f;
+}
+.stApp div[data-baseweb="input"] input::placeholder,
+.stApp div[data-baseweb="textarea"] textarea::placeholder {
+    color: #7a7a8a !important;
+    -webkit-text-fill-color: #7a7a8a !important;
+}
+div[data-baseweb="input"] svg { fill: #4a4a5a !important; }
+div[data-baseweb="input"] button { background: transparent !important; }
+
 /* ---------- Tab ---------- */
 button[data-baseweb="tab"] { font-weight: 600; font-size: 1rem; }
 
