@@ -180,6 +180,19 @@ STAGES = [
     ("Luyện Đọc Cả Câu (Shadowing)", "SHADOWING"),
     ("Gõ Bàn Phím Điền Khuyết", "CLOZE"),
 ]
+PRIORITY_GROUP_LABELS = {
+    1: "Từ vựng giao tiếp công việc",
+    2: "Từ kết nối và bổ trợ câu",
+    3: "Đời sống xoay quanh công việc",
+    4: "Mở rộng vốn từ HSK 4–5",
+}
+
+
+def show_priority_group(word):
+    group = word.get("priority_group")
+    label = PRIORITY_GROUP_LABELS.get(group)
+    if label:
+        st.caption(f"Nhóm ưu tiên {group}: {label}")
 
 
 def stepper_html(phase):
@@ -270,7 +283,7 @@ with tab_radicals:
 # TAB 1: TU LUYỆN HÀNG NGÀY
 # =========================================================================
 with tab_study:
-    st.caption(f"Lộ trình Ngày {st.session_state.user['current_day']}: Làm chủ 4 từ vựng mục tiêu")
+    st.caption(f"Lộ trình Ngày {st.session_state.user['current_day']}: Làm chủ {total_words} từ vựng mục tiêu")
     # --- CƠ CHẾ KHÓA CẤP (BÌNH CẢNH) ---
     user = st.session_state.user
     
@@ -305,6 +318,7 @@ with tab_study:
             word = today_words[st.session_state.card_idx]
             st.progress((st.session_state.card_idx) / total_words)
             st.caption(f"Tiến độ Chặng 1: Từ {st.session_state.card_idx + 1} / {total_words}")
+            show_priority_group(word)
             current_hanzi = word.get('hanzi', '')
             current_example = word.get('example_zh', '')
             if st.session_state.sub_phase == 'flashcard':
@@ -380,6 +394,7 @@ with tab_study:
             word = today_words[st.session_state.shadowing_idx]
             st.progress((st.session_state.shadowing_idx) / total_words)
             st.caption(f"Tiến độ Chặng 2: Câu {st.session_state.shadowing_idx + 1} / {total_words}")
+            show_priority_group(word)
             
             current_hanzi = word.get('hanzi', '')
             current_example = word.get('example_zh', '')
@@ -422,6 +437,7 @@ with tab_study:
             word = today_words[st.session_state.cloze_idx]
             st.progress((st.session_state.cloze_idx) / total_words)
             st.caption(f"Tiến độ Chặng 3: Câu {st.session_state.cloze_idx + 1} / {total_words}")
+            show_priority_group(word)
             
             current_hanzi = word.get('hanzi', '')
             current_example = word.get('example_zh', '')

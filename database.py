@@ -248,6 +248,87 @@ def get_tribulation_cost(is_major_breakthrough=False):
     return base_cost * 3 if is_major_breakthrough else base_cost
 
 
+def _compose_day_examples(day_words, vocabulary):
+    """Chọn câu tự nhiên có từ mục tiêu và ưu tiên từ đã học hoặc sắp học."""
+    sentence_sources = []
+    for source in vocabulary:
+        sentence = source.get("example_zh") or ""
+        if sentence:
+            matched_words = [word for word in vocabulary if word["hanzi"] in sentence]
+            sentence_sources.append((source, matched_words))
+
+    used_sentences = set()
+    result = []
+    for target in day_words:
+        day = target["study_day"]
+        candidates = []
+        for source, matched_words in sentence_sources:
+            sentence = source["example_zh"]
+            if target["hanzi"] not in sentence:
+                continue
+
+            related_words = [
+                word for word in matched_words
+                if word["id"] != target["id"]
+                and (
+                    word["study_day"] < day
+                    or day <= word["study_day"] <= day + 3
+                )
+            ]
+            if not related_words:
+                continue
+
+            past_words = [word for word in related_words if word["study_day"] < day]
+            nearest_future_day = min(
+                (word["study_day"] for word in related_words if word["study_day"] >= day),
+                default=day + 4,
+            )
+            score = (
+                bool(past_words),
+                max((word["study_day"] for word in past_words), default=0),
+                len(past_words),
+                -nearest_future_day,
+                len(related_words),
+                source["domain"] == target["domain"],
+                source["id"] == target["id"],
+            )
+            candidates.append((score, source))
+
+        candidates.sort(key=lambda candidate: candidate[0], reverse=True)
+        source = next(
+            (candidate for _, candidate in candidates
+             if candidate["example_zh"] not in used_sentences),
+            None,
+        )
+        if source is None:
+            source = next(
+                (candidate for candidate, _ in sentence_sources
+                 if candidate["id"] == target["id"]
+                 and candidate["example_zh"] not in used_sentences),
+                None,
+            )
+        if source is None:
+            source = next(
+                (candidate for candidate, _ in sentence_sources
+                 if target["hanzi"] in candidate["example_zh"]
+                 and candidate["example_zh"] not in used_sentences),
+                target,
+            )
+
+        sentence = source.get("example_zh") or target.get("example_zh", "")
+        used_sentences.add(sentence)
+        result.append({
+            **target,
+            "example_zh": sentence,
+            "example_pinyin": source.get("example_pinyin") or target.get("example_pinyin", ""),
+            "example_vi": source.get("example_vi") or target.get("example_vi", ""),
+            "example_cloze": sentence.replace(target["hanzi"], "______", 1)
+            if target["hanzi"] in sentence
+            else target.get("example_cloze", sentence),
+        })
+    return result
+
+
 # ---------------------------------------------------------------------------
 # Lưu vị trí buổi học để F5 không mất tiến trình
 # ---------------------------------------------------------------------------
@@ -280,11 +361,12 @@ def load_session_snapshot():
 
 def load_day_words(day):
     conn = get_db()
-    words = [dict(r) for r in conn.execute(
-        "SELECT * FROM vocab WHERE study_day = ? ORDER BY id ASC", (day,)
+    vocabulary = [dict(r) for r in conn.execute(
+        "SELECT * FROM vocab ORDER BY study_day ASC, priority_group ASC, id ASC"
     ).fetchall()]
     conn.close()
-    return words
+    words = [word for word in vocabulary if word["study_day"] == day]
+    return _compose_day_examples(words, vocabulary)
 
 
 def get_vocab_by_ids(ids):

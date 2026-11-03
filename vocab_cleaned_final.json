@@ -8,12 +8,13 @@
     "meaning_vi": "Xảy ra, phát sinh (sự cố, vấn đề)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 1,
-    "stage_10d": 1,
+    "study_day": 50,
+    "stage_10d": 5,
     "example_zh": "生产线上发生了设备故障。",
     "example_pinyin": "Shēngchǎn xiàn shàng fāshēngle shèbèi gùzhàng.",
     "example_vi": "Dây chuyền sản xuất đã xảy ra sự cố thiết bị.",
-    "example_cloze": "生产线上 ______ 了设备故障。"
+    "example_cloze": "生产线上 ______ 了设备故障。",
+    "priority_group": 1
   },
   {
     "id": 2,
@@ -29,7 +30,8 @@
     "example_zh": "请把今天的销售情况汇报一下。",
     "example_pinyin": "Qǐng bǎ jīntiān de xiāoshòu qíngkuàng huìb bào yīxià.",
     "example_vi": "Xin hãy báo cáo tình hình tiêu thụ ngày hôm nay.",
-    "example_cloze": "请把今天的销售 ______ 汇报一下。"
+    "example_cloze": "请把今天的销售 ______ 汇报一下。",
+    "priority_group": 1
   },
   {
     "id": 3,
@@ -40,12 +42,13 @@
     "meaning_vi": "Tiếp tục (thực hiện công việc, dự án)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 1,
-    "stage_10d": 1,
+    "study_day": 64,
+    "stage_10d": 7,
     "example_zh": "大家休息十分钟，然后继续开会。",
     "example_pinyin": "Dàjiā xiūxí shí fēnzhōng, ránhòu jìxù kāihuì.",
     "example_vi": "Mọi người nghỉ ngơi mười phút, sau đó tiếp tục họp.",
-    "example_cloze": "大家休息十分钟，然后 ______ 开会。"
+    "example_cloze": "大家休息十分钟，然后 ______ 开会。",
+    "priority_group": 2
   },
   {
     "id": 4,
@@ -56,12 +59,13 @@
     "meaning_vi": "Tiến hành, thực hiện",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 1,
-    "stage_10d": 1,
-    "example_zh": "我们正在进行年度 Lương 审核。",
-    "example_pinyin": "Wǒmen zhèngzài jìnxíng niándù xinchóu shěnhé.",
-    "example_vi": "Chúng tôi đang tiến hành xét duyệt lương hàng năm.",
-    "example_cloze": "我们正在 ______ 年度 Lương 审核。"
+    "study_day": 64,
+    "stage_10d": 7,
+    "example_zh": "我们正在进行年度薪水审核。",
+    "example_pinyin": "Wǒmen zhèngzài jìnxíng niándù xīnshuǐ shěnhé.",
+    "example_vi": "Chúng tôi đang tiến hành xét duyệt lương hằng năm.",
+    "example_cloze": "我们正在 ______ 年度薪水审核。",
+    "priority_group": 2
   },
   {
     "id": 5,
@@ -72,12 +76,13 @@
     "meaning_vi": "Trong (khoảng thời gian, hạn định, nội bộ)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 2,
+    "study_day": 1,
     "stage_10d": 1,
     "example_zh": "请在三天内提交报告。",
     "example_pinyin": "Qǐng zài sān tiān nèi tíjiāo bàogào.",
     "example_vi": "Xin hãy nộp báo cáo trong vòng ba ngày.",
-    "example_cloze": "请在三天 ______ 提交报告。"
+    "example_cloze": "请在三天 ______ 提交报告。",
+    "priority_group": 1
   },
   {
     "id": 6,
@@ -88,12 +93,13 @@
     "meaning_vi": "Thông qua (đề xuất, phỏng vấn, kỳ thi, văn bản)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 2,
-    "stage_10d": 1,
+    "study_day": 23,
+    "stage_10d": 3,
     "example_zh": "他已经通过了试用期考核。",
     "example_pinyin": "Tā yǐjīng tōngguòle shìyòngqī kǎohé.",
     "example_vi": "Anh ấy đã vượt qua bài đánh giá thời gian thử việc.",
-    "example_cloze": "他已经 ______ 了试用期考核。"
+    "example_cloze": "他已经 ______ 了试用期考核。",
+    "priority_group": 1
   },
   {
     "id": 7,
@@ -104,12 +110,13 @@
     "meaning_vi": "An toàn (lao động, bảo mật)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 2,
-    "stage_10d": 1,
+    "study_day": 50,
+    "stage_10d": 5,
     "example_zh": "进入车间必须注意安全第一。",
     "example_pinyin": "Jìnrù chējiān bìxū zhùyì ānquán dì yī.",
     "example_vi": "Vào phân xưởng nhất định phải chú ý an toàn là trên hết.",
-    "example_cloze": "进入车间必须注意 ______ 第一。"
+    "example_cloze": "进入车间必须注意 ______ 第一。",
+    "priority_group": 1
   },
   {
     "id": 8,
@@ -120,12 +127,13 @@
     "meaning_vi": "Kế hoạch, lập kế hoạch",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 2,
-    "stage_10d": 1,
+    "study_day": 37,
+    "stage_10d": 4,
     "example_zh": "请把下周的工作计划发给我。",
     "example_pinyin": "Qǐng bǎ xià zhōu de gōngzuò jìhuà fā gěi wǒ.",
     "example_vi": "Hãy gửi cho tôi kế hoạch công việc tuần tới.",
-    "example_cloze": "请把下周的工作 ______ 发给我。"
+    "example_cloze": "请把下周的工作 ______ 发给我。",
+    "priority_group": 1
   },
   {
     "id": 9,
@@ -136,12 +144,13 @@
     "meaning_vi": "Nguyên nhân, lý do",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 3,
-    "stage_10d": 1,
+    "study_day": 50,
+    "stage_10d": 5,
     "example_zh": "请分析这次产品质量问题的原因。",
     "example_pinyin": "Qǐng fēnxī zhè cì chǎnpǐn zhìliàng wèntí de yuánīn.",
     "example_vi": "Xin hãy phân tích nguyên nhân của vấn đề chất lượng sản phẩm lần này.",
-    "example_cloze": "请分析这次产品质量问题的 ______ 。"
+    "example_cloze": "请分析这次产品质量问题的 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 10,
@@ -152,12 +161,13 @@
     "meaning_vi": "Tin tức, thông tin công việc",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 3,
+    "study_day": 1,
     "stage_10d": 1,
     "example_zh": "我一收到消息就通知您。",
     "example_pinyin": "Wǒ yī shōudào xiāoxī jiù tōngzhī nín.",
     "example_vi": "Tôi vừa nhận được tin sẽ thông báo cho ngài ngay.",
-    "example_cloze": "我一收到 ______ 就通知您。"
+    "example_cloze": "我一收到 ______ 就通知您。",
+    "priority_group": 1
   },
   {
     "id": 11,
@@ -168,12 +178,13 @@
     "meaning_vi": "Miễn là, chỉ cần (dùng trong điều kiện hợp đồng, đàm phán)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 3,
-    "stage_10d": 1,
+    "study_day": 64,
+    "stage_10d": 7,
     "example_zh": "只要按时交货，客户就不会取消订单。",
     "example_pinyin": "Zhǐyào ànshí jiāohuò, kèhù jiù bù huì qǔxiāo dìngdān.",
     "example_vi": "Chỉ cần giao hàng đúng hạn, khách hàng sẽ không hủy đơn hàng.",
-    "example_cloze": " ______ 按时交货，客户就不会取消订单。"
+    "example_cloze": " ______ 按时交货，客户就不会取消订单。",
+    "priority_group": 2
   },
   {
     "id": 12,
@@ -184,12 +195,13 @@
     "meaning_vi": "Tiếp nhận, chấp nhận (nhiệm vụ, điều kiện, đơn hàng)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 3,
-    "stage_10d": 1,
+    "study_day": 37,
+    "stage_10d": 4,
     "example_zh": "我们已经接受了客户的订单。",
     "example_pinyin": "Wǒmen yǐjīng jiēshòule kèhù de dìngdān.",
     "example_vi": "Chúng tôi đã tiếp nhận đơn hàng của khách hàng.",
-    "example_cloze": "我们已经 ______ 了客户的订单。"
+    "example_cloze": "我们已经 ______ 了客户的订单。",
+    "priority_group": 1
   },
   {
     "id": 13,
@@ -200,12 +212,13 @@
     "meaning_vi": "Trong số đó, ở trong đó",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 4,
-    "stage_10d": 1,
+    "study_day": 64,
+    "stage_10d": 7,
     "example_zh": "这份报告包含很多数据，其中有很多亮点。",
     "example_pinyin": "Zhè fèn bàogào bāohán hěnduō shùjù, qízhōng yǒu hěnduō liǎndiǎn.",
     "example_vi": "Bản báo cáo này chứa rất nhiều số liệu, trong số đó có rất nhiều điểm sáng.",
-    "example_cloze": "这份报告包含很多数据， ______ 有很多亮点。"
+    "example_cloze": "这份报告包含很多数据， ______ 有很多亮点。",
+    "priority_group": 2
   },
   {
     "id": 14,
@@ -216,12 +229,13 @@
     "meaning_vi": "Thậm chí",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 4,
-    "stage_10d": 1,
+    "study_day": 65,
+    "stage_10d": 7,
     "example_zh": "由于时间紧迫，我们甚至周末也要加班。",
     "example_pinyin": "Yóuyú shíjiān jǐnpò, wǒmen shènzhì zhōumò yě yào jiābān.",
     "example_vi": "Do thời gian gấp rút, thậm chí cuối tuần chúng tôi cũng phải tăng ca.",
-    "example_cloze": "由于时间紧迫，我们 ______ 周末也要加班。"
+    "example_cloze": "由于时间紧迫，我们 ______ 周末也要加班。",
+    "priority_group": 2
   },
   {
     "id": 15,
@@ -232,12 +246,13 @@
     "meaning_vi": "Khẳng định, chắc chắn, ghi nhận",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 4,
+    "study_day": 1,
     "stage_10d": 1,
     "example_zh": "经理对你的工作表现给予了肯定。",
     "example_pinyin": "Jīnglǐ duì nǐ de gōngzuò biǎoxiàn jǐyǔle kěndìng.",
     "example_vi": "Giám đốc đã ghi nhận sự thể hiện công việc của bạn.",
-    "example_cloze": "经理对你的工作表现给予了 ______ 。"
+    "example_cloze": "经理对你的工作表现给予了 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 16,
@@ -248,12 +263,13 @@
     "meaning_vi": "Lúc đó, vào thời điểm đó",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 4,
+    "study_day": 2,
     "stage_10d": 1,
     "example_zh": "当时会议记录上写得很清楚。",
     "example_pinyin": "Dāngshí huìyì jìlù shàng xiě dé hěn qīngchǔ.",
     "example_vi": "Lúc đó biên bản cuộc họp đã viết rất rõ ràng.",
-    "example_cloze": " ______ 会议记录上写得很清楚。"
+    "example_cloze": " ______ 会议记录上写得很清楚。",
+    "priority_group": 1
   },
   {
     "id": 17,
@@ -264,12 +280,13 @@
     "meaning_vi": "Khảo sát, điều tra (thị trường, sự cố)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 5,
-    "stage_10d": 1,
+    "study_day": 37,
+    "stage_10d": 4,
     "example_zh": "我们需要做一份市场调查报告。",
     "example_pinyin": "Wǒmen xūyào zuò yī fèn shìchǎng diàochá bàogào.",
     "example_vi": "Chúng ta cần làm một bản báo cáo khảo sát thị trường.",
-    "example_cloze": "我们需要做一份市场 ______ 报告。"
+    "example_cloze": "我们需要做一份市场 ______ 报告。",
+    "priority_group": 1
   },
   {
     "id": 18,
@@ -280,12 +297,13 @@
     "meaning_vi": "Bộ phận, phần (trong công ty, dự án)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 5,
+    "study_day": 2,
     "stage_10d": 1,
     "example_zh": "这是合同的一部分，请仔细阅读。",
     "example_pinyin": "Zhè shì hétóng de yī bùfen, qǐng zǐxì yuèdú.",
     "example_vi": "Đây là một phần của hợp đồng, vui lòng đọc kỹ.",
-    "example_cloze": "这是合同的一 ______ ，请仔细阅读。"
+    "example_cloze": "这是合同的一 ______ ，请仔细阅读。",
+    "priority_group": 1
   },
   {
     "id": 19,
@@ -296,12 +314,13 @@
     "meaning_vi": "Năng lực làm việc",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 5,
-    "stage_10d": 1,
+    "study_day": 23,
+    "stage_10d": 3,
     "example_zh": "这次晋升主要看员工的综合能力。",
     "example_pinyin": "Zhè cì jìnshēng zhǔyào kàn yuángōng de zōnghé nénglì.",
     "example_vi": "Lần thăng chức này chủ yếu xem xét năng lực tổng hợp của nhân viên.",
-    "example_cloze": "这次晋升主要看员工的综合 ______ 。"
+    "example_cloze": "这次晋升主要看员工的综合 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 20,
@@ -312,12 +331,13 @@
     "meaning_vi": "Bảo vệ, bảo hộ lao động",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 5,
-    "stage_10d": 1,
+    "study_day": 51,
+    "stage_10d": 6,
     "example_zh": "在车间工作时，必须严格遵守安全保护规定。",
     "example_pinyin": "Zài chējiān gōngzuò shí, bìxū yángé zūnshǒu ānquán bǎohù guīdìng.",
     "example_vi": "Khi làm việc ở phân xưởng, bắt buộc phải tuân thủ nghiêm ngặt quy định bảo hộ an toàn.",
-    "example_cloze": "在车间工作时，必须严格遵守安全 ______ 规定。"
+    "example_cloze": "在车间工作时，必须严格遵守安全 ______ 规定。",
+    "priority_group": 1
   },
   {
     "id": 21,
@@ -328,12 +348,13 @@
     "meaning_vi": "Hỗ trợ, ủng hộ (công việc, ngân sách, hệ thống)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 6,
+    "study_day": 2,
     "stage_10d": 1,
     "example_zh": "感谢各位对行政部门 工作的支持。",
     "example_pinyin": "Gǎnxiè gèwèi duì xíngzhèng bùmén gōngzuò de zhīchí.",
     "example_vi": "Cảm ơn mọi người đã hỗ trợ công việc của bộ phận hành chính.",
-    "example_cloze": "感谢各位对行政部门 工作的 ______ 。"
+    "example_cloze": "感谢各位对行政部门 工作的 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 22,
@@ -344,12 +365,13 @@
     "meaning_vi": "Thay đổi, cải tiến (kế hoạch, phương pháp)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 6,
-    "stage_10d": 1,
+    "study_day": 51,
+    "stage_10d": 6,
     "example_zh": "我们需要改变生产工艺来提高效率。",
     "example_pinyin": "Wǒmen xūyào gǎibiàn shēngchǎn gōngyì lái tígāo xiàolǜ.",
     "example_vi": "Chúng ta cần thay đổi quy trình sản xuất để nâng cao hiệu suất.",
-    "example_cloze": "我们需要 ______ 生产工艺来提高效率。"
+    "example_cloze": "我们需要 ______ 生产工艺来提高效率。",
+    "priority_group": 1
   },
   {
     "id": 23,
@@ -360,12 +382,13 @@
     "meaning_vi": "Phương pháp, cách giải quyết vấn đề",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 6,
+    "study_day": 2,
     "stage_10d": 1,
     "example_zh": "大家集思广益，找一个解决问题的好方法。",
     "example_pinyin": "Dàjiā jísīguǎngyì, zhǎo yīgè jiějué wèntí de hǎo fāngfǎ.",
     "example_vi": "Mọi người cùng góp ý để tìm ra một phương pháp hay giải quyết vấn đề.",
-    "example_cloze": "大家集思广益，找一个解决问题的好 ______ 。"
+    "example_cloze": "大家集思广益，找一个解决问题的好 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 24,
@@ -376,12 +399,13 @@
     "meaning_vi": "Đảm bảo, cam kết (tiến độ, chất lượng)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 6,
-    "stage_10d": 1,
+    "study_day": 51,
+    "stage_10d": 6,
     "example_zh": "我们一定按时 保证质量完成任务。",
     "example_pinyin": "Wǒmen yīdìng ànshí bǎozhèng zhìliàng wánchéng rènwu.",
     "example_vi": "Chúng tôi nhất định hoàn thành nhiệm vụ đúng hạn và đảm bảo chất lượng.",
-    "example_cloze": "我们一定按时  ______ 质量完成任务。"
+    "example_cloze": "我们一定按时  ______ 质量完成任务。",
+    "priority_group": 1
   },
   {
     "id": 25,
@@ -392,12 +416,13 @@
     "meaning_vi": "Trực tiếp (liên hệ, quản lý, báo cáo)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 7,
+    "study_day": 3,
     "stage_10d": 1,
     "example_zh": "如有紧急情况，请直接向主管汇报。",
     "example_pinyin": "Rú yǒu jǐnjí qíngkuàng, qǐng zhíjiē xiàng zhǔguǎn huìbào.",
     "example_vi": "Nếu có tình huống khẩn cấp, vui lòng trực tiếp báo cáo với quản lý.",
-    "example_cloze": "如有紧急情况，请 ______ 向主管汇报。"
+    "example_cloze": "如有紧急情况，请 ______ 向主管汇报。",
+    "priority_group": 1
   },
   {
     "id": 26,
@@ -408,12 +433,13 @@
     "meaning_vi": "Tổ chức (sự kiện, hoạt động công ty)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 7,
-    "stage_10d": 1,
+    "study_day": 23,
+    "stage_10d": 3,
     "example_zh": "公司决定组织员工去旅游。",
     "example_pinyin": "Gōngsī juédìng zǔzhī yuángōng qù lǚyóu.",
     "example_vi": "Công ty quyết định tổ chức cho nhân viên đi du lịch.",
-    "example_cloze": "公司决定 ______ 员工去旅游。"
+    "example_cloze": "公司决定 ______ 员工去旅游。",
+    "priority_group": 1
   },
   {
     "id": 27,
@@ -424,12 +450,13 @@
     "meaning_vi": "Phương diện, lĩnh vực",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 7,
+    "study_day": 3,
     "stage_10d": 1,
     "example_zh": "他在财务管理方面很有经验。",
     "example_pinyin": "Tā zài cáiwù guǎnlǐ fāngmiàn hěn yǒu jīngyàn.",
     "example_vi": "Anh ấy có rất nhiều kinh nghiệm trong phương diện quản lý tài chính.",
-    "example_cloze": "他在财务管理 ______ 很有经验。"
+    "example_cloze": "他在财务管理 ______ 很有经验。",
+    "priority_group": 1
   },
   {
     "id": 28,
@@ -440,12 +467,13 @@
     "meaning_vi": "Cân nhắc, xem xét (đề xuất, phương án)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 7,
-    "stage_10d": 1,
+    "study_day": 38,
+    "stage_10d": 4,
     "example_zh": "经理正在考虑您的薪资要求。",
     "example_pinyin": "Jīnglǐ zhèngzài kǎolǜ nín de xīnzī yāoqiú.",
     "example_vi": "Giám đốc đang cân nhắc yêu cầu lương bổng của ông/bà.",
-    "example_cloze": "经理正在 ______ 您的薪资要求。"
+    "example_cloze": "经理正在 ______ 您的薪资要求。",
+    "priority_group": 1
   },
   {
     "id": 29,
@@ -456,12 +484,13 @@
     "meaning_vi": "Bản, phần (dùng cho hợp đồng, báo cáo, tài liệu)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 8,
+    "study_day": 3,
     "stage_10d": 1,
     "example_zh": "请帮我打印这份合同。",
     "example_pinyin": "Qǐng bāng wǒ dǎyìn zhè fèn hétóng.",
     "example_vi": "Hãy giúp tôi in bản hợp đồng này.",
-    "example_cloze": "请帮我打印这 ______ 合同。"
+    "example_cloze": "请帮我打印这 ______ 合同。",
+    "priority_group": 1
   },
   {
     "id": 30,
@@ -472,12 +501,13 @@
     "meaning_vi": "Cung cấp (thông tin, dịch vụ, tài liệu)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 8,
-    "stage_10d": 1,
+    "study_day": 38,
+    "stage_10d": 4,
     "example_zh": "供应商必须按时提供样品。",
     "example_pinyin": "Gòngyīngshāng bìxū ànshí tígōng yàngpǐn.",
     "example_vi": "Nhà cung cấp bắt buộc phải cung cấp mẫu hàng đúng hạn.",
-    "example_cloze": "供应商必须按时 ______ 样品。"
+    "example_cloze": "供应商必须按时 ______ 样品。",
+    "priority_group": 1
   },
   {
     "id": 31,
@@ -488,12 +518,13 @@
     "meaning_vi": "Chỉ, trỏ, ám chỉ",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 8,
-    "stage_10d": 1,
+    "study_day": 65,
+    "stage_10d": 7,
     "example_zh": "老板这句话是指明年的发展方向。",
     "example_pinyin": "Lǎobǎn zhè jù huà shì zhǐ míngnián de fāzhǎn fāngxiàng.",
     "example_vi": "Câu nói này của sếp là chỉ hướng phát triển của năm sau.",
-    "example_cloze": "老板这句话是 ______ 明年的发展方向。"
+    "example_cloze": "老板这句话是 ______ 明年的发展方向。",
+    "priority_group": 2
   },
   {
     "id": 32,
@@ -504,12 +535,13 @@
     "meaning_vi": "Sử dụng (thiết bị, phần mềm, ngân sách)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 8,
-    "stage_10d": 1,
+    "study_day": 51,
+    "stage_10d": 6,
     "example_zh": "员工必须接受机器使用培训。",
     "example_pinyin": "Yuángōng bìxū jiēshōule jīqì shǐyòng péixùn.",
     "example_vi": "Nhân viên bắt buộc phải nhận đào tạo sử dụng máy móc.",
-    "example_cloze": "员工必须接受机器 ______ 培训。"
+    "example_cloze": "员工必须接受机器 ______ 培训。",
+    "priority_group": 1
   },
   {
     "id": 33,
@@ -520,12 +552,13 @@
     "meaning_vi": "Đại diện, người đại diện công ty",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 9,
-    "stage_10d": 1,
+    "study_day": 38,
+    "stage_10d": 4,
     "example_zh": "我是公司的采购代表。",
     "example_pinyin": "Wǒ shì gōngsī de cǎigòudàibiǎo.",
     "example_vi": "Tôi là đại diện thu mua của công ty.",
-    "example_cloze": "我是公司的采购 ______ 。"
+    "example_cloze": "我是公司的采购 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 34,
@@ -536,12 +569,13 @@
     "meaning_vi": "Nhiệm vụ, công việc được giao",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 9,
+    "study_day": 3,
     "stage_10d": 1,
     "example_zh": "大家要按时完成本周的工作任务。",
     "example_pinyin": "Dàjiā yào ànshí wánchéng běn zhōu de gōngzuò rènwu.",
     "example_vi": "Mọi người phải hoàn thành nhiệm vụ công việc tuần này đúng hạn.",
-    "example_cloze": "大家要按时完成本周的工作 ______ 。"
+    "example_cloze": "大家要按时完成本周的工作 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 35,
@@ -552,12 +586,13 @@
     "meaning_vi": "Liên hệ, giữ liên lạc với đối tác/khách hàng",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 9,
-    "stage_10d": 1,
+    "study_day": 38,
+    "stage_10d": 4,
     "example_zh": "有任何问题请随时联系我。",
     "example_pinyin": "Yǒu rènhé wèntí qǐng suíshí liánxì wǒ.",
     "example_vi": "Có bất kỳ vấn đề gì vui lòng liên hệ với tôi bất cứ lúc nào.",
-    "example_cloze": "有任何问题请随时 ______ 我。"
+    "example_cloze": "有任何问题请随时 ______ 我。",
+    "priority_group": 1
   },
   {
     "id": 36,
@@ -568,12 +603,13 @@
     "meaning_vi": "Do đó, vì thế, cho nên (dùng trong văn bản hành chính)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 9,
-    "stage_10d": 1,
+    "study_day": 65,
+    "stage_10d": 7,
     "example_zh": "该员工工作态度优秀，因此被评为优秀员工。",
     "example_pinyin": "Gāi yuángōng gōngzuò tàidù yōuxiù, yīncǐ bèi píng wéi yōuxiù yuángōng.",
     "example_vi": "Nhân viên này có thái độ làm việc xuất sắc, do đó được bình chọn là nhân viên xuất sắc.",
-    "example_cloze": "该员工工作态度优秀， ______ 被评为优秀员工。"
+    "example_cloze": "该员工工作态度优秀， ______ 被评为优秀员工。",
+    "priority_group": 2
   },
   {
     "id": 37,
@@ -584,12 +620,13 @@
     "meaning_vi": "Tính toán (chi phí, lương thưởng)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 10,
-    "stage_10d": 1,
+    "study_day": 24,
+    "stage_10d": 3,
     "example_zh": "财务部正在算这个月的工资。",
     "example_pinyin": "Cáiwù bù zhèngzài suàn zhège yuè de gōngzī.",
     "example_vi": "Phòng tài chính đang tính lương tháng này.",
-    "example_cloze": "财务部正在 ______ 这个月的工资。"
+    "example_cloze": "财务部正在 ______ 这个月的工资。",
+    "priority_group": 1
   },
   {
     "id": 38,
@@ -600,12 +637,13 @@
     "meaning_vi": "Đạt được, nhận được (chứng nhận, thành tựu, sự chấp thuận)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 10,
+    "study_day": 4,
     "stage_10d": 1,
     "example_zh": "我们公司已经获得ISO质量认证。",
     "example_pinyin": "Wǒmen gōngsī yǐjīng huòdé ISO zhìliàng rènzhèng.",
     "example_vi": "Công ty chúng tôi đã đạt được chứng nhận chất lượng ISO.",
-    "example_cloze": "我们公司已经 ______ ISO质量认证。"
+    "example_cloze": "我们公司已经 ______ ISO质量认证。",
+    "priority_group": 1
   },
   {
     "id": 39,
@@ -616,12 +654,13 @@
     "meaning_vi": "Nộp, giao nộp (báo cáo, tài liệu, tiền)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 10,
+    "study_day": 4,
     "stage_10d": 1,
     "example_zh": "请在今天下班前交月度总结。",
     "example_pinyin": "Qǐng zài jīntiān xiàbān qián jiāo yuèdù zǒngjié.",
     "example_vi": "Vui lòng nộp báo cáo tổng kết tháng trước giờ tan làm hôm nay.",
-    "example_cloze": "请在今天下班前 ______ 月度总结。"
+    "example_cloze": "请在今天下班前 ______ 月度总结。",
+    "priority_group": 1
   },
   {
     "id": 40,
@@ -632,12 +671,13 @@
     "meaning_vi": "Toàn bộ, tất cả (dùng trong báo cáo, số liệu, khối lượng công việc)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 10,
+    "study_day": 4,
     "stage_10d": 1,
     "example_zh": "请把全部文件复印一份。",
     "example_pinyin": "Qǐng bǎ quán bù wén jiàn fù yìn yī fèn.",
     "example_vi": "Xin vui lòng photo toàn bộ tài liệu này một bản.",
-    "example_cloze": "请把 ______ 文件复印一份。"
+    "example_cloze": "请把 ______ 文件复印一份。",
+    "priority_group": 1
   },
   {
     "id": 41,
@@ -648,12 +688,13 @@
     "meaning_vi": "Bình thường, hoạt động ổn định (dùng cho thiết bị, tiến độ, quy trình)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 11,
-    "stage_10d": 2,
+    "study_day": 52,
+    "stage_10d": 6,
     "example_zh": "目前机器 SMT 运转 正常。",
     "example_pinyin": "Mù qián jī qì yùn zhuǎn zhèng cháng.",
     "example_vi": "Hiện tại máy móc SMT vận hành bình thường.",
-    "example_cloze": "目前机器 SMT 运转  ______ 。"
+    "example_cloze": "目前机器 SMT 运转  ______ 。",
+    "priority_group": 1
   },
   {
     "id": 42,
@@ -664,12 +705,13 @@
     "meaning_vi": "Ngoài ra, thêm vào đó (dùng để bổ sung ý trong email, chỉ đạo)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 11,
-    "stage_10d": 2,
+    "study_day": 65,
+    "stage_10d": 7,
     "example_zh": "另外，请大家明天准时开会。",
     "example_pinyin": "Lìng wài, qǐng dà jiā míng tiān zhǔn shí kāi huì.",
     "example_vi": "Ngoài ra, mời mọi người ngày mai họp đúng giờ.",
-    "example_cloze": " ______ ，请大家明天准时开会。"
+    "example_cloze": " ______ ，请大家明天准时开会。",
+    "priority_group": 2
   },
   {
     "id": 43,
@@ -680,12 +722,13 @@
     "meaning_vi": "Cảm ơn (dùng trong giao tiếp đối tác, khách hàng, nội bộ)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 11,
-    "stage_10d": 2,
+    "study_day": 39,
+    "stage_10d": 4,
     "example_zh": "感谢贵公司对我们的支持。",
     "example_pinyin": "Gǎn xiè guì gōng sī duì wǒ men de zhī chí.",
     "example_vi": "Cảm ơn quý công ty đã ủng hộ chúng tôi.",
-    "example_cloze": " ______ 贵公司对我们的支持。"
+    "example_cloze": " ______ 贵公司对我们的支持。",
+    "priority_group": 1
   },
   {
     "id": 44,
@@ -696,12 +739,13 @@
     "meaning_vi": "Kiên trì, giữ vững nguyên tắc, tiêu chuẩn (trong chất lượng, quy chế)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 11,
-    "stage_10d": 2,
+    "study_day": 52,
+    "stage_10d": 6,
     "example_zh": "我们要坚持质量第一的原则。",
     "example_pinyin": "Wǒ men yào jiān chí zhì liàng dì yī de yuán zé.",
     "example_vi": "Chúng ta phải kiên trì nguyên tắc chất lượng là trên hết.",
-    "example_cloze": "我们要 ______ 质量第一的原则。"
+    "example_cloze": "我们要 ______ 质量第一的原则。",
+    "priority_group": 1
   },
   {
     "id": 45,
@@ -712,12 +756,13 @@
     "meaning_vi": "Kỹ thuật, công nghệ (bộ phận kỹ thuật trong nhà xưởng)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 12,
-    "stage_10d": 2,
+    "study_day": 52,
+    "stage_10d": 6,
     "example_zh": "请技术部派人来处理故障。",
     "example_pinyin": "Qǐng jì shù bù pài rén lái chǔ lǐ gù zhàng.",
     "example_vi": "Xin bộ phận kỹ thuật cử người đến xử lý sự cố.",
-    "example_cloze": "请 ______ 部派人来处理故障。"
+    "example_cloze": "请 ______ 部派人来处理故障。",
+    "priority_group": 1
   },
   {
     "id": 46,
@@ -728,12 +773,13 @@
     "meaning_vi": "Nghiêm trọng (dùng khi báo cáo lỗi, sự cố chất lượng, vi phạm kỷ luật)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 12,
-    "stage_10d": 2,
+    "study_day": 52,
+    "stage_10d": 6,
     "example_zh": "这个问题比较严重，需要立刻汇报。",
     "example_pinyin": "Zhè gè wèn tí bǐ jiào yán zhòng, xū yào lì kè huì bào.",
     "example_vi": "Vấn đề này khá nghiêm trọng, cần báo cáo ngay lập tức.",
-    "example_cloze": "这个问题比较 ______ ，需要立刻汇报。"
+    "example_cloze": "这个问题比较 ______ ，需要立刻汇报。",
+    "priority_group": 1
   },
   {
     "id": 47,
@@ -744,12 +790,13 @@
     "meaning_vi": "Bao gồm (dùng trong hợp đồng, báo giá, danh mục tài liệu)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 12,
-    "stage_10d": 2,
+    "study_day": 39,
+    "stage_10d": 4,
     "example_zh": "报价单包括运费和税费。",
     "example_pinyin": "Bào jià dān bāo kuò yùn fèi hé shuì fèi.",
     "example_vi": "Bảng báo giá đã bao gồm phí vận chuyển và thuế.",
-    "example_cloze": "报价单 ______ 运费和税费。"
+    "example_cloze": "报价单 ______ 运费和税费。",
+    "priority_group": 1
   },
   {
     "id": 48,
@@ -760,12 +807,13 @@
     "meaning_vi": "Pháp luật, quy định pháp lý (trong hợp đồng, lao động, tuân thủ)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 12,
-    "stage_10d": 2,
+    "study_day": 4,
+    "stage_10d": 1,
     "example_zh": "公司的规章制度必须符合法律规定。",
     "example_pinyin": "Gōng sī de guī zhāng zhì dù bì xū fú hé fǎ lǜ guī dìng.",
     "example_vi": "Quy chế của công ty bắt buộc phải phù hợp với quy định pháp luật.",
-    "example_cloze": "公司的规章制度必须符合 ______ 规定。"
+    "example_cloze": "公司的规章制度必须符合 ______ 规定。",
+    "priority_group": 1
   },
   {
     "id": 49,
@@ -776,12 +824,13 @@
     "meaning_vi": "Đồng thời, và (từ nối dùng trong văn bản, email công sở)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 13,
-    "stage_10d": 2,
+    "study_day": 66,
+    "stage_10d": 7,
     "example_zh": "他完成了报告，并且发送给经理了。",
     "example_pinyin": "Tā wán chéng le bào gào, bìng qiě fā sòng gěi jīng lǐ le.",
     "example_vi": "Anh ấy đã hoàn thành báo cáo, đồng thời gửi cho giám đốc rồi.",
-    "example_cloze": "他完成了报告， ______ 发送给经理了。"
+    "example_cloze": "他完成了报告， ______ 发送给经理了。",
+    "priority_group": 2
   },
   {
     "id": 50,
@@ -792,12 +841,13 @@
     "meaning_vi": "Thu nhận, nhận (nhận email, nhận hàng, nhận hồ sơ)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 13,
-    "stage_10d": 2,
+    "study_day": 5,
+    "stage_10d": 1,
     "example_zh": "我已经收到你的简历了。",
     "example_pinyin": "Wǒ yǐ jīng shōu dào nǐ de jiǎn lì le.",
     "example_vi": "Tôi đã nhận được CV của bạn rồi.",
-    "example_cloze": "我已经 ______ 到你的简历了。"
+    "example_cloze": "我已经 ______ 到你的简历了。",
+    "priority_group": 1
   },
   {
     "id": 51,
@@ -808,12 +858,13 @@
     "meaning_vi": "Giấy chứng nhận, chứng minh (giấy xác nhận công tác, bằng chứng)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 13,
-    "stage_10d": 2,
+    "study_day": 24,
+    "stage_10d": 3,
     "example_zh": "请帮我开一张工作证明。",
     "example_pinyin": "Qǐng bāng wǒ kāi yī zhāng gōng zuò zhèng míng.",
     "example_vi": "Hãy giúp tôi làm một giấy xác nhận công tác.",
-    "example_cloze": "请帮我开一张工作 ______ 。"
+    "example_cloze": "请帮我开一张工作 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 52,
@@ -824,12 +875,13 @@
     "meaning_vi": "Quả thực, thực tế là (dùng khi xác nhận thông tin công việc)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 13,
-    "stage_10d": 2,
+    "study_day": 66,
+    "stage_10d": 7,
     "example_zh": "这个方案确实有很好的效果。",
     "example_pinyin": "Zhè gè fāng àn què shí yǒu hěn hǎo de xiào guǒ.",
     "example_vi": "Phương án này quả thực mang lại hiệu quả rất tốt.",
-    "example_cloze": "这个方案 ______ 有很好的效果。"
+    "example_cloze": "这个方案 ______ 有很好的效果。",
+    "priority_group": 2
   },
   {
     "id": 53,
@@ -840,12 +892,13 @@
     "meaning_vi": "Bất kể, dù cho (dùng trong quy định, điều kiện công việc)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 14,
-    "stage_10d": 2,
+    "study_day": 66,
+    "stage_10d": 7,
     "example_zh": "不管遇到什么困难，都要按时完成任务。",
     "example_pinyin": "Bù guǎn yù dào shén me kùn nan, dōu yào àn shí wán chéng rèn wù.",
     "example_vi": "Bất kể gặp khó khăn gì, đều phải hoàn thành nhiệm vụ đúng hạn.",
-    "example_cloze": " ______ 遇到什么困难，都要按时完成任务。"
+    "example_cloze": " ______ 遇到什么困难，都要按时完成任务。",
+    "priority_group": 2
   },
   {
     "id": 54,
@@ -856,12 +909,13 @@
     "meaning_vi": "Nhận được, chịu sự (nhận được sự khen thưởng, đánh giá, kiểm tra)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 14,
-    "stage_10d": 2,
+    "study_day": 24,
+    "stage_10d": 3,
     "example_zh": "他因为工作出色受到了表扬。",
     "example_pinyin": "Tā yīn wèi gōng zuò chū sè shòu dào le biǎo yáng.",
     "example_vi": "Anh ấy vì công việc xuất sắc nên đã nhận được lời khen thưởng.",
-    "example_cloze": "他因为工作出色 ______ 了表扬。"
+    "example_cloze": "他因为工作出色 ______ 了表扬。",
+    "priority_group": 1
   },
   {
     "id": 55,
@@ -872,12 +926,13 @@
     "meaning_vi": "Phát triển (kinh doanh, thị trường, nhân sự)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 14,
-    "stage_10d": 2,
+    "study_day": 39,
+    "stage_10d": 4,
     "example_zh": "公司一直在寻找新的市场发展机会。",
     "example_pinyin": "Gōng sī yì zhí zài xún zhǎo xīn de shì chǎng fā zhǎn jī huì.",
     "example_vi": "Công ty vẫn luôn tìm kiếm cơ hội phát triển thị trường mới.",
-    "example_cloze": "公司一直在寻找新的市场 ______ 机会。"
+    "example_cloze": "公司一直在寻找新的市场 ______ 机会。",
+    "priority_group": 1
   },
   {
     "id": 56,
@@ -888,12 +943,13 @@
     "meaning_vi": "Ít nhất (dùng trong quy định thời gian, số lượng, báo giá)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 14,
-    "stage_10d": 2,
+    "study_day": 5,
+    "stage_10d": 1,
     "example_zh": "请至少提前三天提交申请。",
     "example_pinyin": "Qǐng zhì shǎo tí qián sān tiān tí jiāo shēn qǐng.",
     "example_vi": "Xin vui lòng nộp đơn trước ít nhất ba ngày.",
-    "example_cloze": "请 ______ 提前三天提交申请。"
+    "example_cloze": "请 ______ 提前三天提交申请。",
+    "priority_group": 1
   },
   {
     "id": 57,
@@ -904,12 +960,13 @@
     "meaning_vi": "Giải thích, làm rõ (vấn đề, quy chế, lỗi sản xuất)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 15,
-    "stage_10d": 2,
+    "study_day": 53,
+    "stage_10d": 6,
     "example_zh": "请主管 解释一下这个 报表的数据。",
     "example_pinyin": "Qǐng zhǔ guǎn jiě shì yī xià zhè gè bào biǎo de shù jù.",
     "example_vi": "Xin chủ quản giải thích một chút về số liệu của bảng báo cáo này.",
-    "example_cloze": "请主管  ______ 一下这个 报表的数据。"
+    "example_cloze": "请主管  ______ 一下这个 报表的数据。",
+    "priority_group": 1
   },
   {
     "id": 58,
@@ -920,12 +977,13 @@
     "meaning_vi": "Phụ trách, chịu trách nhiệm (công việc, dự án, vị trí)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 15,
-    "stage_10d": 2,
+    "study_day": 25,
+    "stage_10d": 3,
     "example_zh": "张经理负责管理销售部。",
     "example_pinyin": "Zhāng jīng lǐ fù zé guǎn lǐ xiāo shòu bù.",
     "example_vi": "Quản lý Trương phụ trách quản lý bộ phận kinh doanh.",
-    "example_cloze": "张经理 ______ 管理销售部。"
+    "example_cloze": "张经理 ______ 管理销售部。",
+    "priority_group": 1
   },
   {
     "id": 59,
@@ -936,12 +994,13 @@
     "meaning_vi": "Đầu tiên, trước tiên (từ nối mở đầu báo cáo, email, cuộc họp)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 15,
-    "stage_10d": 2,
+    "study_day": 66,
+    "stage_10d": 7,
     "example_zh": "首先，我们要确定项目目标。",
     "example_pinyin": "Shǒu xiān, wǒ men yào què dìng xiàng mù mù biāo.",
     "example_vi": "Trước tiên, chúng ta phải xác định mục tiêu dự án.",
-    "example_cloze": " ______ ，我们要确定项目目标。"
+    "example_cloze": " ______ ，我们要确定项目目标。",
+    "priority_group": 2
   },
   {
     "id": 60,
@@ -952,12 +1011,13 @@
     "meaning_vi": "Hiểu, thấu hiểu (chỉ thị, yêu cầu của sếp hoặc đối tác)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 15,
-    "stage_10d": 2,
+    "study_day": 5,
+    "stage_10d": 1,
     "example_zh": "大家对这个新规章有什么不理解的吗？",
     "example_pinyin": "Dà jiā duì zhè gè xīn guī zhāng yǒu shén me bù lǐ jiě de ma?",
     "example_vi": "Mọi người có điều gì chưa hiểu về quy chế mới này không?",
-    "example_cloze": "大家对这个新规章有什么不 ______ 的吗？"
+    "example_cloze": "大家对这个新规章有什么不 ______ 的吗？",
+    "priority_group": 1
   },
   {
     "id": 61,
@@ -968,12 +1028,13 @@
     "meaning_vi": "Đưa tin, báo cáo, làm thủ tục nhận việc (Check-in nhân sự)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 16,
-    "stage_10d": 2,
+    "study_day": 25,
+    "stage_10d": 3,
     "example_zh": "新员工明天早上来公司报道。",
     "example_pinyin": "Xīn yuán gōng míng tiān zǎo shàng lái gōng sī bào dào.",
     "example_vi": "Nhân viên mới sáng mai đến công ty làm thủ tục nhận việc.",
-    "example_cloze": "新员工明天早上来公司 ______ 。"
+    "example_cloze": "新员工明天早上来公司 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 62,
@@ -984,12 +1045,13 @@
     "meaning_vi": "Sắp xếp, bố trí (lịch họp, công việc, nhân sự)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 16,
-    "stage_10d": 2,
+    "study_day": 5,
+    "stage_10d": 1,
     "example_zh": "秘书已经安排好了下午的会议。",
     "example_pinyin": "Mì shū yǐ jīng ān pái hǎo le xià wǔ de huì yì.",
     "example_vi": "Thư ký đã sắp xếp ổn thỏa cuộc họp buổi chiều rồi.",
-    "example_cloze": "秘书已经 ______ 好了下午的会议。"
+    "example_cloze": "秘书已经 ______ 好了下午的会议。",
+    "priority_group": 1
   },
   {
     "id": 63,
@@ -1000,12 +1062,13 @@
     "meaning_vi": "Làm lại, lại từ đầu (sửa lỗi, làm lại bản vẽ hoặc báo cáo)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 16,
-    "stage_10d": 2,
+    "study_day": 53,
+    "stage_10d": 6,
     "example_zh": "这个零件尺寸不对，需要重新加工。",
     "example_pinyin": "Zhè gè líng jiàn chǐ cùn bú duì, xū yào chóng xīn jiā gōng.",
     "example_vi": "Kích thước linh kiện này không đúng, cần phải gia công lại.",
-    "example_cloze": "这个零件尺寸不对，需要 ______ 加工。"
+    "example_cloze": "这个零件尺寸不对，需要 ______ 加工。",
+    "priority_group": 1
   },
   {
     "id": 64,
@@ -1016,12 +1079,13 @@
     "meaning_vi": "Trách nhiệm công việc",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 16,
-    "stage_10d": 2,
+    "study_day": 25,
+    "stage_10d": 3,
     "example_zh": "每个人都要对自己的工作任务负责任。",
     "example_pinyin": "Měi gè rén dōu yào duì zì jǐ de gōng zuò rèn wù fù zé rèn.",
     "example_vi": "Mỗi người đều phải chịu trách nhiệm về nhiệm vụ côngg việc của mình.",
-    "example_cloze": "每个人都要对自己的工作任务负 ______ 。"
+    "example_cloze": "每个人都要对自己的工作任务负 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 65,
@@ -1032,12 +1096,13 @@
     "meaning_vi": "Đạt lợi nhuận, thắng (trong kinh doanh, đấu thầu)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 17,
-    "stage_10d": 2,
+    "study_day": 39,
+    "stage_10d": 4,
     "example_zh": "我们这次合作的目标是实现双赢。",
     "example_pinyin": "Wǒ men zhè cì hé zuò de mù biāo shì shí xiàn shuāng yíng.",
     "example_vi": "Mục tiêu của đợt hợp tác này là đạt được đôi bên cùng có lợi.",
-    "example_cloze": "我们这次合作的目标是实现双 ______ 。"
+    "example_cloze": "我们这次合作的目标是实现双 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 66,
@@ -1048,12 +1113,13 @@
     "meaning_vi": "Giải trình, hướng dẫn, thuyết minh",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 17,
-    "stage_10d": 2,
+    "study_day": 6,
+    "stage_10d": 1,
     "example_zh": "请针对这份报告作一个详细的说明。",
     "example_pinyin": "Qǐng zhēn duì zhè fèn bào gào zuò yī gè xiáng xì de shuō míng.",
     "example_vi": "Xin vui lòng đưa ra phần giải trình chi tiết đối với báo cáo này.",
-    "example_cloze": "请针对这份报告作一个详细的 ______ 。"
+    "example_cloze": "请针对这份报告作一个详细的 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 67,
@@ -1064,12 +1130,13 @@
     "meaning_vi": "Áp lực (công việc, doanh số)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 17,
-    "stage_10d": 2,
+    "study_day": 25,
+    "stage_10d": 3,
     "example_zh": "近期生产任务重，大家的压力都很大。",
     "example_pinyin": "Jìn qī shēng chǎn rèn wù zhòng, dà jiā de yā lì dōu hěn dà.",
     "example_vi": "Thời gian gần đây nhiệm vụ sản xuất nặng nề, áp lực của mọi người đều rất lớn.",
-    "example_cloze": "近期生产任务重，大家的 ______ 都很大。"
+    "example_cloze": "近期生产任务重，大家的 ______ 都很大。",
+    "priority_group": 1
   },
   {
     "id": 68,
@@ -1080,12 +1147,13 @@
     "meaning_vi": "Do, vì (dùng trong văn bản hành chính, báo cáo)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 17,
-    "stage_10d": 2,
+    "study_day": 67,
+    "stage_10d": 7,
     "example_zh": "由于交通堵塞，他今天上班迟到了。",
     "example_pinyin": "Yóu yú jiāo tōng dǔ sè, tā jīn tiān shàng bān chí dào le.",
     "example_vi": "Do tắc đường nên hôm nay anh ấy đi làm muộn.",
-    "example_cloze": " ______ 交通堵塞，他今天上班迟到了。"
+    "example_cloze": " ______ 交通堵塞，他今天上班迟到了。",
+    "priority_group": 2
   },
   {
     "id": 69,
@@ -1096,12 +1164,13 @@
     "meaning_vi": "Từ bỏ, từ bỏ cơ hội/quyền lợi",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 18,
-    "stage_10d": 2,
+    "study_day": 40,
+    "stage_10d": 4,
     "example_zh": "我们绝对不能轻易放弃这个客户。",
     "example_pinyin": "Wǒ men jué duì bù néng qīng yì fàng qì zhè gè kè hù.",
     "example_vi": "Chúng ta tuyệt đối không thể dễ dàng từ bỏ khách hàng này.",
-    "example_cloze": "我们绝对不能轻易 ______ 这个客户。"
+    "example_cloze": "我们绝对不能轻易 ______ 这个客户。",
+    "priority_group": 1
   },
   {
     "id": 70,
@@ -1112,12 +1181,13 @@
     "meaning_vi": "Ý kiến, góp ý, phản hồi",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 18,
-    "stage_10d": 2,
+    "study_day": 6,
+    "stage_10d": 1,
     "example_zh": "大家对这个新方案有什么意见吗？",
     "example_pinyin": "Dà jiā duì zhè gè xīn fāng àn yǒu shén me yì jiàn ma?",
     "example_vi": "Mọi người có ý kiến gì đối với phương án mới này không?",
-    "example_cloze": "大家对这个新方案有什么 ______ 吗？"
+    "example_cloze": "大家对这个新方案有什么 ______ 吗？",
+    "priority_group": 1
   },
   {
     "id": 71,
@@ -1128,12 +1198,13 @@
     "meaning_vi": "Quá trình (thực hiện công việc, sản xuất)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 18,
-    "stage_10d": 2,
+    "study_day": 53,
+    "stage_10d": 6,
     "example_zh": "我们要严格控制生产过程的质量。",
     "example_pinyin": "Wǒ men yào yán gé kòng zhì shēng chǎn guò chéng de zhì liàng.",
     "example_vi": "Chúng ta phải kiểm soát nghiêm ngặt chất lượng của quá trình sản xuất.",
-    "example_cloze": "我们要严格控制生产 ______ 的质量。"
+    "example_cloze": "我们要严格控制生产 ______ 的质量。",
+    "priority_group": 1
   },
   {
     "id": 72,
@@ -1144,12 +1215,13 @@
     "meaning_vi": "Cho dù, dẫu cho (khung ngữ pháp điều kiện)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 18,
-    "stage_10d": 2,
+    "study_day": 67,
+    "stage_10d": 7,
     "example_zh": "即使时间很紧，我们也要按时完成任务。",
     "example_pinyin": "Jí shǐ shí jiān hěn jǐn, wǒ men yě yào àn shí wán chéng rèn wù.",
     "example_vi": "Cho dù thời gian rất gấp, chúng ta cũng phải hoàn thành nhiệm vụ đúng hạn.",
-    "example_cloze": " ______ 时间很紧，我们也要按时完成任务。"
+    "example_cloze": " ______ 时间很紧，我们也要按时完成任务。",
+    "priority_group": 2
   },
   {
     "id": 73,
@@ -1160,12 +1232,13 @@
     "meaning_vi": "Mặc dù / Cứ tự nhiên (làm gì)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 19,
-    "stage_10d": 2,
+    "study_day": 67,
+    "stage_10d": 7,
     "example_zh": "尽管成本上升了，我们还是保持原价。",
     "example_pinyin": "Jǐn guǎn chéng běn shàng shēng le, wǒ men hái shì bǎo chí yuán jià.",
     "example_vi": "Mặc dù chi phí đã tăng lên, chúng ta vẫn giữ nguyên giá.",
-    "example_cloze": " ______ 成本上升了，我们还是保持原价。"
+    "example_cloze": " ______ 成本上升了，我们还是保持原价。",
+    "priority_group": 2
   },
   {
     "id": 74,
@@ -1176,12 +1249,13 @@
     "meaning_vi": "Vẫn, vẫn như cũ",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 19,
-    "stage_10d": 2,
+    "study_day": 67,
+    "stage_10d": 7,
     "example_zh": "设备虽然旧了，但仍然可以正常运转。",
     "example_pinyin": "Shè bèi suī rán jiù le, dàn réng rán kě yǐ zhèng cháng yùn zhuǎn.",
     "example_vi": "Thiết bị tuy đã cũ nhưng vẫn có thể vận hành bình thường.",
-    "example_cloze": "设备虽然旧了，但 ______ 可以正常运转。"
+    "example_cloze": "设备虽然旧了，但 ______ 可以正常运转。",
+    "priority_group": 2
   },
   {
     "id": 75,
@@ -1192,12 +1266,13 @@
     "meaning_vi": "Đáng, đáng giá (đầu tư, lưu ý)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 19,
-    "stage_10d": 2,
+    "study_day": 40,
+    "stage_10d": 4,
     "example_zh": "这个项目的投资回报率很高，很值得做。",
     "example_pinyin": "Zhè gè xiàng mù de tóu zī huí bào lǜ hěn gāo, hěn zhí de zuò.",
     "example_vi": "Tỷ suất hoàn vốn của dự án này rất cao, rất đáng để làm.",
-    "example_cloze": "这个项目的投资回报率很高，很 ______ 做。"
+    "example_cloze": "这个项目的投资回报率很高，很 ______ 做。",
+    "priority_group": 1
   },
   {
     "id": 76,
@@ -1208,12 +1283,13 @@
     "meaning_vi": "Kinh nghiệm làm việc, trải qua",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 19,
-    "stage_10d": 2,
+    "study_day": 26,
+    "stage_10d": 3,
     "example_zh": "面试时请简述你之前的工作经历。",
     "example_pinyin": "Miàn shì shí qǐng jiǎn shù nǐ zhī qián de gōng zuò jīng lì.",
     "example_vi": "Khi phỏng vấn xin hãy khái quát kinh nghiệm làm việc trước đây của bạn.",
-    "example_cloze": "面试时请简述你之前的工作 ______ 。"
+    "example_cloze": "面试时请简述你之前的工作 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 77,
@@ -1224,12 +1300,13 @@
     "meaning_vi": "Thảo luận, họp bàn",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 20,
-    "stage_10d": 2,
+    "study_day": 6,
+    "stage_10d": 1,
     "example_zh": "下午三点我们开会讨论年度预算。",
     "example_pinyin": "Xià wǔ sān diǎn wǒ men kāi huì tǎo lùn nián dù yù suàn.",
     "example_vi": "3 giờ chiều nay chúng ta họp thảo luận về ngân sách hàng năm.",
-    "example_cloze": "下午三点我们开会 ______ 年度预算。"
+    "example_cloze": "下午三点我们开会 ______ 年度预算。",
+    "priority_group": 1
   },
   {
     "id": 78,
@@ -1240,12 +1317,13 @@
     "meaning_vi": "Vượt quá (chỉ tiêu, ngân sách, thời gian)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 20,
-    "stage_10d": 2,
+    "study_day": 40,
+    "stage_10d": 4,
     "example_zh": "本月的销售额已经超过了预 目标。",
     "example_pinyin": "Běn yuè de xiāo shòu é yǐ jīng chāo guò le yù biāo.",
     "example_vi": "Doanh số bán hàng tháng này đã vượt quá mục tiêu dự kiến.",
-    "example_cloze": "本月的销售额已经 ______ 了预 目标。"
+    "example_cloze": "本月的销售额已经 ______ 了预 目标。",
+    "priority_group": 1
   },
   {
     "id": 79,
@@ -1256,12 +1334,13 @@
     "meaning_vi": "Địa chỉ công ty, kho hàng",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 20,
-    "stage_10d": 2,
+    "study_day": 6,
+    "stage_10d": 1,
     "example_zh": "请把公司的详细地址发邮件给我。",
     "example_pinyin": "Qǐng bǎ gōng sī de xiáng xì dì zhǐ fā yóu jiàn gěi wǒ.",
     "example_vi": "Xin vui lòng gửi email địa chỉ chi tiết của công ty cho tôi.",
-    "example_cloze": "请把公司的详细 ______ 发邮件给我。"
+    "example_cloze": "请把公司的详细 ______ 发邮件给我。",
+    "priority_group": 1
   },
   {
     "id": 80,
@@ -1272,12 +1351,13 @@
     "meaning_vi": "Bất luận, dù là (khung ngữ pháp quy định)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 20,
-    "stage_10d": 2,
+    "study_day": 68,
+    "stage_10d": 7,
     "example_zh": "无论 Xưởng nào cũng phải tuân thủ quy định an toàn.",
     "example_pinyin": "Wú lùn nǎ gè chē jiān dōu yào zūn shǒu guī dìng.",
     "example_vi": "Bất kể phân xưởng nào cũng phải tuân thủ quy định.",
-    "example_cloze": " ______  Xưởng nào cũng phải tuân thủ quy định an toàn."
+    "example_cloze": " ______  Xưởng nào cũng phải tuân thủ quy định an toàn.",
+    "priority_group": 2
   },
   {
     "id": 81,
@@ -1288,12 +1368,13 @@
     "meaning_vi": "Căng thẳng, cấp bách (tiến độ, thời gian)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 21,
-    "stage_10d": 3,
+    "study_day": 53,
+    "stage_10d": 6,
     "example_zh": "目前 期限很紧张，大家要加快速度。",
     "example_pinyin": "Mù qián qī xiàn hěn jǐn zhāng, dà jiā yào jiā kuài sù dù.",
     "example_vi": "Hiện tại thời hạn rất gấp, mọi người phải đẩy nhanh tốc độ.",
-    "example_cloze": "目前 期限很 ______ ，大家要加快速度。"
+    "example_cloze": "目前 期限很 ______ ，大家要加快速度。",
+    "priority_group": 1
   },
   {
     "id": 82,
@@ -1304,12 +1385,13 @@
     "meaning_vi": "Tiết kiệm (chi phí, nguyên vật liệu)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 21,
-    "stage_10d": 3,
+    "study_day": 54,
+    "stage_10d": 6,
     "example_zh": "优化流程可以帮公司节省不少成本。",
     "example_pinyin": "Yōu huà liǔ chéng kě yǐ bāng gōng sī jié shěng bù shǎo chéng běn.",
     "example_vi": "Tối ưu hóa quy trình có thể giúp công ty tiết kiệm không ít chi phí.",
-    "example_cloze": "优化流程可以帮公司节 ______ 不少成本。"
+    "example_cloze": "优化流程可以帮公司节 ______ 不少成本。",
+    "priority_group": 1
   },
   {
     "id": 83,
@@ -1320,12 +1402,13 @@
     "meaning_vi": "Hết sức, vô cùng (mức độ)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 21,
-    "stage_10d": 3,
+    "study_day": 68,
+    "stage_10d": 7,
     "example_zh": "我对这次的产品质量十分满意。",
     "example_pinyin": "Wǒ duì zhè cì de chǎn pǐn zhì liàng shí fēn mǎn yì.",
     "example_vi": "Tôi vô cùng hài lòng về chất lượng sản phẩm lần này.",
-    "example_cloze": "我对这次的产品质量 ______ 满意。"
+    "example_cloze": "我对这次的产品质量 ______ 满意。",
+    "priority_group": 2
   },
   {
     "id": 84,
@@ -1336,12 +1419,13 @@
     "meaning_vi": "Đi kèm, tiếp đón (đối tác, khách hàng)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 21,
-    "stage_10d": 3,
+    "study_day": 7,
+    "stage_10d": 1,
     "example_zh": "下午我需要去机场陪同客户。",
     "example_pinyin": "Xià wǔ wǒ xū yào qù jī chǎng péi tóng kè hù.",
     "example_vi": "Buổi chiều tôi cần ra sân bay tiếp đón khách hàng.",
-    "example_cloze": "下午我需要去机场 ______ 同客户。"
+    "example_cloze": "下午我需要去机场 ______ 同客户。",
+    "priority_group": 1
   },
   {
     "id": 85,
@@ -1352,12 +1436,13 @@
     "meaning_vi": "Cúp (điện thoại), treo (biển, thông báo)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 22,
-    "stage_10d": 3,
+    "study_day": 7,
+    "stage_10d": 1,
     "example_zh": "请不要随便挂断客户的电话。",
     "example_pinyin": "Qǐng bù yào suí biàn guà duàn kè hù de diàn huà.",
     "example_vi": "Xin đừng tùy tiện cúp máy điện thoại của khách hàng.",
-    "example_cloze": "请不要随便 ______ 断客户的电话。"
+    "example_cloze": "请不要随便 ______ 断客户的电话。",
+    "priority_group": 1
   },
   {
     "id": 86,
@@ -1368,12 +1453,13 @@
     "meaning_vi": "Vốn dĩ, ban đầu (kế hoạch ban đầu)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 22,
-    "stage_10d": 3,
+    "study_day": 7,
+    "stage_10d": 1,
     "example_zh": "会议本来定在 and 上午，现改到下午。",
     "example_pinyin": "Huì yì běn lái dìng zài shàng wǔ, xiàn gǎi dào xià wǔ.",
     "example_vi": "Cuộc họp vốn dĩ định vào buổi sáng, nay đổi sang buổi chiều.",
-    "example_cloze": "会议 ______ 定在 and 上午，现改到下午。"
+    "example_cloze": "会议 ______ 定在 and 上午，现改到下午。",
+    "priority_group": 1
   },
   {
     "id": 87,
@@ -1384,12 +1470,13 @@
     "meaning_vi": "Điều kiện (hợp đồng, làm việc)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 22,
-    "stage_10d": 3,
+    "study_day": 40,
+    "stage_10d": 4,
     "example_zh": "双方正在就合同条款和条件进行谈判。",
     "example_pinyin": "Shuāng fāng zhèng zài jiù hé tong tiáo kuǎn hé tiáo jiàn jìn háng tán pàn.",
     "example_vi": "Hai bên đang tiến hành đàm phán về các điều khoản và điều kiện hợp đồng.",
-    "example_cloze": "双方正在就合同条款和 ______ 进行谈判。"
+    "example_cloze": "双方正在就合同条款和 ______ 进行谈判。",
+    "priority_group": 1
   },
   {
     "id": 88,
@@ -1400,12 +1487,13 @@
     "meaning_vi": "Quảng cáo, marketing",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 22,
-    "stage_10d": 3,
+    "study_day": 41,
+    "stage_10d": 5,
     "example_zh": "我们需要加大新产品的广告宣传力度。",
     "example_pinyin": "Wǒ men xū yào jiā dà xīn chǎn pǐn de guǎng gào xuān chuán lì dù.",
     "example_vi": "Chúng ta cần tăng cường mức độ tuyên truyền quảng cáo cho sản phẩm mới.",
-    "example_cloze": "我们需要加大新产品的 ______ 宣传力度。"
+    "example_cloze": "我们需要加大新产品的 ______ 宣传力度。",
+    "priority_group": 1
   },
   {
     "id": 89,
@@ -1416,12 +1504,13 @@
     "meaning_vi": "Then chốt, điểm mấu chốt",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 23,
-    "stage_10d": 3,
+    "study_day": 54,
+    "stage_10d": 6,
     "example_zh": "品质控制是整个生产流程的关键。",
     "example_pinyin": "Pǐn zhì kòng zhì shì zhěng gè shēng chǎn liǔ chéng de guān jiàn.",
     "example_vi": "Kiểm soát chất lượng là điểm mấu chốt của toàn bộ quy trình sản xuất.",
-    "example_cloze": "品质控制是整个生产流程的 ______ 。"
+    "example_cloze": "品质控制是整个生产流程的 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 90,
@@ -1432,12 +1521,13 @@
     "meaning_vi": "Khó khăn trong công việc",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 23,
+    "study_day": 26,
     "stage_10d": 3,
     "example_zh": "工作中遇到困难时，可以向主管反映。",
     "example_pinyin": "Gōng zuò zhōng yù dào kùn nan shí, kě yǐ xiàng zhǔ guǎn fǎn yìng.",
     "example_vi": "Khi gặp khó khăn trong công việc, có thể phản ánh với quản lý.",
-    "example_cloze": "工作中遇到 ______ 时，可以向主管反映。"
+    "example_cloze": "工作中遇到 ______ 时，可以向主管反映。",
+    "priority_group": 1
   },
   {
     "id": 91,
@@ -1448,12 +1538,13 @@
     "meaning_vi": "Chuyên môn, chuyên nghiệp",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 23,
-    "stage_10d": 3,
+    "study_day": 7,
+    "stage_10d": 1,
     "example_zh": "这家公司的服务非常专业。",
     "example_pinyin": "Zhè jiā gōng sī de fú wù fēi cháng zhuān yè",
     "example_vi": "Dịch vụ của công ty này rất chuyên nghiệp.",
-    "example_cloze": "这家公司的服务非常 ______ 。"
+    "example_cloze": "这家公司的服务非常 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 92,
@@ -1464,12 +1555,13 @@
     "meaning_vi": "Quy định, quy chế",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 23,
+    "study_day": 26,
     "stage_10d": 3,
     "example_zh": "请大家严格遵守公司的各项规定。",
     "example_pinyin": "Qǐng dà jiā yán gé zūn shǒu gōng sī de gè xiàng guī dìng",
     "example_vi": "Mọi người vui lòng tuân thủ nghiêm ngặt các quy định của công ty.",
-    "example_cloze": "请大家严格遵守公司的各项 ______ 。"
+    "example_cloze": "请大家严格遵守公司的各项 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 93,
@@ -1480,12 +1572,13 @@
     "meaning_vi": "Cho nên, thế là",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 24,
-    "stage_10d": 3,
+    "study_day": 68,
+    "stage_10d": 7,
     "example_zh": "经理同意了方案，于是我们开始准备实施。",
     "example_pinyin": "Jīng lǐ tóng yì le fāng àn, yú shì wǒ men kāi shǐ zhǔn bèi shí shī",
     "example_vi": "Giám đốc đã đồng ý phương án, thế là chúng tôi bắt đầu chuẩn bị triển khai.",
-    "example_cloze": "经理同意了方案， ______ 我们开始准备实施。"
+    "example_cloze": "经理同意了方案， ______ 我们开始准备实施。",
+    "priority_group": 2
   },
   {
     "id": 94,
@@ -1496,12 +1589,13 @@
     "meaning_vi": "Chính xác, đúng đắn",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 24,
-    "stage_10d": 3,
+    "study_day": 8,
+    "stage_10d": 1,
     "example_zh": "请确保输入的数据完全正确。",
     "example_pinyin": "Qǐng què bǎo shū rù de shù jù wán quán zhèng què",
     "example_vi": "Vui lòng đảm bảo dữ liệu nhập vào hoàn toàn chính xác.",
-    "example_cloze": "请确保输入的数据完全 ______ 。"
+    "example_cloze": "请确保输入的数据完全 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 95,
@@ -1512,12 +1606,13 @@
     "meaning_vi": "Phương hướng, định hướng",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 24,
-    "stage_10d": 3,
+    "study_day": 41,
+    "stage_10d": 5,
     "example_zh": "我们需要调整明年的市场开发方向。",
     "example_pinyin": "Wǒ men xū yào tiáo zhěng míng nián de shì chǎng kāi fā fāng xiàng",
     "example_vi": "Chúng ta cần điều chỉnh phương hướng phát triển thị trường năm tới.",
-    "example_cloze": "我们需要调整明年的市场开发 ______ 。"
+    "example_cloze": "我们需要调整明年的市场开发 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 96,
@@ -1528,12 +1623,13 @@
     "meaning_vi": "Thị trường",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 24,
-    "stage_10d": 3,
+    "study_day": 41,
+    "stage_10d": 5,
     "example_zh": "这份市场调研报告非常详细.",
     "example_pinyin": "Zhè fèn shì chǎng diào yán bào gào fēi cháng xiáng xì",
     "example_vi": "Bản báo cáo nghiên cứu thị trường này rất chi tiết.",
-    "example_cloze": "这份 ______ 调研报告非常详细."
+    "example_cloze": "这份 ______ 调研报告非常详细.",
+    "priority_group": 1
   },
   {
     "id": 97,
@@ -1544,12 +1640,13 @@
     "meaning_vi": "Quản lý, điều hành",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 25,
+    "study_day": 26,
     "stage_10d": 3,
     "example_zh": "他负责仓库的日常管理工作。",
     "example_pinyin": "Tā fù zé cāng kù de rì cháng guǎn lǐ gōng zuò",
     "example_vi": "Anh ấy phụ trách công việc quản lý hàng ngày của kho.",
-    "example_cloze": "他负责仓库的日常 ______ 工作。"
+    "example_cloze": "他负责仓库的日常 ______ 工作。",
+    "priority_group": 1
   },
   {
     "id": 98,
@@ -1560,12 +1657,13 @@
     "meaning_vi": "Thích hợp, phù hợp",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 25,
+    "study_day": 27,
     "stage_10d": 3,
     "example_zh": "这名候选人非常适合这个岗位。",
     "example_pinyin": "Zhè míng hòu xuǎn rén fēi cháng shì hé zhè gè gǎng wèi",
     "example_vi": "Ứng viên này rất phù hợp với vị trí này.",
-    "example_cloze": "这名候选人非常 ______ 这个岗位。"
+    "example_cloze": "这名候选人非常 ______ 这个岗位。",
+    "priority_group": 1
   },
   {
     "id": 99,
@@ -1576,12 +1674,13 @@
     "meaning_vi": "Chính thức",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 25,
-    "stage_10d": 3,
+    "study_day": 8,
+    "stage_10d": 1,
     "example_zh": "我们将在下周一发布正式通知。",
     "example_pinyin": "Wǒ men jiāng zài xià zhōu yī fā bù zhèng shì tōng zhī",
     "example_vi": "Chúng ta sẽ phát hành thông báo chính thức vào thứ Hai tuần tới.",
-    "example_cloze": "我们将在下周一发布 ______ 通知。"
+    "example_cloze": "我们将在下周一发布 ______ 通知。",
+    "priority_group": 1
   },
   {
     "id": 100,
@@ -1592,12 +1691,13 @@
     "meaning_vi": "Gây ra, dẫn đến, thu hút",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 25,
-    "stage_10d": 3,
+    "study_day": 54,
+    "stage_10d": 6,
     "example_zh": "这个问题必须引起我们的高度重视。",
     "example_pinyin": "Zhè gè wèn tí bì xū yǐn qǐ wǒ men de gāo dù zhòng shì",
     "example_vi": "Vấn đề này bắt buộc phải thu hút sự coi trọng cao độ của chúng ta.",
-    "example_cloze": "这个问题必须 ______ 我们的高度重视。"
+    "example_cloze": "这个问题必须 ______ 我们的高度重视。",
+    "priority_group": 1
   },
   {
     "id": 101,
@@ -1608,12 +1708,13 @@
     "meaning_vi": "Nội dung",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 26,
-    "stage_10d": 3,
+    "study_day": 8,
+    "stage_10d": 1,
     "example_zh": "请核对合同里的条款内容。",
     "example_pinyin": "Qǐng hé duì hé tòng lǐ de tiáo kuǎn nèi róng",
     "example_vi": "Vui lòng đối chiếu nội dung các điều khoản trong hợp đồng.",
-    "example_cloze": "请核对合同里的条款 ______ 。"
+    "example_cloze": "请核对合同里的条款 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 102,
@@ -1624,12 +1725,13 @@
     "meaning_vi": "Thông báo",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 26,
-    "stage_10d": 3,
+    "study_day": 8,
+    "stage_10d": 1,
     "example_zh": "人事部已经发出了开会通知。",
     "example_pinyin": "Rén shì bù yǐ jǐng fā chū le kāi huì tōng zhī",
     "example_vi": "Phòng Nhân sự đã phát thông báo họp.",
-    "example_cloze": "人事部已经发出了开会 ______ 。"
+    "example_cloze": "人事部已经发出了开会 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 103,
@@ -1640,12 +1742,13 @@
     "meaning_vi": "Mục đích, mục tiêu",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 26,
-    "stage_10d": 3,
+    "study_day": 41,
+    "stage_10d": 5,
     "example_zh": "这次会议的主要目的是讨论销售业绩。",
     "example_pinyin": "Zhè cì huì yì de zhǔ yào mù dì shì tǎo lùn xiāo shòu yè jì",
     "example_vi": "Mục đích chính của cuộc họp lần này là thảo luận về doanh số bán hàng.",
-    "example_cloze": "这次会议的主要 ______ 是讨论销售业绩。"
+    "example_cloze": "这次会议的主要 ______ 是讨论销售业绩。",
+    "priority_group": 1
   },
   {
     "id": 104,
@@ -1656,12 +1759,13 @@
     "meaning_vi": "Quốc tế",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 26,
-    "stage_10d": 3,
+    "study_day": 42,
+    "stage_10d": 5,
     "example_zh": "我们公司正在积极开拓国际市场。",
     "example_pinyin": "Wǒ men gōng sī zhèng zài jī jí kāi tuò guó jì shì chǎng",
     "example_vi": "Công ty chúng tôi đang tích cực khai mở thị trường quốc tế.",
-    "example_cloze": "我们公司正在积极开拓 ______ 市场。"
+    "example_cloze": "我们公司正在积极开拓 ______ 市场。",
+    "priority_group": 1
   },
   {
     "id": 105,
@@ -1677,7 +1781,8 @@
     "example_zh": "我们需要招聘有三年以上工作经验的主管。",
     "example_pinyin": "Wǒ men xū yào zhāo pìn yǒu sān nián yǐ shàng gōng zuò jīng yàn de zhǔ guǎn",
     "example_vi": "Chúng tôi cần tuyển dụng quản lý có kinh nghiệm làm việc từ 3 năm trở lên.",
-    "example_cloze": "我们需要招聘有三年以上工作 ______ 的主管。"
+    "example_cloze": "我们需要招聘有三年以上工作 ______ 的主管。",
+    "priority_group": 1
   },
   {
     "id": 106,
@@ -1688,12 +1793,13 @@
     "meaning_vi": "Tiêu chuẩn",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 27,
-    "stage_10d": 3,
+    "study_day": 54,
+    "stage_10d": 6,
     "example_zh": "产品质量必须符合国家标准。",
     "example_pinyin": "Chǎn pǐn zhì liàng bì xū fú hé guó jiā biāo zhǔn",
     "example_vi": "Chất lượng sản phẩm bắt buộc phải phù hợp với tiêu chuẩn quốc gia.",
-    "example_cloze": "产品质量必须符合国家 ______ 。"
+    "example_cloze": "产品质量必须符合国家 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 107,
@@ -1709,7 +1815,8 @@
     "example_zh": "员工在工作时间应保持职业素养。",
     "example_pinyin": "Yuán gōng zài gōng zuò shí jiān yìng bǎo chí zhí yè sù yǎng",
     "example_vi": "Nhân viên trong giờ làm việc nên duy trì tác phong chuyên nghiệp.",
-    "example_cloze": "员工在工作时间应保持 ______ 素养。"
+    "example_cloze": "员工在工作时间应保持 ______ 素养。",
+    "priority_group": 1
   },
   {
     "id": 108,
@@ -1720,12 +1827,13 @@
     "meaning_vi": "Phạm vi, quy mô",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 27,
-    "stage_10d": 3,
+    "study_day": 9,
+    "stage_10d": 1,
     "example_zh": "这项费用报销的范围有限制。",
     "example_pinyin": "Zhè xiàng fèi yòng bào xiāo de fàn wéi yǒu xiàn zhì",
     "example_vi": "Phạm vi thanh toán khoản phí này có giới hạn.",
-    "example_cloze": "这项费用报销的 ______ 有限制。"
+    "example_cloze": "这项费用报销的 ______ 有限制。",
+    "priority_group": 1
   },
   {
     "id": 109,
@@ -1736,12 +1844,13 @@
     "meaning_vi": "Tốc độ, tiến độ",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 28,
-    "stage_10d": 3,
+    "study_day": 55,
+    "stage_10d": 6,
     "example_zh": "我们需要加快生产进度和出货速度。",
     "example_pinyin": "Wǒ men xū yào jiā kuài shēng chǎn jìn dù hé chū huò sù dù",
     "example_vi": "Chúng tôi cần đẩy nhanh tiến độ sản xuất và tốc độ xuất hàng.",
-    "example_cloze": "我们需要加快生产进度和出货 ______ 。"
+    "example_cloze": "我们需要加快生产进度和出货 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 110,
@@ -1752,12 +1861,13 @@
     "meaning_vi": "Hiệu quả công việc, kết quả đạt được",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 28,
-    "stage_10d": 3,
+    "study_day": 55,
+    "stage_10d": 6,
     "example_zh": "这个月的生产效果非常好。",
     "example_pinyin": "Zhège yuè de shēngchǎn xiào guǒ fěi cháng hǎo.",
     "example_vi": "Hiệu quả sản xuất tháng này rất tốt.",
-    "example_cloze": "这个月的生产 ______ 非常好。"
+    "example_cloze": "这个月的生产 ______ 非常好。",
+    "priority_group": 1
   },
   {
     "id": 111,
@@ -1768,12 +1878,13 @@
     "meaning_vi": "Kinh tế, tài chính",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 28,
-    "stage_10d": 3,
+    "study_day": 42,
+    "stage_10d": 5,
     "example_zh": "我们需要考虑成本和经济效益。",
     "example_pinyin": "Wǒmen xūyào kǎolǜ chéngběn hé jīngjì xiàoyì.",
     "example_vi": "Chúng ta cần cân nhắc chi phí và hiệu quả kinh tế.",
-    "example_cloze": "我们需要考虑成本和 ______ 效益。"
+    "example_cloze": "我们需要考虑成本和 ______ 效益。",
+    "priority_group": 1
   },
   {
     "id": 112,
@@ -1784,12 +1895,13 @@
     "meaning_vi": "Chiếu theo, dựa theo (quy định, quy trình)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 28,
-    "stage_10d": 3,
+    "study_day": 68,
+    "stage_10d": 7,
     "example_zh": "请按照公司的规定提交报告。",
     "example_pinyin": "Qǐng ànzhào gōngsī de guīdìng tíjiāo bàogào.",
     "example_vi": "Xin vui lòng nộp báo cáo theo quy định của công ty.",
-    "example_cloze": "请 ______ 公司的规定提交报告。"
+    "example_cloze": "请 ______ 公司的规定提交报告。",
+    "priority_group": 2
   },
   {
     "id": 113,
@@ -1800,12 +1912,13 @@
     "meaning_vi": "Phản đối, không đồng tình",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 29,
-    "stage_10d": 3,
+    "study_day": 42,
+    "stage_10d": 5,
     "example_zh": "大家对这个方案有没有反对意见？",
     "example_pinyin": "Dàjiā duì zhège fāng'àn yǒu méiyǒu fǎnduì yìjiàn?",
     "example_vi": "Mọi người có ý kiến phản đối nào đối với phương án này không?",
-    "example_cloze": "大家对这个方案有没有 ______ 意见？"
+    "example_cloze": "大家对这个方案有没有 ______ 意见？",
+    "priority_group": 1
   },
   {
     "id": 114,
@@ -1816,12 +1929,13 @@
     "meaning_vi": "Thua lỗ, thua cuộc (trong cạnh tranh)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 29,
-    "stage_10d": 3,
+    "study_day": 42,
+    "stage_10d": 5,
     "example_zh": "在市场竞争中，我们不能输给对手。",
     "example_pinyin": "Zài shìchǎng jìngzhēng zhōng, wǒmen bùnéng shū gěi duìshǒu.",
     "example_vi": "Trong cạnh tranh thị trường, chúng ta không thể thua đối thủ.",
-    "example_cloze": "在市场竞争中，我们不能 ______ 给对手。"
+    "example_cloze": "在市场竞争中，我们不能 ______ 给对手。",
+    "priority_group": 1
   },
   {
     "id": 115,
@@ -1832,12 +1946,13 @@
     "meaning_vi": "Nếu không thì, kẻo",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 29,
-    "stage_10d": 3,
+    "study_day": 69,
+    "stage_10d": 7,
     "example_zh": "请在今天内完成，否则会影响进度。",
     "example_pinyin": "Qǐng zài jīntiān nèi wánchéng, fǒuzé huì yǐngxiǎng jìndù.",
     "example_vi": "Vui lòng hoàn thành trong hôm nay, nếu không sẽ ảnh hưởng đến tiến độ.",
-    "example_cloze": "请在今天内完成， ______ 会影响进度。"
+    "example_cloze": "请在今天内完成， ______ 会影响进度。",
+    "priority_group": 2
   },
   {
     "id": 116,
@@ -1848,12 +1963,13 @@
     "meaning_vi": "Miễn phí, không tính tiền",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 29,
-    "stage_10d": 3,
+    "study_day": 43,
+    "stage_10d": 5,
     "example_zh": "我们为客户提供免费的技术支持。",
     "example_pinyin": "Wǒmen wèi kèhù tígōng miǎnfèi de jìshù zhīchí.",
     "example_vi": "Chúng tôi cung cấp hỗ trợ kỹ thuật miễn phí cho khách hàng.",
-    "example_cloze": "我们为客户提供 ______ 的技术支持。"
+    "example_cloze": "我们为客户提供 ______ 的技术支持。",
+    "priority_group": 1
   },
   {
     "id": 117,
@@ -1864,12 +1980,13 @@
     "meaning_vi": "Động tác, tốc độ xử lý công việc",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 30,
-    "stage_10d": 3,
+    "study_day": 55,
+    "stage_10d": 6,
     "example_zh": "大家动作快一点， 货主要得急。",
     "example_pinyin": "Dàjiā dòngzuò kuài yīdiǎn, huò zhǔ yào de jí.",
     "example_vi": "Mọi người làm nhanh tay lên, chủ hàng cần gấp.",
-    "example_cloze": "大家 ______ 快一点， 货主要得急。"
+    "example_cloze": "大家 ______ 快一点， 货主要得急。",
+    "priority_group": 1
   },
   {
     "id": 118,
@@ -1880,12 +1997,13 @@
     "meaning_vi": "Tăng lên, gia tăng (số lượng, ngân sách...)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 30,
-    "stage_10d": 3,
+    "study_day": 9,
+    "stage_10d": 1,
     "example_zh": "公司决定增加 5 个production 岗位。",
     "example_pinyin": "Gōngsī juédìng zēngjiā wǔ gè gǎngwèi.",
     "example_vi": "Công ty quyết định tăng thêm 5 vị trí công việc.",
-    "example_cloze": "公司决定 ______  5 个production 岗位。"
+    "example_cloze": "公司决定 ______  5 个production 岗位。",
+    "priority_group": 1
   },
   {
     "id": 119,
@@ -1896,12 +2014,13 @@
     "meaning_vi": "Từ chối (đề nghị, đơn hàng, yêu cầu...)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 30,
-    "stage_10d": 3,
+    "study_day": 43,
+    "stage_10d": 5,
     "example_zh": "供应商拒绝了我们的降价要求。",
     "example_pinyin": "Gòngyìngshāng jùjuéle wǒmen de jiàngjià yāoqiú.",
     "example_vi": "Nhà cung cấp đã từ chối yêu cầu giảm giá của chúng ta.",
-    "example_cloze": "供应商 ______ 了我们的降价要求。"
+    "example_cloze": "供应商 ______ 了我们的降价要求。",
+    "priority_group": 1
   },
   {
     "id": 120,
@@ -1912,12 +2031,13 @@
     "meaning_vi": "Không chỉ...",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 30,
-    "stage_10d": 3,
+    "study_day": 69,
+    "stage_10d": 7,
     "example_zh": "这项工作不仅需要时间，还需要经验。",
     "example_pinyin": "Zhè xiàng gōngzuò bùjǐn xūyào shíjiān, hái xūyào jīngyàn.",
     "example_vi": "Công việc này không chỉ cần thời gian, mà còn cần kinh nghiệm.",
-    "example_cloze": "这项工作 ______ 需要时间，还需要经验。"
+    "example_cloze": "这项工作 ______ 需要时间，还需要经验。",
+    "priority_group": 2
   },
   {
     "id": 121,
@@ -1928,12 +2048,13 @@
     "meaning_vi": "Thuận lợi, suôn sẻ",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 31,
-    "stage_10d": 4,
+    "study_day": 9,
+    "stage_10d": 1,
     "example_zh": "祝我们的项目进展顺利。",
     "example_pinyin": "Zhù wǒmen de xiàngmù jìnzhǎn shùnlì.",
     "example_vi": "Chúc dự án của chúng ta tiến triển thuận lợi.",
-    "example_cloze": "祝我们的项目进展 ______ 。"
+    "example_cloze": "祝我们的项目进展 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 122,
@@ -1944,12 +2065,13 @@
     "meaning_vi": "Phiền phức, làm phiền (ai đó)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 31,
-    "stage_10d": 4,
+    "study_day": 9,
+    "stage_10d": 1,
     "example_zh": "麻烦你帮我打印这份文件。",
     "example_pinyin": "Máfan nǐ bāng wǒ dǎyìn zhè fèn wénjiàn.",
     "example_vi": "Phiền bạn giúp tôi in tài liệu này.",
-    "example_cloze": " ______ 你帮我打印这份文件。"
+    "example_cloze": " ______ 你帮我打印这份文件。",
+    "priority_group": 1
   },
   {
     "id": 123,
@@ -1960,12 +2082,13 @@
     "meaning_vi": "Đăng ký, xin (nghỉ phép, visa, ngân sách...)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 31,
-    "stage_10d": 4,
+    "study_day": 27,
+    "stage_10d": 3,
     "example_zh": "员工可以网上申请年假。",
     "example_pinyin": "Yuángōng kěyǐ wǎngshàng shēnqǐng niánjià.",
     "example_vi": "Nhân viên có thể đăng ký nghỉ phép năm qua mạng.",
-    "example_cloze": "员工可以网上 ______ 年假。"
+    "example_cloze": "员工可以网上 ______ 年假。",
+    "priority_group": 1
   },
   {
     "id": 124,
@@ -1976,12 +2099,13 @@
     "meaning_vi": "Cạnh tranh, đấu tranh thị trường",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 31,
-    "stage_10d": 4,
+    "study_day": 43,
+    "stage_10d": 5,
     "example_zh": "市场竞争越来越激烈。",
     "example_pinyin": "Shìchǎng jìngzhēng yuè lái yuè jīliè.",
     "example_vi": "Cạnh tranh thị trường ngày càng khốc liệt.",
-    "example_cloze": "市场 ______ 越来越激烈。"
+    "example_cloze": "市场 ______ 越来越激烈。",
+    "priority_group": 1
   },
   {
     "id": 125,
@@ -1992,12 +2116,13 @@
     "meaning_vi": "Đánh giá, ước tính (chi phí, thời gian)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 32,
-    "stage_10d": 4,
+    "study_day": 55,
+    "stage_10d": 6,
     "example_zh": "我估计这项工程需要两个月完成。",
     "example_pinyin": "Wǒ gūjì zhè xiàng gōngchéng xūyào liǎng gè yuè wánchéng.",
     "example_vi": "Tôi ước tính công trình này mất 2 tháng để hoàn thành.",
-    "example_cloze": "我 ______ 这项工程需要两个月完成。"
+    "example_cloze": "我 ______ 这项工程需要两个月完成。",
+    "priority_group": 1
   },
   {
     "id": 126,
@@ -2008,12 +2133,13 @@
     "meaning_vi": "Thất bại, hỏng (thử nghiệm, dự án)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 32,
-    "stage_10d": 4,
+    "study_day": 56,
+    "stage_10d": 6,
     "example_zh": "这次测试失败了，我们需要找原因。",
     "example_pinyin": "Zhè cì cèshì shīàile, wǒmen xūyào zhǎo yuányīn.",
     "example_vi": "Lần kiểm tra này thất bại rồi, chúng ta cần tìm nguyên nhân.",
-    "example_cloze": "这次测试 ______ 了，我们需要找原因。"
+    "example_cloze": "这次测试 ______ 了，我们需要找原因。",
+    "priority_group": 1
   },
   {
     "id": 127,
@@ -2024,12 +2150,13 @@
     "meaning_vi": "Sản xuất, chế tạo",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 32,
-    "stage_10d": 4,
+    "study_day": 56,
+    "stage_10d": 6,
     "example_zh": "这家工厂专门制造电子产品。",
     "example_pinyin": "Zhè jiā gōngchǎng zhuānmén zhìzào diànzǐ chǎnpǐn.",
     "example_vi": "Xưởng này chuyên chế tạo sản phẩm điện tử.",
-    "example_cloze": "这家工厂专门 ______ 电子产品。"
+    "example_cloze": "这家工厂专门 ______ 电子产品。",
+    "priority_group": 1
   },
   {
     "id": 128,
@@ -2040,12 +2167,13 @@
     "meaning_vi": "Đành phải, buộc phải",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 32,
-    "stage_10d": 4,
+    "study_day": 69,
+    "stage_10d": 7,
     "example_zh": "因为材料不足，我们不得不停工。",
     "example_pinyin": "Yīnwèi cáiliào bùzú, wǒmen bùdé bù tínggōng.",
     "example_vi": "Vì thiếu nguyên liệu, chúng tôi buộc phải đình công/ngừng sản xuất.",
-    "example_cloze": "因为材料不足，我们 ______ 停工。"
+    "example_cloze": "因为材料不足，我们 ______ 停工。",
+    "priority_group": 2
   },
   {
     "id": 129,
@@ -2056,12 +2184,13 @@
     "meaning_vi": "Tại địa phương, sở tại",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 33,
-    "stage_10d": 4,
+    "study_day": 43,
+    "stage_10d": 5,
     "example_zh": "我们要在当地寻找合作伙伴。",
     "example_pinyin": "Wǒmen yào zài dāngdì xúnzhǎo hézuò huǒbàn.",
     "example_vi": "Chúng ta phải tìm đối tác hợp tác tại địa phương.",
-    "example_cloze": "我们要在 ______ 寻找合作伙伴。"
+    "example_cloze": "我们要在 ______ 寻找合作伙伴。",
+    "priority_group": 1
   },
   {
     "id": 130,
@@ -2072,12 +2201,13 @@
     "meaning_vi": "Khoảng chừng, đại khái, ước chừng",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 33,
-    "stage_10d": 4,
+    "study_day": 10,
+    "stage_10d": 1,
     "example_zh": "会议大概需要一个小时。",
     "example_pinyin": "Huìyì dàgài xūyào yī gè xiǎoshí.",
     "example_vi": "Cuộc họp đại khái mất khoảng một tiếng.",
-    "example_cloze": "会议 ______ 需要一个小时。"
+    "example_cloze": "会议 ______ 需要一个小时。",
+    "priority_group": 1
   },
   {
     "id": 131,
@@ -2088,12 +2218,13 @@
     "meaning_vi": "Cho phép, phê chuẩn",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 33,
-    "stage_10d": 4,
+    "study_day": 28,
+    "stage_10d": 3,
     "example_zh": "厂区内不允许抽烟。",
     "example_pinyin": "Chǎngqū nèi bù yǔnxǔ chōuyān.",
     "example_vi": "Trong khu vực nhà máy không cho phép hút thuốc.",
-    "example_cloze": "厂区内不 ______ 抽烟。"
+    "example_cloze": "厂区内不 ______ 抽烟。",
+    "priority_group": 1
   },
   {
     "id": 132,
@@ -2104,12 +2235,13 @@
     "meaning_vi": "Thu hút (khách hàng, nhân tài)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 33,
-    "stage_10d": 4,
+    "study_day": 44,
+    "stage_10d": 5,
     "example_zh": "这次促销活动吸引了很多客户。",
     "example_pinyin": "Zhè cì cùxiāo huódòng xīyǐnle hěnduō kèhù.",
     "example_vi": "Hoạt động khuyến mãi lần này đã thu hút rất nhiều khách hàng.",
-    "example_cloze": "这次促销活动 ______ 了很多客户。"
+    "example_cloze": "这次促销活动 ______ 了很多客户。",
+    "priority_group": 1
   },
   {
     "id": 133,
@@ -2120,12 +2252,13 @@
     "meaning_vi": "Cùng nhau, chung (mục tiêu, nỗ lực)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 34,
-    "stage_10d": 4,
+    "study_day": 10,
+    "stage_10d": 1,
     "example_zh": "我们要共同努力完成这个项目。",
     "example_pinyin": "Wǒmen yào gòngtóng nǔlì wánchéng zhège xiàngmù",
     "example_vi": "Chúng ta phải cùng nhau nỗ lực hoàn thành dự án này.",
-    "example_cloze": "我们要 ______ 努力完成这个项目。"
+    "example_cloze": "我们要 ______ 努力完成这个项目。",
+    "priority_group": 1
   },
   {
     "id": 134,
@@ -2136,12 +2269,13 @@
     "meaning_vi": "Dừng lại, đình chỉ (công việc, máy móc)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 34,
-    "stage_10d": 4,
+    "study_day": 56,
+    "stage_10d": 6,
     "example_zh": "机器出现故障，请立即停止运行。",
     "example_pinyin": "Jīqì chūxiàn gùzhàng, qǐng lìjí tíngzhǐ yùnxíng",
     "example_vi": "Máy móc xuất hiện sự cố, xin vui lòng dừng vận hành ngay lập tức.",
-    "example_cloze": "机器出现故障，请立即 ______ 运行。"
+    "example_cloze": "机器出现故障，请立即 ______ 运行。",
+    "priority_group": 1
   },
   {
     "id": 135,
@@ -2152,12 +2286,13 @@
     "meaning_vi": "Nhắc nhở",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 34,
-    "stage_10d": 4,
+    "study_day": 10,
+    "stage_10d": 1,
     "example_zh": "谢谢你提醒我明 天的会议。",
     "example_pinyin": "Xièxie nǐ tíxǐng wǒ míngtiān de huìyì",
     "example_vi": "Cảm ơn bạn đã nhắc tôi về cuộc họp ngày mai.",
-    "example_cloze": "谢谢你 ______ 我明 天的会议。"
+    "example_cloze": "谢谢你 ______ 我明 天的会议。",
+    "priority_group": 1
   },
   {
     "id": 136,
@@ -2168,12 +2303,13 @@
     "meaning_vi": "Thái độ (làm việc, phục vụ)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 34,
-    "stage_10d": 4,
+    "study_day": 28,
+    "stage_10d": 3,
     "example_zh": "公司的服务态度得到了客户的认可。",
     "example_pinyin": "Gōngsī de fúwù tàidù dédào le kèhù de rènkě",
     "example_vi": "Thái độ phục vụ của công ty đã nhận được sự công nhận của khách hàng.",
-    "example_cloze": "公司的服务 ______ 得到了客户的认可。"
+    "example_cloze": "公司的服务 ______ 得到了客户的认可。",
+    "priority_group": 1
   },
   {
     "id": 137,
@@ -2184,12 +2320,13 @@
     "meaning_vi": "Phức tạp (thủ tục, vấn đề)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 35,
-    "stage_10d": 4,
+    "study_day": 10,
+    "stage_10d": 1,
     "example_zh": "这个审批程序太复杂了。",
     "example_pinyin": "Zhège shěnpī chéngxù tài fùzá le",
     "example_vi": "Quy trình xét duyệt này quá phức tạp.",
-    "example_cloze": "这个审批程序太 ______ 了。"
+    "example_cloze": "这个审批程序太 ______ 了。",
+    "priority_group": 1
   },
   {
     "id": 138,
@@ -2200,12 +2337,13 @@
     "meaning_vi": "Biểu đạt, diễn đạt (ý kiến, quan điểm)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 35,
-    "stage_10d": 4,
+    "study_day": 69,
+    "stage_10d": 7,
     "example_zh": "请清晰地表达你的意见。",
     "example_pinyin": "Qǐng qīngxī de biǎodá nǐ de yìjiàn",
     "example_vi": "Xin hãy diễn đạt ý kiến của bạn một cách rõ ràng.",
-    "example_cloze": "请清晰地 ______ 你的意见。"
+    "example_cloze": "请清晰地 ______ 你的意见。",
+    "priority_group": 2
   },
   {
     "id": 139,
@@ -2216,12 +2354,13 @@
     "meaning_vi": "Con số, số liệu",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 35,
-    "stage_10d": 4,
+    "study_day": 44,
+    "stage_10d": 5,
     "example_zh": "这份报表上的数字不对。",
     "example_pinyin": "Zhè fèn bàobiǎo shàng de shùzì bú duì",
     "example_vi": "Con số trên báo cáo này không đúng.",
-    "example_cloze": "这份报表上的 ______ 不对。"
+    "example_cloze": "这份报表上的 ______ 不对。",
+    "priority_group": 1
   },
   {
     "id": 140,
@@ -2232,12 +2371,13 @@
     "meaning_vi": "Mời, lời mời (đối tác, khách hàng)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 35,
-    "stage_10d": 4,
+    "study_day": 44,
+    "stage_10d": 5,
     "example_zh": "我们邀请了新客户来参观工厂。",
     "example_pinyin": "Wǒmen yāoqǐng le xīn kèhù lái cānguān gōngchǎng",
     "example_vi": "Chúng tôi đã mời khách hàng mới đến tham quan nhà máy.",
-    "example_cloze": "我们 ______ 了新客户来参观工厂。"
+    "example_cloze": "我们 ______ 了新客户来参观工厂。",
+    "priority_group": 1
   },
   {
     "id": 141,
@@ -2248,12 +2388,13 @@
     "meaning_vi": "Ưu tú, xuất sắc (nhân sự)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 36,
-    "stage_10d": 4,
+    "study_day": 28,
+    "stage_10d": 3,
     "example_zh": "公司需要招聘更多优秀的人才。",
     "example_pinyin": "Gōngsī xūyào zhāopìn gèng duō yōuxiù de réncái",
     "example_vi": "Công ty cần tuyển dụng nhiều nhân tài ưu tú hơn.",
-    "example_cloze": "公司需要招聘更多 ______ 的人才。"
+    "example_cloze": "公司需要招聘更多 ______ 的人才。",
+    "priority_group": 1
   },
   {
     "id": 142,
@@ -2264,12 +2405,13 @@
     "meaning_vi": "Tốt nhất là, nên (đưa ra đề xuất)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 36,
-    "stage_10d": 4,
+    "study_day": 70,
+    "stage_10d": 7,
     "example_zh": "你最好在下班前发邮件。",
     "example_pinyin": "Nǐ zuì hǎo zài xiàbān qián fā yóujiàn",
     "example_vi": "Tốt nhất là bạn nên gửi email trước khi tan làm.",
-    "example_cloze": "你 ______ 在下班前发邮件。"
+    "example_cloze": "你 ______ 在下班前发邮件。",
+    "priority_group": 2
   },
   {
     "id": 143,
@@ -2280,12 +2422,13 @@
     "meaning_vi": "Ngắt, đứt (kết nối, điện, mạng)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 36,
-    "stage_10d": 4,
+    "study_day": 56,
+    "stage_10d": 6,
     "example_zh": "刚才办公室突然断网了。",
     "example_pinyin": "Gāngcái bàngōngshì tūrán duàn wǎng le",
     "example_vi": "Ban nãy văn phòng bất ngờ bị đứt mạng.",
-    "example_cloze": "刚才办公室突然 ______ 网了。"
+    "example_cloze": "刚才办公室突然 ______ 网了。",
+    "priority_group": 1
   },
   {
     "id": 144,
@@ -2296,12 +2439,13 @@
     "meaning_vi": "Nhất định phải, tuyệt đối phải (nhấn mạnh lưu ý)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 36,
-    "stage_10d": 4,
+    "study_day": 70,
+    "stage_10d": 7,
     "example_zh": "离开前千万记得关空调。",
     "example_pinyin": "Líkāi qián qiānwàn jìde guān kōngtiáo",
     "example_vi": "Lúc rời đi tuyệt đối phải nhớ tắt điều hòa.",
-    "example_cloze": "离开前 ______ 记得关空调。"
+    "example_cloze": "离开前 ______ 记得关空调。",
+    "priority_group": 2
   },
   {
     "id": 145,
@@ -2312,12 +2456,13 @@
     "meaning_vi": "Xuất phát, khởi hành (đi công tác)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 37,
-    "stage_10d": 4,
+    "study_day": 11,
+    "stage_10d": 2,
     "example_zh": "我们什么时候出发去拜访客户？",
     "example_pinyin": "Wǒmen shénme shíhou chūfā qù bàifǎng kèhù",
     "example_vi": "Khi nào chúng ta xuất phát đi thăm khách hàng?",
-    "example_cloze": "我们什么时候 ______ 去拜访客户？"
+    "example_cloze": "我们什么时候 ______ 去拜访客户？",
+    "priority_group": 1
   },
   {
     "id": 146,
@@ -2328,12 +2473,13 @@
     "meaning_vi": "Khoảng cách, cách (thời gian, địa điểm)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 37,
-    "stage_10d": 4,
+    "study_day": 11,
+    "stage_10d": 2,
     "example_zh": "距离项目 截止日期还有三天。",
     "example_pinyin": "Jùlí xiàngmù jiézhǐ rìqī hái yǒu sān tiān",
     "example_vi": "Khoảng cách đến ngày hạn chót dự án còn 3 ngày.",
-    "example_cloze": " ______ 项目 截止日期还有三天。"
+    "example_cloze": " ______ 项目 截止日期还有三天。",
+    "priority_group": 1
   },
   {
     "id": 147,
@@ -2344,12 +2490,13 @@
     "meaning_vi": "Nhẹ nhàng, thoải mái (công việc)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 37,
-    "stage_10d": 4,
+    "study_day": 28,
+    "stage_10d": 3,
     "example_zh": "今天的会议气氛很轻松。",
     "example_pinyin": "Jīntiān de huìyì qìfēn hěn qīngsōng",
     "example_vi": "Bầu không khí cuộc họp hôm nay rất thoải mái.",
-    "example_cloze": "今天的会议气氛很 ______ 。"
+    "example_cloze": "今天的会议气氛很 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 148,
@@ -2360,12 +2507,13 @@
     "meaning_vi": "Tốt nghiệp (hồ sơ nhân sự)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 37,
-    "stage_10d": 4,
+    "study_day": 29,
+    "stage_10d": 3,
     "example_zh": "请 提交您的毕业证书复印件。",
     "example_pinyin": "Qǐng tíjiāo nín de bìyè zhèngshū fùyìnjiàn",
     "example_vi": "Xin vui lòng nộp bản sao văn bằng tốt nghiệp của bạn.",
-    "example_cloze": "请 提交您的 ______ 证书复印件。"
+    "example_cloze": "请 提交您的 ______ 证书复印件。",
+    "priority_group": 1
   },
   {
     "id": 149,
@@ -2376,12 +2524,13 @@
     "meaning_vi": "Hoài nghi, nghi ngờ (số liệu, vấn đề)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 38,
-    "stage_10d": 4,
+    "study_day": 57,
+    "stage_10d": 6,
     "example_zh": "我怀疑这批产品的质量有问题。",
     "example_pinyin": "Wǒ huáiyí zhè pī chǎnpǐn de zhìliàng yǒu wèntí",
     "example_vi": "Tôi nghi ngờ chất lượng lô sản phẩm này có vấn đề.",
-    "example_cloze": "我 ______ 这批产品的质量有问题。"
+    "example_cloze": "我 ______ 这批产品的质量有问题。",
+    "priority_group": 1
   },
   {
     "id": 150,
@@ -2392,12 +2541,13 @@
     "meaning_vi": "Giá cả",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 38,
-    "stage_10d": 4,
+    "study_day": 44,
+    "stage_10d": 5,
     "example_zh": "请把最新的产品价格表发给我。",
     "example_pinyin": "Qǐng bǎ zuì xīn de chǎnpǐn jiàgébiǎo fā gěi wǒ",
     "example_vi": "Xin hãy gửi bảng giá sản phẩm mới nhất cho tôi.",
-    "example_cloze": "请把最新的产品 ______ 表发给我。"
+    "example_cloze": "请把最新的产品 ______ 表发给我。",
+    "priority_group": 1
   },
   {
     "id": 151,
@@ -2408,12 +2558,13 @@
     "meaning_vi": "Rốt cuộc, sau cùng (làm rõ vấn đề)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 38,
-    "stage_10d": 4,
+    "study_day": 70,
+    "stage_10d": 7,
     "example_zh": "这个问题究竟是什么原因造成的？",
     "example_pinyin": "Zhège wèntí jiùjìng shì shénme yuányīn zàochéng de",
     "example_vi": "Vấn đề này rốt cuộc do nguyên nhân gì gây ra?",
-    "example_cloze": "这个问题 ______ 是什么原因造成的？"
+    "example_cloze": "这个问题 ______ 是什么原因造成的？",
+    "priority_group": 2
   },
   {
     "id": 152,
@@ -2424,12 +2575,13 @@
     "meaning_vi": "Nhẹ (trọng lượng hàng hóa)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 38,
-    "stage_10d": 4,
+    "study_day": 57,
+    "stage_10d": 6,
     "example_zh": "这个箱子比较轻，我来搬吧。",
     "example_pinyin": "Zhège xiāngzi bǐjiào qīng, wǒ lái bān ba",
     "example_vi": "Thùng này tương đối nhẹ, để tôi khiêng cho.",
-    "example_cloze": "这个箱子比较 ______ ，我来搬吧。"
+    "example_cloze": "这个箱子比较 ______ ，我来搬吧。",
+    "priority_group": 1
   },
   {
     "id": 153,
@@ -2440,12 +2592,13 @@
     "meaning_vi": "Tuy nhiên, thế mà (từ nối viết báo cáo)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 39,
-    "stage_10d": 4,
+    "study_day": 70,
+    "stage_10d": 7,
     "example_zh": "计划已经制定了，然而执行起来很困难。",
     "example_pinyin": "Jìhuà yǐjīng zhìdìng le, rán'ér zhíng xíng qǐlái hěn kùnnán",
     "example_vi": "Kế hoạch đã được thiết lập, tuy nhiên thực hiện lên rất khó khăn.",
-    "example_cloze": "计划已经制定了， ______ 执行起来很困难。"
+    "example_cloze": "计划已经制定了， ______ 执行起来很困难。",
+    "priority_group": 2
   },
   {
     "id": 154,
@@ -2456,12 +2609,13 @@
     "meaning_vi": "Giao lưu, trao đổi (công việc)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 39,
-    "stage_10d": 4,
+    "study_day": 11,
+    "stage_10d": 2,
     "example_zh": "我们 </i>开会交流一下意见。",
     "example_pinyin": "Wǒmen kāihuì jiāoliú yíxià yìjiàn",
     "example_vi": "Chúng ta mở cuộc họp trao đổi ý kiến một chút.",
-    "example_cloze": "我们 </i>开会 ______ 一下意见。"
+    "example_cloze": "我们 </i>开会 ______ 一下意见。",
+    "priority_group": 1
   },
   {
     "id": 155,
@@ -2472,12 +2626,13 @@
     "meaning_vi": "Phù hợp, đáp ứng (tiêu chuẩn, quy định)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 39,
-    "stage_10d": 4,
+    "study_day": 57,
+    "stage_10d": 6,
     "example_zh": "这批原料不符合公司的质量标准。",
     "example_pinyin": "Zhè pī yuánliào bù fúhé gōngsī de zhìliàng biāozhǔn",
     "example_vi": "Lô nguyên liệu này không phù hợp với tiêu chuẩn chất lượng của công ty.",
-    "example_cloze": "这批原料不 ______ 公司的质量标准。"
+    "example_cloze": "这批原料不 ______ 公司的质量标准。",
+    "priority_group": 1
   },
   {
     "id": 156,
@@ -2488,12 +2643,13 @@
     "meaning_vi": "Đáp án, phương án giải quyết (vấn đề)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 39,
-    "stage_10d": 4,
+    "study_day": 11,
+    "stage_10d": 2,
     "example_zh": "我们明天前必须 找到解决问题的答案。",
     "example_pinyin": "Wǒmen míngtiān qián bìxū zhǎodào jiějué wèntí de dá'àn",
     "example_vi": "Chúng ta trước ngày mai bắt buộc phải tìm ra phương án giải quyết vấn đề.",
-    "example_cloze": "我们明天前必须 找到解决问题的 ______ 。"
+    "example_cloze": "我们明天前必须 找到解决问题的 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 157,
@@ -2504,12 +2660,13 @@
     "meaning_vi": "Lãng phí (thời gian, tài nguyên, chi phí trong công việc)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 40,
-    "stage_10d": 4,
-    "example_zh": "我们不能浪费公司的资源。 (Wǒmen bù néng làng fèi gōng sī de zī yuán.) - Chúng ta không thể lãng phí tài nguyên của công ty.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我们不能 ______ 公司的资源。 (Wǒmen bù néng làng fèi gōng sī de zī yuán.) - Chúng ta không thể lãng phí tài nguyên của công ty."
+    "study_day": 12,
+    "stage_10d": 2,
+    "example_zh": "我们不能浪费公司的资源。",
+    "example_pinyin": "Wǒmen bù néng làng fèi gōng sī de zī yuán.",
+    "example_vi": "Chúng ta không thể lãng phí tài nguyên của công ty.",
+    "example_cloze": "我们不能______公司的资源。",
+    "priority_group": 1
   },
   {
     "id": 158,
@@ -2520,12 +2677,13 @@
     "meaning_vi": "Tôn trọng (ý kiến, quyết định, đồng nghiệp, đối tác)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 40,
-    "stage_10d": 4,
-    "example_zh": "我们要互相尊重。 (Wǒmen yào hù xiāng zūn zhòng.) - Chúng ta phải tôn trọng lẫn nhau.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我们要互相 ______ 。 (Wǒmen yào hù xiāng zūn zhòng.) - Chúng ta phải tôn trọng lẫn nhau."
+    "study_day": 12,
+    "stage_10d": 2,
+    "example_zh": "我们要互相尊重。",
+    "example_pinyin": "Wǒmen yào hù xiāng zūn zhòng.",
+    "example_vi": "Chúng ta phải tôn trọng lẫn nhau.",
+    "example_cloze": "我们要互相______。",
+    "priority_group": 1
   },
   {
     "id": 159,
@@ -2536,12 +2694,13 @@
     "meaning_vi": "Ngôn ngữ (giao tiếp, làm việc)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 40,
-    "stage_10d": 4,
-    "example_zh": "工作时请注意语言规范。 (Gōng zuò shí qǐng zhù yì yǔ yán guī fàn.) - Khi làm việc xin chú ý chuẩn mực ngôn ngữ.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "工作时请注意 ______ 规范。 (Gōng zuò shí qǐng zhù yì yǔ yán guī fàn.) - Khi làm việc xin chú ý chuẩn mực ngôn ngữ."
+    "study_day": 12,
+    "stage_10d": 2,
+    "example_zh": "工作时请注意语言规范。",
+    "example_pinyin": "Gōng zuò shí qǐng zhù yì yǔ yán guī fàn.",
+    "example_vi": "Khi làm việc xin chú ý chuẩn mực ngôn ngữ.",
+    "example_cloze": "工作时请注意______规范。",
+    "priority_group": 1
   },
   {
     "id": 160,
@@ -2552,12 +2711,13 @@
     "meaning_vi": "Chín muồi, thành thục (kỹ năng, phương án, kế hoạch)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 40,
-    "stage_10d": 4,
-    "example_zh": "这个方案已经很成熟了。 (Zhè gè fāng àn yǐ jīng hěn chéng shú le.) - Phương án này đã rất chín muồi rồi.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "这个方案已经很 ______ 了。 (Zhè gè fāng àn yǐ jīng hěn chéng shú le.) - Phương án này đã rất chín muồi rồi."
+    "study_day": 45,
+    "stage_10d": 5,
+    "example_zh": "这个方案已经很成熟了。",
+    "example_pinyin": "Zhè gè fāng àn yǐ jīng hěn chéng shú le.",
+    "example_vi": "Phương án này đã rất chín muồi rồi.",
+    "example_cloze": "这个方案已经很______了。",
+    "priority_group": 1
   },
   {
     "id": 161,
@@ -2568,12 +2728,13 @@
     "meaning_vi": "Tín nhiệm, tin tưởng (cấp trên, khách hàng, đối tác)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 41,
-    "stage_10d": 5,
-    "example_zh": "感谢领导对我的信任。 (Gǎn xiè lǐng dǎo duì wǒ de xìn rèn.) - Cảm ơn sự tín nhiệm của lãnh đạo dành cho tôi.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "感谢领导对我的 ______ 。 (Gǎn xiè lǐng dǎo duì wǒ de xìn rèn.) - Cảm ơn sự tín nhiệm của lãnh đạo dành cho tôi."
+    "study_day": 29,
+    "stage_10d": 3,
+    "example_zh": "感谢领导对我的信任。",
+    "example_pinyin": "Gǎn xiè lǐng dǎo duì wǒ de xìn rèn.",
+    "example_vi": "Cảm ơn sự tín nhiệm của lãnh đạo dành cho tôi.",
+    "example_cloze": "感谢领导对我的______。",
+    "priority_group": 1
   },
   {
     "id": 162,
@@ -2584,12 +2745,13 @@
     "meaning_vi": "Trang web (của công ty)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 41,
-    "stage_10d": 5,
-    "example_zh": "请把产品信息更新到公司网站上。 (Qǐng bǎ chǎn pǐn xìn xī gēng xīn dào gōng sī wǎng zhàn shàng.) - Vui lòng cập nhật thông tin sản phẩm lên trang web công ty.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请把产品信息更新到公司 ______ 上。 (Qǐng bǎ chǎn pǐn xìn xī gēng xīn dào gōng sī wǎng zhàn shàng.) - Vui lòng cập nhật thông tin sản phẩm lên trang web công ty."
+    "study_day": 12,
+    "stage_10d": 2,
+    "example_zh": "请把产品信息更新到公司网站上。",
+    "example_pinyin": "Qǐng bǎ chǎn pǐn xìn xī gēng xīn dào gōng sī wǎng zhàn shàng.",
+    "example_vi": "Vui lòng cập nhật thông tin sản phẩm lên trang web công ty.",
+    "example_cloze": "请把产品信息更新到公司______上。",
+    "priority_group": 1
   },
   {
     "id": 163,
@@ -2600,12 +2762,13 @@
     "meaning_vi": "Thực tế, thực tiễn (công việc, số liệu)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 41,
-    "stage_10d": 5,
-    "example_zh": "我们要从实际情况出发。 (Wǒmen yào cóng shí jì qíng kuàng chū fā.) - Chúng ta phải xuất phát từ tình hình thực tế.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我们要从 ______ 情况出发。 (Wǒmen yào cóng shí jì qíng kuàng chū fā.) - Chúng ta phải xuất phát từ tình hình thực tế."
+    "study_day": 57,
+    "stage_10d": 6,
+    "example_zh": "我们要从实际情况出发。",
+    "example_pinyin": "Wǒmen yào cóng shí jì qíng kuàng chū fā.",
+    "example_vi": "Chúng ta phải xuất phát từ tình hình thực tế.",
+    "example_cloze": "我们要从______情况出发。",
+    "priority_group": 1
   },
   {
     "id": 164,
@@ -2616,12 +2779,13 @@
     "meaning_vi": "Độ tuổi (trong tuyển dụng nhân sự)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 41,
-    "stage_10d": 5,
-    "example_zh": "招聘岗位对年龄有什么要求？ (Zhāo pìn gǎng wèi duì nián líng yǒu shén me yào qiú?) - Vị trí tuyển dụng có yêu cầu gì về độ tuổi không?",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "招聘岗位对 ______ 有什么要求？ (Zhāo pìn gǎng wèi duì nián líng yǒu shén me yào qiú?) - Vị trí tuyển dụng có yêu cầu gì về độ tuổi không?"
+    "study_day": 29,
+    "stage_10d": 3,
+    "example_zh": "招聘岗位对年龄有什么要求？",
+    "example_pinyin": "Zhāo pìn gǎng wèi duì nián líng yǒu shén me yào qiú?",
+    "example_vi": "Vị trí tuyển dụng có yêu cầu gì về độ tuổi không?",
+    "example_cloze": "招聘岗位对______有什么要求？",
+    "priority_group": 1
   },
   {
     "id": 165,
@@ -2632,12 +2796,13 @@
     "meaning_vi": "Gần như, xấp xỉ (số lượng, tiến độ)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 42,
-    "stage_10d": 5,
-    "example_zh": "今天的生产任务差不多完成了。 (Jīn tiān de shēng chǎn rèn wù chà bu duō wán chéng le.) - Nhiệm vụ sản xuất hôm nay gần như đã hoàn thành.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "今天的生产任务 ______ 完成了。 (Jīn tiān de shēng chǎn rèn wù chà bu duō wán chéng le.) - Nhiệm vụ sản xuất hôm nay gần như đã hoàn thành."
+    "study_day": 58,
+    "stage_10d": 6,
+    "example_zh": "今天的生产任务差不多完成了。",
+    "example_pinyin": "Jīn tiān de shēng chǎn rèn wù chà bu duō wán chéng le.",
+    "example_vi": "Nhiệm vụ sản xuất hôm nay gần như đã hoàn thành.",
+    "example_cloze": "今天的生产任务______完成了。",
+    "priority_group": 1
   },
   {
     "id": 166,
@@ -2648,12 +2813,13 @@
     "meaning_vi": "Tài liệu (văn phòng) hoặc Nguyên vật liệu (sản xuất)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 42,
-    "stage_10d": 5,
-    "example_zh": "请帮我 打印这份会议材料。 (Qǐng bāng wǒ dǎ yìn zhè fèn huì yì cái liào.) - Hãy giúp tôi in tài liệu cuộc họp này.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请帮我 打印这份会议 ______ 。 (Qǐng bāng wǒ dǎ yìn zhè fèn huì yì cái liào.) - Hãy giúp tôi in tài liệu cuộc họp này."
+    "study_day": 13,
+    "stage_10d": 2,
+    "example_zh": "请帮我 打印这份会议材料。",
+    "example_pinyin": "Qǐng bāng wǒ dǎ yìn zhè fèn huì yì cái liào.",
+    "example_vi": "Hãy giúp tôi in tài liệu cuộc họp này.",
+    "example_cloze": "请帮我 打印这份会议______。",
+    "priority_group": 1
   },
   {
     "id": 167,
@@ -2664,12 +2830,13 @@
     "meaning_vi": "Quen thuộc, nắm rõ (quy trình, công việc)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 42,
-    "stage_10d": 5,
-    "example_zh": "新员工需要时间熟悉工作流程。 (Xīn yuán gōng xū yào shí jiān shú xī gōng zuò liú chéng.) - Nhân viên mới cần thời gian để quen thuộc với quy trình công việc.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "新员工需要时间 ______ 工作流程。 (Xīn yuán gōng xū yào shí jiān shú xī gōng zuò liú chéng.) - Nhân viên mới cần thời gian để quen thuộc với quy trình công việc."
+    "study_day": 29,
+    "stage_10d": 3,
+    "example_zh": "新员工需要时间熟悉工作流程。",
+    "example_pinyin": "Xīn yuán gōng xū yào shí jiān shú xī gōng zuò liú chéng.",
+    "example_vi": "Nhân viên mới cần thời gian để quen thuộc với quy trình công việc.",
+    "example_cloze": "新员工需要时间______工作流程。",
+    "priority_group": 1
   },
   {
     "id": 168,
@@ -2680,12 +2847,13 @@
     "meaning_vi": "Lẫn nhau, hỗ trợ lẫn nhau trong công việc",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 42,
-    "stage_10d": 5,
-    "example_zh": "同事之间要互相帮助。 (Tóng shì zhī jiān yào hù xiāng bāng zhù.) - Đồng nghiệp với nhau phải giúp đỡ lẫn nhau.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "同事之间要 ______ 帮助。 (Tóng shì zhī jiān yào hù xiāng bāng zhù.) - Đồng nghiệp với nhau phải giúp đỡ lẫn nhau."
+    "study_day": 13,
+    "stage_10d": 2,
+    "example_zh": "同事之间要互相帮助。",
+    "example_pinyin": "Tóng shì zhī jiān yào hù xiāng bāng zhù.",
+    "example_vi": "Đồng nghiệp với nhau phải giúp đỡ lẫn nhau.",
+    "example_cloze": "同事之间要______帮助。",
+    "priority_group": 1
   },
   {
     "id": 169,
@@ -2696,12 +2864,13 @@
     "meaning_vi": "Phù hợp, thích hợp (vị trí, thời gian, phương án)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 43,
-    "stage_10d": 5,
-    "example_zh": "他很适合这个岗位。 (Tā hěn shì hé zhè gè gǎng wèi.) - Anh ấy rất phù hợp với vị trí này.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "他很适合这个岗位。 (Tā hěn shì hé zhè gè gǎng wèi.) - Anh ấy rất phù hợp với vị trí này."
+    "study_day": 30,
+    "stage_10d": 3,
+    "example_zh": "这个方案很合适，我们可以按照计划开始工作。",
+    "example_pinyin": "Zhège fāng'àn hěn héshì, wǒmen kěyǐ ànzhào jìhuà kāishǐ gōngzuò.",
+    "example_vi": "Phương án này rất phù hợp, chúng ta có thể bắt đầu làm việc theo kế hoạch.",
+    "example_cloze": "这个方案很______，我们可以按照计划开始工作。",
+    "priority_group": 1
   },
   {
     "id": 170,
@@ -2712,12 +2881,13 @@
     "meaning_vi": "Thất vọng (về kết quả công việc, hiệu suất)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 43,
-    "stage_10d": 5,
-    "example_zh": "这次 Quality 结果让人很失望。 (Zhè cì jié guǒ ràng rén hěn shī wàng.) - Kết quả lần này khiến người ta rất thất vọng.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "这次 Quality 结果让人很 ______ 。 (Zhè cì jié guǒ ràng rén hěn shī wàng.) - Kết quả lần này khiến người ta rất thất vọng."
+    "study_day": 58,
+    "stage_10d": 6,
+    "example_zh": "这次 Quality 结果让人很失望。",
+    "example_pinyin": "Zhè cì jié guǒ ràng rén hěn shī wàng.",
+    "example_vi": "Kết quả lần này khiến người ta rất thất vọng.",
+    "example_cloze": "这次 Quality 结果让人很______。",
+    "priority_group": 1
   },
   {
     "id": 171,
@@ -2728,12 +2898,13 @@
     "meaning_vi": "Ấn tượng (trong phỏng vấn hoặc gặp gỡ đối tác)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 43,
-    "stage_10d": 5,
-    "example_zh": "我对这个候选人的印象很好。 (Wǒ duì zhè gè hòu xuǎn rén de yìn xiàng hěn hǎo.) - Ấn tượng của tôi đối với ứng viên này rất tốt.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我对这个候选人的 ______ 很好。 (Wǒ duì zhè gè hòu xuǎn rén de yìn xiàng hěn hǎo.) - Ấn tượng của tôi đối với ứng viên này rất tốt."
+    "study_day": 30,
+    "stage_10d": 3,
+    "example_zh": "我对这个候选人的印象很好。",
+    "example_pinyin": "Wǒ duì zhè gè hòu xuǎn rén de yìn xiàng hěn hǎo.",
+    "example_vi": "Ấn tượng của tôi đối với ứng viên này rất tốt.",
+    "example_cloze": "我对这个候选人的______很好。",
+    "priority_group": 1
   },
   {
     "id": 172,
@@ -2744,12 +2915,13 @@
     "meaning_vi": "Số (điện thoại, phòng họp, mã đơn hàng)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 43,
-    "stage_10d": 5,
-    "example_zh": "请留下您的联系号码。 (Qǐng liú xià nín de lián xì hào mǎ.) - Xin hãy để lại số điện thoại liên lạc của bạn.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请留下您的联系 ______ 。 (Qǐng liú xià nín de lián xì hào mǎ.) - Xin hãy để lại số điện thoại liên lạc của bạn."
+    "study_day": 13,
+    "stage_10d": 2,
+    "example_zh": "请留下您的联系号码。",
+    "example_pinyin": "Qǐng liú xià nín de lián xì hào mǎ.",
+    "example_vi": "Xin hãy để lại số điện thoại liên lạc của bạn.",
+    "example_cloze": "请留下您的联系______。",
+    "priority_group": 1
   },
   {
     "id": 173,
@@ -2760,12 +2932,13 @@
     "meaning_vi": "Năm/ngày sinh (khai báo lý lịch nhân sự)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 44,
-    "stage_10d": 5,
-    "example_zh": "请在简历上写明出生年月。 (Qǐng zài jiǎn lì shàng xiě míng chū shēng nián yuè.) - Xin ghi rõ năm tháng sinh trên CV.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请在简历上写明 ______ 年月。 (Qǐng zài jiǎn lì shàng xiě míng chū shēng nián yuè.) - Xin ghi rõ năm tháng sinh trên CV."
+    "study_day": 30,
+    "stage_10d": 3,
+    "example_zh": "请在简历上写明出生年月。",
+    "example_pinyin": "Qǐng zài jiǎn lì shàng xiě míng chū shēng nián yuè.",
+    "example_vi": "Xin ghi rõ năm tháng sinh trên CV.",
+    "example_cloze": "请在简历上写明______年月。",
+    "priority_group": 1
   },
   {
     "id": 174,
@@ -2776,12 +2949,13 @@
     "meaning_vi": "Cơ sở, nền tảng (công việc, kỹ thuật, đào tạo)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 44,
-    "stage_10d": 5,
-    "example_zh": "培训课程从基础知识开始。 (péi xùn kè chéng cóng jī chǔ zhī shi kāi shǐ.) - Khóa đào tạo bắt đầu từ kiến thức cơ bản.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "培训课程从 ______ 知识开始。 (péi xùn kè chéng cóng jī chǔ zhī shi kāi shǐ.) - Khóa đào tạo bắt đầu từ kiến thức cơ bản."
+    "study_day": 30,
+    "stage_10d": 3,
+    "example_zh": "培训课程从基础知识开始。",
+    "example_pinyin": "péi xùn kè chéng cóng jī chǔ zhī shi kāi shǐ.",
+    "example_vi": "Khóa đào tạo bắt đầu từ kiến thức cơ bản.",
+    "example_cloze": "培训课程从______知识开始。",
+    "priority_group": 1
   },
   {
     "id": 175,
@@ -2792,12 +2966,13 @@
     "meaning_vi": "Thích ứng (với môi trường làm việc mới, ca làm việc)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 44,
-    "stage_10d": 5,
-    "example_zh": "新员工很快就适应了工厂的工作节奏。 (Xīn yuán gōng hěn kuài jiù shì yìng le gōng chǎng de gōng zuò jié zòu.) - Nhân viên mới đã nhanh chóng thích ứng với nhịp độ làm việc của nhà máy.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "新员工很快就 ______ 了工厂的工作节奏。 (Xīn yuán gōng hěn kuài jiù shì yìng le gōng chǎng de gōng zuò jié zòu.) - Nhân viên mới đã nhanh chóng thích ứng với nhịp độ làm việc của nhà máy."
+    "study_day": 31,
+    "stage_10d": 4,
+    "example_zh": "新员工很快就适应了工厂的工作节奏。",
+    "example_pinyin": "Xīn yuán gōng hěn kuài jiù shì yìng le gōng chǎng de gōng zuò jié zòu.",
+    "example_vi": "Nhân viên mới đã nhanh chóng thích ứng với nhịp độ làm việc của nhà máy.",
+    "example_cloze": "新员工很快就______了工厂的工作节奏。",
+    "priority_group": 1
   },
   {
     "id": 176,
@@ -2808,12 +2983,13 @@
     "meaning_vi": "Kiếm lời, sinh lợi nhuận (trong kinh doanh thương mại)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 44,
+    "study_day": 45,
     "stage_10d": 5,
-    "example_zh": "今年公司的目标是赚取更多利润。 (Jīn nián gōng sī de mù biāo shì zhuàn qǔ gèng duō lì rùn.) - Mục tiêu năm nay của công ty là kiếm được nhiều lợi nhuận hơn.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "今年公司的目标是 ______ 取更多利润。 (Jīn nián gōng sī de mù biāo shì zhuàn qǔ gèng duō lì rùn.) - Mục tiêu năm nay của công ty là kiếm được nhiều lợi nhuận hơn."
+    "example_zh": "今年公司的目标是赚取更多利润。",
+    "example_pinyin": "Jīn nián gōng sī de mù biāo shì zhuàn qǔ gèng duō lì rùn.",
+    "example_vi": "Mục tiêu năm nay của công ty là kiếm được nhiều lợi nhuận hơn.",
+    "example_cloze": "今年公司的目标是______取更多利润。",
+    "priority_group": 1
   },
   {
     "id": 177,
@@ -2824,12 +3000,13 @@
     "meaning_vi": "Khoảng chừng, ước chừng",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 45,
-    "stage_10d": 5,
+    "study_day": 13,
+    "stage_10d": 2,
     "example_zh": "这次会议大约需要两个小时。",
     "example_pinyin": "Zhè cì huìyì dàyuē xūyào liǎng gè xiǎoshí.",
     "example_vi": "Cuộc họp này khoảng chừng cần hai tiếng.",
-    "example_cloze": "这次会议 ______ 需要两个小时。"
+    "example_cloze": "这次会议 ______ 需要两个小时。",
+    "priority_group": 1
   },
   {
     "id": 178,
@@ -2840,12 +3017,13 @@
     "meaning_vi": "Làm trước thời hạn, sớm hơn",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 45,
-    "stage_10d": 5,
+    "study_day": 14,
+    "stage_10d": 2,
     "example_zh": "请大家提前十分钟进入会议室。",
     "example_pinyin": "Qǐng dàjiā tíqián shí fēnzhōng jìnrù huìyìshì.",
     "example_vi": "Xin mọi người vào phòng họp sớm trước mười phút.",
-    "example_cloze": "请大家 ______ 十分钟进入会议室。"
+    "example_cloze": "请大家 ______ 十分钟进入会议室。",
+    "priority_group": 1
   },
   {
     "id": 179,
@@ -2856,12 +3034,13 @@
     "meaning_vi": "Tạm thời, trong lúc này",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 45,
-    "stage_10d": 5,
+    "study_day": 14,
+    "stage_10d": 2,
     "example_zh": "这个方案暂时由我负责。",
     "example_pinyin": "Zhè gè fāng'àn zànshí yóu wǒ fùzé.",
     "example_vi": "Phương án này tạm thời do tôi phụ trách.",
-    "example_cloze": "这个方案 ______ 由我负责。"
+    "example_cloze": "这个方案 ______ 由我负责。",
+    "priority_group": 1
   },
   {
     "id": 180,
@@ -2872,12 +3051,13 @@
     "meaning_vi": "Tích cực, chủ động",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 45,
-    "stage_10d": 5,
+    "study_day": 31,
+    "stage_10d": 4,
     "example_zh": "希望大家积极配合 HR 部门的工作。",
     "example_pinyin": "Xīwàng dàjiā jījí pèihé HR bùmén de gōngzuò.",
     "example_vi": "Mong mọi người tích cực phối hợp với công việc của bộ phận Nhân sự.",
-    "example_cloze": "希望大家 ______ 配合 HR 部门的工作。"
+    "example_cloze": "希望大家 ______ 配合 HR 部门的工作。",
+    "priority_group": 1
   },
   {
     "id": 181,
@@ -2888,12 +3068,13 @@
     "meaning_vi": "Cao cấp, cấp cao",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 46,
+    "study_day": 45,
     "stage_10d": 5,
     "example_zh": "我们需要采购一些高级办公用品。",
     "example_pinyin": "Wǒmen xūyào cǎigòu yīxiē gāojí bàngōng yòngpǐn.",
     "example_vi": "Chúng ta cần thu mua một số văn phòng phẩm cao cấp.",
-    "example_cloze": "我们需要采购一些 ______ 办公用品。"
+    "example_cloze": "我们需要采购一些 ______ 办公用品。",
+    "priority_group": 1
   },
   {
     "id": 182,
@@ -2904,12 +3085,13 @@
     "meaning_vi": "Thu nhập, doanh thu",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 46,
-    "stage_10d": 5,
+    "study_day": 31,
+    "stage_10d": 4,
     "example_zh": "公司的营业收入今年增加了百分之十。",
     "example_pinyin": "Gōngsī de yíngyè shōurù jīnnián zēngjiā le bǎi fēn zhī shí.",
     "example_vi": "Doanh thu kinh doanh của công ty năm nay đã tăng mười phần trăm.",
-    "example_cloze": "公司的营业 ______ 今年增加了百分之十。"
+    "example_cloze": "公司的营业 ______ 今年增加了百分之十。",
+    "priority_group": 1
   },
   {
     "id": 183,
@@ -2920,12 +3102,13 @@
     "meaning_vi": "E rằng, sợ rằng",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 46,
-    "stage_10d": 5,
+    "study_day": 71,
+    "stage_10d": 8,
     "example_zh": "这份合同今天恐怕 赶不完了。",
     "example_pinyin": "Zhè fèn hétóng jīntiān kǒngpà gǎn bù wán le.",
     "example_vi": "Bản hợp đồng này e là hôm nay không kịp hoàn thành rồi.",
-    "example_cloze": "这份合同今天 ______  赶不完了。"
+    "example_cloze": "这份合同今天 ______  赶不完了。",
+    "priority_group": 2
   },
   {
     "id": 184,
@@ -2936,12 +3119,13 @@
     "meaning_vi": "Kỹ lưỡng, cẩn thận",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 46,
-    "stage_10d": 5,
+    "study_day": 58,
+    "stage_10d": 6,
     "example_zh": "质检员必须仔细检查每个产品。",
     "example_pinyin": "Zhìjiǎn yuán bìxū zǐxì jiǎnchá měi gè chǎnpǐn.",
     "example_vi": "Nhân viên KCS bắt buộc phải kiểm tra kỹ lưỡng từng sản phẩm.",
-    "example_cloze": "质检员必须 ______ 检查每个产品。"
+    "example_cloze": "质检员必须 ______ 检查每个产品。",
+    "priority_group": 1
   },
   {
     "id": 185,
@@ -2952,12 +3136,13 @@
     "meaning_vi": "Nghiêm ngặt, chặt chẽ",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 47,
-    "stage_10d": 5,
+    "study_day": 58,
+    "stage_10d": 6,
     "example_zh": "工厂对安全生产的要求非常严格。",
     "example_pinyin": "Gōngchǎng duì ānquán shēngchǎn de yāoqiú fēicháng yángé.",
     "example_vi": "Nhà xưởng yêu cầu đối với sản xuất an toàn cực kỳ nghiêm ngặt.",
-    "example_cloze": "工厂对安全生产的要求非常 ______ 。"
+    "example_cloze": "工厂对安全生产的要求非常 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 186,
@@ -2968,12 +3153,13 @@
     "meaning_vi": "Kịp thời",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 47,
-    "stage_10d": 5,
+    "study_day": 14,
+    "stage_10d": 2,
     "example_zh": "请及时回复客户的邮件。",
     "example_pinyin": "Qǐng jíshí huífù kèhù de yóujiàn.",
     "example_vi": "Xin vui lòng phản hồi email của khách hàng kịp thời.",
-    "example_cloze": "请 ______ 回复客户的邮件。"
+    "example_cloze": "请 ______ 回复客户的邮件。",
+    "priority_group": 1
   },
   {
     "id": 187,
@@ -2984,12 +3170,13 @@
     "meaning_vi": "Chuyên môn, chuyên dùng",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 47,
-    "stage_10d": 5,
+    "study_day": 31,
+    "stage_10d": 4,
     "example_zh": "公司设立了专门的培训部门。",
     "example_pinyin": "Gōngsī shèlì le zhuānmén de péixùn bùmén.",
     "example_vi": "Công ty đã thiết lập bộ phận đào tạo chuyên trách.",
-    "example_cloze": "公司设立了 ______ 的培训部门。"
+    "example_cloze": "公司设立了 ______ 的培训部门。",
+    "priority_group": 1
   },
   {
     "id": 188,
@@ -3000,12 +3187,13 @@
     "meaning_vi": "Công cụ, dụng cụ làm việc",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 47,
-    "stage_10d": 5,
+    "study_day": 59,
+    "stage_10d": 6,
     "example_zh": "工人下班前必须整理好生产工具。",
     "example_pinyin": "Gōngrén xiàbān qián bìxū zhěnglǐ hǎo shēngchǎn gōngjù.",
     "example_vi": "Công nhân trước khi tan làm phải thu dọn gọn gàng dụng cụ sản xuất.",
-    "example_cloze": "工人下班前必须整理好生产 ______ 。"
+    "example_cloze": "工人下班前必须整理好生产 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 189,
@@ -3016,12 +3204,13 @@
     "meaning_vi": "Đặc biệt là",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 48,
-    "stage_10d": 5,
+    "study_day": 71,
+    "stage_10d": 8,
     "example_zh": "各部门要注意节约成本，尤其行政部。",
     "example_pinyin": "Gè bùmén yào zhעùyì jiéyuē chéngběn, yóuqí xíngzhèng bù.",
     "example_vi": "Các bộ phận cần chú ý tiết kiệm chi phí, đặc biệt là phòng Hành chính.",
-    "example_cloze": "各部门要注意节约成本， ______ 行政部。"
+    "example_cloze": "各部门要注意节约成本， ______ 行政部。",
+    "priority_group": 2
   },
   {
     "id": 190,
@@ -3032,12 +3221,13 @@
     "meaning_vi": "Niềm tin, sự tự tin",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 48,
+    "study_day": 45,
     "stage_10d": 5,
     "example_zh": "我们有信心完成今年的销售目标。",
     "example_pinyin": "Wǒmen yǒu xìnxīn wánchéng jīnnián de xiāoshòu mùbiāo.",
     "example_vi": "Chúng tôi có niềm tin hoàn thành mục tiêu doanh số năm nay.",
-    "example_cloze": "我们有 ______ 完成今年的销售目标。"
+    "example_cloze": "我们有 ______ 完成今年的销售目标。",
+    "priority_group": 1
   },
   {
     "id": 191,
@@ -3048,12 +3238,13 @@
     "meaning_vi": "Cố ý, chủ tâm",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 48,
-    "stage_10d": 5,
+    "study_day": 32,
+    "stage_10d": 4,
     "example_zh": "他不是故意迟到的，路上堵车了。",
     "example_pinyin": "Tā bú shì gùyì chídào de, lùshang dǔchē le.",
     "example_vi": "Anh ấy không phải cố ý đi muộn đâu, trên đường bị kẹt xe.",
-    "example_cloze": "他不是 ______ 迟到的，路上堵车了。"
+    "example_cloze": "他不是 ______ 迟到的，路上堵车了。",
+    "priority_group": 1
   },
   {
     "id": 192,
@@ -3064,12 +3255,13 @@
     "meaning_vi": "Quan điểm, cách nhìn nhận",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 48,
-    "stage_10d": 5,
+    "study_day": 14,
+    "stage_10d": 2,
     "example_zh": "大家对这个新规章有什么看法？",
     "example_pinyin": "Dàjiā duì zhè gè xīn guīzhāng yǒu shénme kànfǎ?",
     "example_vi": "Mọi người có quan điểm gì đối với quy chế mới này không?",
-    "example_cloze": "大家对这个新规章有什么 ______ ？"
+    "example_cloze": "大家对这个新规章有什么 ______ ？",
+    "priority_group": 1
   },
   {
     "id": 193,
@@ -3080,12 +3272,13 @@
     "meaning_vi": "Giảm bớt, cắt giảm",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 49,
-    "stage_10d": 5,
+    "study_day": 59,
+    "stage_10d": 6,
     "example_zh": "我们要想办法减少不良品率。",
     "example_pinyin": "Wǒmen yào xiǎng bànfǎ jiǎnshǎo bùliáng pǐn lǜ.",
     "example_vi": "Chúng ta phải nghĩ cách giảm bớt tỷ lệ hàng lỗi.",
-    "example_cloze": "我们要想办法 ______ 不良品率。"
+    "example_cloze": "我们要想办法 ______ 不良品率。",
+    "priority_group": 1
   },
   {
     "id": 194,
@@ -3096,12 +3289,13 @@
     "meaning_vi": "Vất vả, nhọc nhằn (dùng để cảm ơn đồng nghiệp/nhân viên)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 49,
-    "stage_10d": 5,
+    "study_day": 32,
+    "stage_10d": 4,
     "example_zh": "各位同事，这次项目大家都辛苦了！",
     "example_pinyin": "Gèwèi tóngshì, zhè cì xiàngmù dàjiā dōu xīnkǔ le!",
     "example_vi": "Thưa các đồng nghiệp, dự án lần này mọi người đều vất vả rồi!",
-    "example_cloze": "各位同事，这次项目大家都 ______ 了！"
+    "example_cloze": "各位同事，这次项目大家都 ______ 了！",
+    "priority_group": 1
   },
   {
     "id": 195,
@@ -3112,12 +3306,13 @@
     "meaning_vi": "Vừa đúng lúc, vừa vặn",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 49,
-    "stage_10d": 5,
+    "study_day": 15,
+    "stage_10d": 2,
     "example_zh": "这份文件我正好要用。",
     "example_pinyin": "Zhè fèn wénjiàn wǒ zhènghǎo yào yòng.",
     "example_vi": "Bản tài liệu này tôi đang vừa vặn cần dùng.",
-    "example_cloze": "这份文件我 ______ 要用。"
+    "example_cloze": "这份文件我 ______ 要用。",
+    "priority_group": 1
   },
   {
     "id": 196,
@@ -3128,12 +3323,13 @@
     "meaning_vi": "Chủ động",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 49,
-    "stage_10d": 5,
+    "study_day": 32,
+    "stage_10d": 4,
     "example_zh": "新员工要主动融入团队。",
     "example_pinyin": "Xīn yuángōng yào zhǔdòng róngrù tuánduì.",
     "example_vi": "Nhân viên mới phải chủ động hòa nhập vào tập thể.",
-    "example_cloze": "新员工要 ______ 融入团队。"
+    "example_cloze": "新员工要 ______ 融入团队。",
+    "priority_group": 1
   },
   {
     "id": 197,
@@ -3144,12 +3340,13 @@
     "meaning_vi": "Hạn chế, giới hạn",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 50,
-    "stage_10d": 5,
+    "study_day": 15,
+    "stage_10d": 2,
     "example_zh": "公司对打印文件有数量限制。",
     "example_pinyin": "Gōngsī duì dǎyìn wénjiàn yǒu shùliàng xiànzhì.",
     "example_vi": "Công ty có giới hạn số lượng đối với việc in ấn tài liệu.",
-    "example_cloze": "公司对打印文件有数量 ______ 。"
+    "example_cloze": "公司对打印文件有数量 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 198,
@@ -3160,12 +3357,13 @@
     "meaning_vi": "Phán đoán, đánh giá",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 50,
+    "study_day": 46,
     "stage_10d": 5,
     "example_zh": "经理根据市场情况作出了准确的判断。",
     "example_pinyin": "Jīnglǐ gēnjù shìchǎng qíngkuàng zuòchū le zhǔnquè de pànduàn.",
     "example_vi": "Giám đốc căn cứ vào tình hình thị trường để đưa ra phán đoán chính xác.",
-    "example_cloze": "经理根据市场情况作出了准确的 ______ 。"
+    "example_cloze": "经理根据市场情况作出了准确的 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 199,
@@ -3176,12 +3374,13 @@
     "meaning_vi": "Tiền lương, tiền công",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 50,
-    "stage_10d": 5,
+    "study_day": 32,
+    "stage_10d": 4,
     "example_zh": "财务部通常在每个月十号发放工资。",
     "example_pinyin": "Cáiwù bù tōngcháng zài měi gè yuè shí hào fāfàng gōngzī.",
     "example_vi": "Phòng Tài vụ thông thường phát lương vào ngày mười hàng tháng.",
-    "example_cloze": "财务部通常在每个月十号发放 ______ 。"
+    "example_cloze": "财务部通常在每个月十号发放 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 200,
@@ -3192,12 +3391,13 @@
     "meaning_vi": "Phân biệt, sự khác nhau",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 50,
-    "stage_10d": 5,
-    "example_zh": "我们要区别这两个产品的质量。 (Wǒmen yào qūbié zhè liǎng gè chǎnpǐn de zhìliàng.) - Chúng ta phải phân biệt chất lượng của hai sản phẩm này.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我们要 ______ 这两个产品的质量。 (Wǒmen yào qūbié zhè liǎng gè chǎnpǐn de zhìliàng.) - Chúng ta phải phân biệt chất lượng của hai sản phẩm này."
+    "study_day": 15,
+    "stage_10d": 2,
+    "example_zh": "我们要区别这两个产品的质量。",
+    "example_pinyin": "Wǒmen yào qūbié zhè liǎng gè chǎnpǐn de zhìliàng.",
+    "example_vi": "Chúng ta phải phân biệt chất lượng của hai sản phẩm này.",
+    "example_cloze": "我们要______这两个产品的质量。",
+    "priority_group": 1
   },
   {
     "id": 201,
@@ -3208,12 +3408,13 @@
     "meaning_vi": "Tương lai, thời gian tới",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 51,
-    "stage_10d": 6,
-    "example_zh": "这是公司将来的发展计划。 (Zhè shì gōngsī jiānglái de fāzhǎn jìhuà.) - Đây là kế hoạch phát triển trong tương lai của công ty.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "这是公司 ______ 的发展计划。 (Zhè shì gōngsī jiānglái de fāzhǎn jìhuà.) - Đây là kế hoạch phát triển trong tương lai của công ty."
+    "study_day": 15,
+    "stage_10d": 2,
+    "example_zh": "这是公司将来的发展计划。",
+    "example_pinyin": "Zhè shì gōngsī jiānglái de fāzhǎn jìhuà.",
+    "example_vi": "Đây là kế hoạch phát triển trong tương lai của công ty.",
+    "example_cloze": "这是公司______的发展计划。",
+    "priority_group": 1
   },
   {
     "id": 202,
@@ -3224,12 +3425,13 @@
     "meaning_vi": "Khích lệ, động viên",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 51,
-    "stage_10d": 6,
-    "example_zh": "经理常常鼓励员工努力工作。 (Jīnglǐ chángcháng gǔlì yuángōng nǔlì gōngzuò.) - Giám đốc thường xuyên động viên nhân viên nỗ lực làm việc.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "经理常常 ______ 员工努力工作。 (Jīnglǐ chángcháng gǔlì yuángōng nǔlì gōngzuò.) - Giám đốc thường xuyên động viên nhân viên nỗ lực làm việc."
+    "study_day": 33,
+    "stage_10d": 4,
+    "example_zh": "经理常常鼓励员工努力工作。",
+    "example_pinyin": "Jīnglǐ chángcháng gǔlì yuángōng nǔlì gōngzuò.",
+    "example_vi": "Giám đốc thường xuyên động viên nhân viên nỗ lực làm việc.",
+    "example_cloze": "经理常常______员工努力工作。",
+    "priority_group": 1
   },
   {
     "id": 203,
@@ -3240,12 +3442,13 @@
     "meaning_vi": "Tổ chức",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 51,
-    "stage_10d": 6,
-    "example_zh": "公司下周举办年会。 (Gōngsī xià zhōuxǔ jǔbàn niánhuì.) - Công ty tuần sau tổ chức tiệc cuối năm.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "公司下周 ______ 年会。 (Gōngsī xià zhōuxǔ jǔbàn niánhuì.) - Công ty tuần sau tổ chức tiệc cuối năm."
+    "study_day": 16,
+    "stage_10d": 2,
+    "example_zh": "公司下周举办年会。",
+    "example_pinyin": "Gōngsī xià zhōuxǔ jǔbàn niánhuì.",
+    "example_vi": "Công ty tuần sau tổ chức tiệc cuối năm.",
+    "example_cloze": "公司下周______年会。",
+    "priority_group": 1
   },
   {
     "id": 204,
@@ -3256,12 +3459,13 @@
     "meaning_vi": "Khách hàng",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 51,
-    "stage_10d": 6,
-    "example_zh": "我们要为顾客提供最好的服务。 (Wǒmen yào wèi gùkè tígōng zuì hǎo de fúwù.) - Chúng ta phải cung cấp dịch vụ tốt nhất cho khách hàng.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我们要为 ______ 提供最好的服务。 (Wǒmen yào wèi gùkè tígōng zuì hǎo de fúwù.) - Chúng ta phải cung cấp dịch vụ tốt nhất cho khách hàng."
+    "study_day": 46,
+    "stage_10d": 5,
+    "example_zh": "我们要为顾客提供最好的服务。",
+    "example_pinyin": "Wǒmen yào wèi gùkè tígōng zuì hǎo de fúwù.",
+    "example_vi": "Chúng ta phải cung cấp dịch vụ tốt nhất cho khách hàng.",
+    "example_cloze": "我们要为______提供最好的服务。",
+    "priority_group": 1
   },
   {
     "id": 205,
@@ -3272,12 +3476,13 @@
     "meaning_vi": "Cấu thành, hợp thành",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 52,
+    "study_day": 59,
     "stage_10d": 6,
-    "example_zh": "这个部门由十个人组成。 (Zhège bùmén yóu shí gè rén zǔchéng.) - Bộ phận này do mười người cấu thành.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "这个部门由十个人 ______ 。 (Zhège bùmén yóu shí gè rén zǔchéng.) - Bộ phận này do mười người cấu thành."
+    "example_zh": "这个部门由十个人组成。",
+    "example_pinyin": "Zhège bùmén yóu shí gè rén zǔchéng.",
+    "example_vi": "Bộ phận này do mười người cấu thành.",
+    "example_cloze": "这个部门由十个人______。",
+    "priority_group": 1
   },
   {
     "id": 206,
@@ -3288,12 +3493,13 @@
     "meaning_vi": "Sắp xếp, chỉnh lý (tài liệu, hồ sơ)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 52,
-    "stage_10d": 6,
-    "example_zh": "请帮我整理这份合同档案。 (Qǐng bāng wǒ zhěnglǐ zhè fèn hétóng dàng'àn.) - Hãy giúp tôi chỉnh lý bộ hồ sơ hợp đồng này.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请帮我 ______ 这份合同档案。 (Qǐng bāng wǒ zhěnglǐ zhè fèn hétóng dàng'àn.) - Hãy giúp tôi chỉnh lý bộ hồ sơ hợp đồng này."
+    "study_day": 16,
+    "stage_10d": 2,
+    "example_zh": "请帮我整理这份合同档案。",
+    "example_pinyin": "Qǐng bāng wǒ zhěnglǐ zhè fèn hétóng dàng'àn.",
+    "example_vi": "Hãy giúp tôi chỉnh lý bộ hồ sơ hợp đồng này.",
+    "example_cloze": "请帮我______这份合同档案。",
+    "priority_group": 1
   },
   {
     "id": 207,
@@ -3304,12 +3510,13 @@
     "meaning_vi": "Phong phú, dồi dào",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 52,
-    "stage_10d": 6,
-    "example_zh": "他有很丰富的工作经验。 (Tā yǒu hěn fēngfù de gōngzuò jīngyàn.) - Anh ấy có kinh nghiệm làm việc rất phong phú.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "他有很 ______ 的工作经验。 (Tā yǒu hěn fēngfù de gōngzuò jīngyàn.) - Anh ấy có kinh nghiệm làm việc rất phong phú."
+    "study_day": 33,
+    "stage_10d": 4,
+    "example_zh": "他有很丰富的工作经验。",
+    "example_pinyin": "Tā yǒu hěn fēngfù de gōngzuò jīngyàn.",
+    "example_vi": "Anh ấy có kinh nghiệm làm việc rất phong phú.",
+    "example_cloze": "他有很______的工作经验。",
+    "priority_group": 1
   },
   {
     "id": 208,
@@ -3320,12 +3527,13 @@
     "meaning_vi": "Ngày thường, lúc bình thường",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 52,
-    "stage_10d": 6,
-    "example_zh": "平时我们要做好设备保养。 (Píngshí wǒmen yào zuò hǎo shèbèi bǎoyǎng.) - Ngày thường chúng ta phải làm tốt công tác bảo dưỡng thiết bị.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": " ______ 我们要做好设备保养。 (Píngshí wǒmen yào zuò hǎo shèbèi bǎoyǎng.) - Ngày thường chúng ta phải làm tốt công tác bảo dưỡng thiết bị."
+    "study_day": 16,
+    "stage_10d": 2,
+    "example_zh": "平时我们要做好设备保养。",
+    "example_pinyin": "Píngshí wǒmen yào zuò hǎo shèbèi bǎoyǎng.",
+    "example_vi": "Ngày thường chúng ta phải làm tốt công tác bảo dưỡng thiết bị.",
+    "example_cloze": "______我们要做好设备保养。",
+    "priority_group": 1
   },
   {
     "id": 209,
@@ -3336,12 +3544,13 @@
     "meaning_vi": "Chất lượng",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 53,
+    "study_day": 59,
     "stage_10d": 6,
-    "example_zh": "我们必须严格控制产品质量。 (Wǒmen bìxū yángé kòngzhì chǎnpǐn zhìliàng.) - Chúng ta bắt buộc phải kiểm soát nghiêm ngặt chất lượng sản phẩm.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我们必须严格控制产品 ______ 。 (Wǒmen bìxū yángé kòngzhì chǎnpǐn zhìliàng.) - Chúng ta bắt buộc phải kiểm soát nghiêm ngặt chất lượng sản phẩm."
+    "example_zh": "我们必须严格控制产品质量。",
+    "example_pinyin": "Wǒmen bìxū yángé kòngzhì chǎnpǐn zhìliàng.",
+    "example_vi": "Chúng ta bắt buộc phải kiểm soát nghiêm ngặt chất lượng sản phẩm.",
+    "example_cloze": "我们必须严格控制产品______。",
+    "priority_group": 1
   },
   {
     "id": 210,
@@ -3352,12 +3561,13 @@
     "meaning_vi": "Gửi (bưu phẩm, email)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 53,
-    "stage_10d": 6,
-    "example_zh": "请把文件寄给总公司。 (Qǐng bǎ wénjiàn jì gěi zǒng gōngsī.) - Vui lòng gửi tài liệu cho tổng công ty.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请把文件 ______ 给总公司。 (Qǐng bǎ wénjiàn jì gěi zǒng gōngsī.) - Vui lòng gửi tài liệu cho tổng công ty."
+    "study_day": 16,
+    "stage_10d": 2,
+    "example_zh": "请把文件寄给总公司。",
+    "example_pinyin": "Qǐng bǎ wénjiàn jì gěi zǒng gōngsī.",
+    "example_vi": "Vui lòng gửi tài liệu cho tổng công ty.",
+    "example_cloze": "请把文件______给总公司。",
+    "priority_group": 1
   },
   {
     "id": 211,
@@ -3368,12 +3578,13 @@
     "meaning_vi": "Chính xác, chuẩn xác",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 53,
-    "stage_10d": 6,
-    "example_zh": "请提供准确的数据。 (Qǐng tígōng zhǔnquè de shùjù.) - Vui lòng cung cấp số liệu chính xác.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请提供 ______ 的数据。 (Qǐng tígōng zhǔnquè de shùjù.) - Vui lòng cung cấp số liệu chính xác."
+    "study_day": 17,
+    "stage_10d": 2,
+    "example_zh": "请提供准确的数据。",
+    "example_pinyin": "Qǐng tígōng zhǔnquè de shùjù.",
+    "example_vi": "Vui lòng cung cấp số liệu chính xác.",
+    "example_cloze": "请提供______的数据。",
+    "priority_group": 1
   },
   {
     "id": 212,
@@ -3384,12 +3595,13 @@
     "meaning_vi": "Chi tiết, tỉ mỉ",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 53,
-    "stage_10d": 6,
-    "example_zh": "这份报告写得很详细。 (Zhè fèn bàogào xiě de hěn xiángxì.) - Bản báo cáo này được viết rất chi tiết.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "这份报告写得很 ______ 。 (Zhè fèn bàogào xiě de hěn xiángxì.) - Bản báo cáo này được viết rất chi tiết."
+    "study_day": 17,
+    "stage_10d": 2,
+    "example_zh": "这份报告写得很详细。",
+    "example_pinyin": "Zhè fèn bàogào xiě de hěn xiángxì.",
+    "example_vi": "Bản báo cáo này được viết rất chi tiết.",
+    "example_cloze": "这份报告写得很______。",
+    "priority_group": 1
   },
   {
     "id": 213,
@@ -3400,12 +3612,13 @@
     "meaning_vi": "Cấm, nghiêm cấm",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 54,
+    "study_day": 60,
     "stage_10d": 6,
-    "example_zh": "车间内禁止吸烟。 (Chējiān nèi jìnzhǐ xīyān.) - Nghiêm cấm hút thuốc trong phân xưởng.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "车间内 ______ 吸烟。 (Chējiān nèi jìnzhǐ xīyān.) - Nghiêm cấm hút thuốc trong phân xưởng."
+    "example_zh": "车间内禁止吸烟。",
+    "example_pinyin": "Chējiān nèi jìnzhǐ xīyān.",
+    "example_vi": "Nghiêm cấm hút thuốc trong phân xưởng.",
+    "example_cloze": "车间内______吸烟。",
+    "priority_group": 1
   },
   {
     "id": 214,
@@ -3416,12 +3629,13 @@
     "meaning_vi": "Mua sắm",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 54,
-    "stage_10d": 6,
-    "example_zh": "这家网店主要提供网上购物服务。 (Zhè jiā wǎngdiàn zhǔyào tígōng wǎngshàng gòuwù fúwù.) - Cửa hàng trực tuyến này chủ yếu cung cấp dịch vụ mua sắm qua mạng.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "这家网店主要提供网上 ______ 服务。 (Zhè jiā wǎngdiàn zhǔyào tígōng wǎngshàng gòuwù fúwù.) - Cửa hàng trực tuyến này chủ yếu cung cấp dịch vụ mua sắm qua mạng."
+    "study_day": 46,
+    "stage_10d": 5,
+    "example_zh": "这家网店主要提供网上购物服务。",
+    "example_pinyin": "Zhè jiā wǎngdiàn zhǔyào tígōng wǎngshàng gòuwù fúwù.",
+    "example_vi": "Cửa hàng trực tuyến này chủ yếu cung cấp dịch vụ mua sắm qua mạng.",
+    "example_cloze": "这家网店主要提供网上______服务。",
+    "priority_group": 1
   },
   {
     "id": 215,
@@ -3432,12 +3646,13 @@
     "meaning_vi": "Số lượng",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 54,
+    "study_day": 60,
     "stage_10d": 6,
-    "example_zh": "请核对这批货物的数量。 (Qǐng héduì zhè pī huòwù de shùliàng.) - Vui lòng đối chiếu số lượng của lô hàng này.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请核对这批货物的 ______ 。 (Qǐng héduì zhè pī huòwù de shùliàng.) - Vui lòng đối chiếu số lượng của lô hàng này."
+    "example_zh": "请核对这批货物的数量。",
+    "example_pinyin": "Qǐng héduì zhè pī huòwù de shùliàng.",
+    "example_vi": "Vui lòng đối chiếu số lượng của lô hàng này.",
+    "example_cloze": "请核对这批货物的______。",
+    "priority_group": 1
   },
   {
     "id": 216,
@@ -3448,12 +3663,13 @@
     "meaning_vi": "Tính cách",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 54,
-    "stage_10d": 6,
-    "example_zh": "他的性格很适合做销售工作。 (Tā de xìnggé hěn shìhé zuò xiāoshòu gōngzuò.) - Tính cách của anh ấy rất phù hợp làm công việc kinh doanh.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "他的 ______ 很适合做销售工作。 (Tā de xìnggé hěn shìhé zuò xiāoshòu gōngzuò.) - Tính cách của anh ấy rất phù hợp làm công việc kinh doanh."
+    "study_day": 33,
+    "stage_10d": 4,
+    "example_zh": "他的性格很适合做销售工作。",
+    "example_pinyin": "Tā de xìnggé hěn shìhé zuò xiāoshòu gōngzuò.",
+    "example_vi": "Tính cách của anh ấy rất phù hợp làm công việc kinh doanh.",
+    "example_cloze": "他的______很适合做销售工作。",
+    "priority_group": 1
   },
   {
     "id": 217,
@@ -3464,12 +3680,13 @@
     "meaning_vi": "Giảm xuống, hạ thấp",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 55,
-    "stage_10d": 6,
-    "example_zh": "我们需要采取措施降低成本。 (Wǒmen xūyào cǎiqǔ cuòshī jiàngdī chéngběn.) - Chúng ta cần thực hiện các biện pháp để giảm chi phí.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我们需要采取措施 ______ 成本。 (Wǒmen xūyào cǎiqǔ cuòshī jiàngdī chéngběn.) - Chúng ta cần thực hiện các biện pháp để giảm chi phí."
+    "study_day": 46,
+    "stage_10d": 5,
+    "example_zh": "我们需要采取措施降低成本。",
+    "example_pinyin": "Wǒmen xūyào cǎiqǔ cuòshī jiàngdī chéngběn.",
+    "example_vi": "Chúng ta cần thực hiện các biện pháp để giảm chi phí.",
+    "example_cloze": "我们需要采取措施______成本。",
+    "priority_group": 1
   },
   {
     "id": 218,
@@ -3480,12 +3697,13 @@
     "meaning_vi": "Quả nhiên, đúng như dự đoán",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 55,
-    "stage_10d": 6,
-    "example_zh": "经理 果然同意了这个方案。 (Jīnglǐ guǒrán tóngyì le zhège fāng'àn.) - Giám đốc quả nhiên đã đồng ý với phương án này.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "经理  ______ 同意了这个方案。 (Jīnglǐ guǒrán tóngyì le zhège fāng'àn.) - Giám đốc quả nhiên đã đồng ý với phương án này."
+    "study_day": 71,
+    "stage_10d": 8,
+    "example_zh": "经理 果然同意了这个方案。",
+    "example_pinyin": "Jīnglǐ guǒrán tóngyì le zhège fāng'àn.",
+    "example_vi": "Giám đốc quả nhiên đã đồng ý với phương án này.",
+    "example_cloze": "经理 ______同意了这个方案。",
+    "priority_group": 2
   },
   {
     "id": 219,
@@ -3496,12 +3714,13 @@
     "meaning_vi": "Cùng với, theo đà",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 55,
-    "stage_10d": 6,
-    "example_zh": "随着市场的发展，我们需要更多的技术人才。 (Suízhe shìchǎng de fāzhǎn, wǒmen xūyào gèng duō de jìshù réncái.) - Cùng với sự phát triển của thị trường, chúng ta cần nhiều nhân tài kỹ thuật hơn.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": " ______ 市场的发展，我们需要更多的技术人才。 (Suízhe shìchǎng de fāzhǎn, wǒmen xūyào gèng duō de jìshù réncái.) - Cùng với sự phát triển của thị trường, chúng ta cần nhiều nhân tài kỹ thuật hơn."
+    "study_day": 71,
+    "stage_10d": 8,
+    "example_zh": "随着市场的发展，我们需要更多的技术人才。",
+    "example_pinyin": "Suízhe shìchǎng de fāzhǎn, wǒmen xūyào gèng duō de jìshù réncái.",
+    "example_vi": "Cùng với sự phát triển của thị trường, chúng ta cần nhiều nhân tài kỹ thuật hơn.",
+    "example_cloze": "______市场的发展，我们需要更多的技术人才。",
+    "priority_group": 2
   },
   {
     "id": 220,
@@ -3512,12 +3731,13 @@
     "meaning_vi": "mật khẩu, mã pin (hệ thống/máy tính)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 55,
-    "stage_10d": 6,
-    "example_zh": "请修改您的电脑登录密码。 (Qǐng xiūgǎi nín de diànnǎo dēnglù mì mǎ.) - Vui lòng thay đổi mật khẩu đăng nhập máy tính của bạn.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请修改您的电脑登录 ______ 。 (Qǐng xiūgǎi nín de diànnǎo dēnglù mì mǎ.) - Vui lòng thay đổi mật khẩu đăng nhập máy tính của bạn."
+    "study_day": 17,
+    "stage_10d": 2,
+    "example_zh": "请修改您的电脑登录密码。",
+    "example_pinyin": "Qǐng xiūgǎi nín de diànnǎo dēnglù mì mǎ.",
+    "example_vi": "Vui lòng thay đổi mật khẩu đăng nhập máy tính của bạn.",
+    "example_cloze": "请修改您的电脑登录______。",
+    "priority_group": 1
   },
   {
     "id": 221,
@@ -3528,12 +3748,13 @@
     "meaning_vi": "xin lỗi (trong giao tiếp công việc, đối tác)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 56,
-    "stage_10d": 6,
-    "example_zh": "因为 货期 延误，我 代表 公司 向 您 道歉。 (Yīnwèi huòqī yánwù, wǒ dàibiǎo gōngsī xiàng nín dàoqiàn.) - Do chậm trễ tiến độ giao hàng, tôi đại diện công ty xin lỗi quý khách.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "因为 货期 延误，我 代表 公司 向 您  ______ 。 (Yīnwèi huòqī yánwù, wǒ dàibiǎo gōngsī xiàng nín dàoqiàn.) - Do chậm trễ tiến độ giao hàng, tôi đại diện công ty xin lỗi quý khách."
+    "study_day": 17,
+    "stage_10d": 2,
+    "example_zh": "因为 货期 延误，我 代表 公司 向 您 道歉。",
+    "example_pinyin": "Yīnwèi huòqī yánwù, wǒ dàibiǎo gōngsī xiàng nín dàoqiàn.",
+    "example_vi": "Do chậm trễ tiến độ giao hàng, tôi đại diện công ty xin lỗi quý khách.",
+    "example_cloze": "因为 货期 延误，我 代表 公司 向 您 ______。",
+    "priority_group": 1
   },
   {
     "id": 222,
@@ -3544,12 +3765,13 @@
     "meaning_vi": "thị sát, thăm quan, phỏng vấn",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 56,
-    "stage_10d": 6,
-    "example_zh": "明天 客户将来 公司 访问。 (Míngtiān kèhù jiāng lái gōngsī fǎngwèn.) - Ngày mai khách hàng sẽ đến thăm quan công ty.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "明天 客户将来 公司  ______ 。 (Míngtiān kèhù jiāng lái gōngsī fǎngwèn.) - Ngày mai khách hàng sẽ đến thăm quan công ty."
+    "study_day": 47,
+    "stage_10d": 5,
+    "example_zh": "明天 客户将来 公司 访问。",
+    "example_pinyin": "Míngtiān kèhù jiāng lái gōngsī fǎngwèn.",
+    "example_vi": "Ngày mai khách hàng sẽ đến thăm quan công ty.",
+    "example_cloze": "明天 客户将来 公司 ______。",
+    "priority_group": 1
   },
   {
     "id": 223,
@@ -3560,12 +3782,13 @@
     "meaning_vi": "đối thoại, trao đổi công việc",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 56,
-    "stage_10d": 6,
-    "example_zh": "我们 需要 跟 供应商 进行 深入 对话。 (Wǒmen xūyào gēn gīngyīngshāng jìnxíng shēnrù duìhuà.) - Chúng ta cần tiến hành đối thoại sâu hơn với nhà cung cấp.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我们 需要 跟 供应商 进行 深入  ______ 。 (Wǒmen xūyào gēn gīngyīngshāng jìnxíng shēnrù duìhuà.) - Chúng ta cần tiến hành đối thoại sâu hơn với nhà cung cấp."
+    "study_day": 18,
+    "stage_10d": 2,
+    "example_zh": "我们 需要 跟 供应商 进行 深入 对话。",
+    "example_pinyin": "Wǒmen xūyào gēn gīngyīngshāng jìnxíng shēnrù duìhuà.",
+    "example_vi": "Chúng ta cần tiến hành đối thoại sâu hơn với nhà cung cấp.",
+    "example_cloze": "我们 需要 跟 供应商 进行 深入 ______。",
+    "priority_group": 1
   },
   {
     "id": 224,
@@ -3576,12 +3799,13 @@
     "meaning_vi": "thu dọn, sắp xếp (văn phòng, phòng họp, tài liệu)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 56,
-    "stage_10d": 6,
-    "example_zh": "请 会议结束后 收拾好 会议室。 (Qǐng huìyì jiéshù hòu shōushí hǎo huìyìshì.) - Vui lòng thu dọn phòng họp sau khi cuộc họp kết thúc.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请 会议结束后  ______ 好 会议室。 (Qǐng huìyì jiéshù hòu shōushí hǎo huìyìshì.) - Vui lòng thu dọn phòng họp sau khi cuộc họp kết thúc."
+    "study_day": 18,
+    "stage_10d": 2,
+    "example_zh": "请 会议结束后 收拾好 会议室。",
+    "example_pinyin": "Qǐng huìyì jiéshù hòu shōushí hǎo huìyìshì.",
+    "example_vi": "Vui lòng thu dọn phòng họp sau khi cuộc họp kết thúc.",
+    "example_cloze": "请 会议结束后 ______好 会议室。",
+    "priority_group": 1
   },
   {
     "id": 225,
@@ -3592,12 +3816,13 @@
     "meaning_vi": "dần dần (dùng trong báo cáo xu hướng kinh doanh, sản xuất)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 57,
+    "study_day": 60,
     "stage_10d": 6,
-    "example_zh": "生产 效率 正在 逐渐 提高。 (Shēngchǎn xiàolǜ zhèngzài zhújiàn tígāo.) - Hiệu suất sản xuất đang dần được nâng cao.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "生产 效率 正在  ______  提高。 (Shēngchǎn xiàolǜ zhèngzài zhújiàn tígāo.) - Hiệu suất sản xuất đang dần được nâng cao."
+    "example_zh": "生产 效率 正在 逐渐 提高。",
+    "example_pinyin": "Shēngchǎn xiàolǜ zhèngzài zhújiàn tígāo.",
+    "example_vi": "Hiệu suất sản xuất đang dần được nâng cao.",
+    "example_cloze": "生产 效率 正在 ______ 提高。",
+    "priority_group": 1
   },
   {
     "id": 226,
@@ -3608,12 +3833,13 @@
     "meaning_vi": "chìa khóa (phòng làm việc, kho, tủ tài liệu)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 57,
-    "stage_10d": 6,
-    "example_zh": "行政部里 有 档案室 的 钥匙。 (Xíngzhèng bù lǐ yǒu dàng'ànshì de yàoshi.) - Phòng Hành chính có chìa khóa phòng lưu trữ hồ sơ.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "行政部里 有 档案室 的  ______ 。 (Xíngzhèng bù lǐ yǒu dàng'ànshì de yàoshi.) - Phòng Hành chính có chìa khóa phòng lưu trữ hồ sơ."
+    "study_day": 18,
+    "stage_10d": 2,
+    "example_zh": "行政部里 有 档案室 的 钥匙。",
+    "example_pinyin": "Xíngzhèng bù lǐ yǒu dàng'ànshì de yàoshi.",
+    "example_vi": "Phòng Hành chính có chìa khóa phòng lưu trữ hồ sơ.",
+    "example_cloze": "行政部里 有 档案室 的 ______。",
+    "priority_group": 1
   },
   {
     "id": 227,
@@ -3624,12 +3850,13 @@
     "meaning_vi": "ô nhiễm môi trường sản xuất nhà xưởng",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 57,
+    "study_day": 60,
     "stage_10d": 6,
-    "example_zh": "工厂 必须 严格 控制 生产 污染。 (Gōngchǎng bìxū yángé kòngzhì shēngchǎn wūrǎn.) - Nhà xưởng bắt buộc phải kiểm soát nghiêm ngặt ô nhiễm trong sản xuất.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "工厂 必须 严格 控制 生产  ______ 。 (Gōngchǎng bìxū yángé kòngzhì shēngchǎn wūrǎn.) - Nhà xưởng bắt buộc phải kiểm soát nghiêm ngặt ô nhiễm trong sản xuất."
+    "example_zh": "工厂 必须 严格 控制 生产 污染。",
+    "example_pinyin": "Gōngchǎng bìxū yángé kòngzhì shēngchǎn wūrǎn.",
+    "example_vi": "Nhà xưởng bắt buộc phải kiểm soát nghiêm ngặt ô nhiễm trong sản xuất.",
+    "example_cloze": "工厂 必须 严格 控制 生产 ______。",
+    "priority_group": 1
   },
   {
     "id": 228,
@@ -3640,12 +3867,13 @@
     "meaning_vi": "nhiệt độ (kho, xưởng, máy móc)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 57,
-    "stage_10d": 6,
-    "example_zh": "请 检查 车间 的 温度 和 湿度。 (Qǐng jiǎnchá chējiān de wēndù hé shùdù.) - Vui lòng kiểm tra nhiệt độ và độ ẩm của phân xưởng.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请 检查 车间 的  ______  和 湿度。 (Qǐng jiǎnchá chējiān de wēndù hé shùdù.) - Vui lòng kiểm tra nhiệt độ và độ ẩm của phân xưởng."
+    "study_day": 61,
+    "stage_10d": 7,
+    "example_zh": "请 检查 车间 的 温度 和 湿度。",
+    "example_pinyin": "Qǐng jiǎnchá chējiān de wēndù hé shùdù.",
+    "example_vi": "Vui lòng kiểm tra nhiệt độ và độ ẩm của phân xưởng.",
+    "example_cloze": "请 检查 车间 的 ______ 和 湿度。",
+    "priority_group": 1
   },
   {
     "id": 229,
@@ -3656,12 +3884,13 @@
     "meaning_vi": "ví dụ như (dùng khi viết email, báo cáo, quy chế)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 58,
-    "stage_10d": 6,
-    "example_zh": "我们可以 采取 新措施，例如 增加 人人 培训。 (Wǒmen kěyǐ cǎiqǔ xīn cuòshī, lìrú zēngjiā rén yuán péixùn.) - Chúng ta có thể áp dụng các biện pháp mới, ví dụ như tăng cường đào tạo nhân sự.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我们可以 采取 新措施， ______  增加 人人 培训。 (Wǒmen kěyǐ cǎiqǔ xīn cuòshī, lìrú zēngjiā rén yuán péixùn.) - Chúng ta có thể áp dụng các biện pháp mới, ví dụ như tăng cường đào tạo nhân sự."
+    "study_day": 72,
+    "stage_10d": 8,
+    "example_zh": "我们可以 采取 新措施，例如 增加 人人 培训。",
+    "example_pinyin": "Wǒmen kěyǐ cǎiqǔ xīn cuòshī, lìrú zēngjiā rén yuán péixùn.",
+    "example_vi": "Chúng ta có thể áp dụng các biện pháp mới, ví dụ như tăng cường đào tạo nhân sự.",
+    "example_cloze": "我们可以 采取 新措施，______ 增加 人人 培训。",
+    "priority_group": 2
   },
   {
     "id": 230,
@@ -3672,12 +3901,13 @@
     "meaning_vi": "chúc mừng (đối tác ký hợp đồng, thăng chức)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 58,
-    "stage_10d": 6,
-    "example_zh": "祝贺 贵 公司 取得 优秀 的 业绩。 (Zhùhè guì gōngsī qǔdé yōuxiù de yèjì.) - Chúc mừng quý công ty đạt được thành tích xuất sắc.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": " ______  贵 公司 取得 优秀 的 业绩。 (Zhùhè guì gōngsī qǔdé yōuxiù de yèjì.) - Chúc mừng quý công ty đạt được thành tích xuất sắc."
+    "study_day": 47,
+    "stage_10d": 5,
+    "example_zh": "祝贺 贵 公司 取得 优秀 的 业绩。",
+    "example_pinyin": "Zhùhè guì gōngsī qǔdé yōuxiù de yèjì.",
+    "example_vi": "Chúc mừng quý công ty đạt được thành tích xuất sắc.",
+    "example_cloze": "______ 贵 公司 取得 优秀 的 业绩。",
+    "priority_group": 1
   },
   {
     "id": 231,
@@ -3688,12 +3918,13 @@
     "meaning_vi": "phê bình, nhắc nhở lỗi vi phạm quy chế",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 58,
-    "stage_10d": 6,
-    "example_zh": "对 违反 纪律 的 员工，我们 需要 进行 批评。 (Duì wéifǎn jìlǜ de yuángōng, wǒmen xūyào jìnxíng pīpíng.) - Đối với nhân viên vi phạm kỷ luật, chúng ta cần tiến hành phê bình.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "对 违反 纪律 的 员工，我们 需要 进行  ______ 。 (Duì wéifǎn jìlǜ de yuángōng, wǒmen xūyào jìnxíng pīpíng.) - Đối với nhân viên vi phạm kỷ luật, chúng ta cần tiến hành phê bình."
+    "study_day": 33,
+    "stage_10d": 4,
+    "example_zh": "对 违反 纪律 的 员工，我们 需要 进行 批评。",
+    "example_pinyin": "Duì wéifǎn jìlǜ de yuángōng, wǒmen xūyào jìnxíng pīpíng.",
+    "example_vi": "Đối với nhân viên vi phạm kỷ luật, chúng ta cần tiến hành phê bình.",
+    "example_cloze": "对 违反 纪律 的 员工，我们 需要 进行 ______。",
+    "priority_group": 1
   },
   {
     "id": 232,
@@ -3704,12 +3935,13 @@
     "meaning_vi": "coi trọng, đề cao (chất lượng, an toàn lao động)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 58,
-    "stage_10d": 6,
-    "example_zh": "公司 领导 非常 重视 产品 质量。 (Gōngsī lǐngdǎo fēicháng zhòngshì chǎnpǐn zhìliàng.) - Lãnh đạo công ty rất coi trọng chất lượng sản phẩm.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "公司 领导 非常  ______  产品 质量。 (Gōngsī lǐngdǎo fēicháng zhòngshì chǎnpǐn zhìliàng.) - Lãnh đạo công ty rất coi trọng chất lượng sản phẩm."
+    "study_day": 61,
+    "stage_10d": 7,
+    "example_zh": "公司 领导 非常 重视 产品 质量。",
+    "example_pinyin": "Gōngsī lǐngdǎo fēicháng zhòngshì chǎnpǐn zhìliàng.",
+    "example_vi": "Lãnh đạo công ty rất coi trọng chất lượng sản phẩm.",
+    "example_cloze": "公司 领导 非常 ______ 产品 质量。",
+    "priority_group": 1
   },
   {
     "id": 233,
@@ -3720,12 +3952,13 @@
     "meaning_vi": "tăng trưởng, gia tăng doanh số/sản lượng",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 59,
-    "stage_10d": 6,
-    "example_zh": "今年 的 销售额 实现 了 明显 增长。 (Jīnnián de xiāoshòué shíxiàn le míngxiǎn zēngzhǎng.) - Doanh số bán hàng năm nay đã đạt được sự tăng trưởng rõ rệt.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "今年 的 销售额 实现 了 明显  ______ 。 (Jīnnián de xiāoshòué shíxiàn le míngxiǎn zēngzhǎng.) - Doanh số bán hàng năm nay đã đạt được sự tăng trưởng rõ rệt."
+    "study_day": 47,
+    "stage_10d": 5,
+    "example_zh": "今年 的 销售额 实现 了 明显 增长。",
+    "example_pinyin": "Jīnnián de xiāoshòué shíxiàn le míngxiǎn zēngzhǎng.",
+    "example_vi": "Doanh số bán hàng năm nay đã đạt được sự tăng trưởng rõ rệt.",
+    "example_cloze": "今年 的 销售额 实现 了 明显 ______。",
+    "priority_group": 1
   },
   {
     "id": 234,
@@ -3736,12 +3969,13 @@
     "meaning_vi": "trái lại, ngược lại (dùng trong phân tích, báo cáo)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 59,
-    "stage_10d": 6,
-    "example_zh": "实际 结果 与 预期 相反。 (Shíjì jiéguǒ yǔ yùqī xiāngfǎn.) - Kết quả thực tế trái ngược với kỳ vọng.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "实际 结果 与 预期  ______ 。 (Shíjì jiéguǒ yǔ yùqī xiāngfǎn.) - Kết quả thực tế trái ngược với kỳ vọng."
+    "study_day": 72,
+    "stage_10d": 8,
+    "example_zh": "实际 结果 与 预期 相反。",
+    "example_pinyin": "Shíjì jiéguǒ yǔ yùqī xiāngfǎn.",
+    "example_vi": "Kết quả thực tế trái ngược với kỳ vọng.",
+    "example_cloze": "实际 结果 与 预期 ______。",
+    "priority_group": 2
   },
   {
     "id": 235,
@@ -3752,12 +3986,13 @@
     "meaning_vi": "ý kiến, chủ kiến (trong họp bàn phương án)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 59,
-    "stage_10d": 6,
-    "example_zh": "大家 对 这个 方案 有 什么 好 主意 吗？ (Dàjiā duì zhège fāng'àn yǒu shénme hǎo zhǔyi ma?) - Mọi người có ý kiến hay gì cho phương án này không?",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "大家 对 这个 方案 有 什么 好  ______  吗？ (Dàjiā duì zhège fāng'àn yǒu shénme hǎo zhǔyi ma?) - Mọi người có ý kiến hay gì cho phương án này không?"
+    "study_day": 18,
+    "stage_10d": 2,
+    "example_zh": "大家 对 这个 方案 有 什么 好 主意 吗？",
+    "example_pinyin": "Dàjiā duì zhège fāng'àn yǒu shénme hǎo zhǔyi ma?",
+    "example_vi": "Mọi người có ý kiến hay gì cho phương án này không?",
+    "example_cloze": "大家 对 这个 方案 有 什么 好 ______ 吗？",
+    "priority_group": 1
   },
   {
     "id": 236,
@@ -3768,12 +4003,13 @@
     "meaning_vi": "mở rộng (quy mô, thị trường, sản xuất)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 59,
-    "stage_10d": 6,
-    "example_zh": "我们 计划 明年 扩大 生产 规模。 (Wǒmen jìhuà míngnián kuòdà shēngchǎn guīmó.) - Chúng tôi dự định năm sau mở rộng quy mô sản xuất.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我们 计划 明年  ______  生产 规模。 (Wǒmen jìhuà míngnián kuòdà shēngchǎn guīmó.) - Chúng tôi dự định năm sau mở rộng quy mô sản xuất."
+    "study_day": 47,
+    "stage_10d": 5,
+    "example_zh": "我们 计划 明年 扩大 生产 规模。",
+    "example_pinyin": "Wǒmen jìhuà míngnián kuòdà shēngchǎn guīmó.",
+    "example_vi": "Chúng tôi dự định năm sau mở rộng quy mô sản xuất.",
+    "example_cloze": "我们 计划 明年 ______ 生产 规模。",
+    "priority_group": 1
   },
   {
     "id": 237,
@@ -3784,12 +4020,13 @@
     "meaning_vi": "tiền thưởng, KPI thưởng",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 60,
-    "stage_10d": 6,
-    "example_zh": "表现 优秀 的 员工 将 获得 丰厚 奖金。 (Biǎoxiàn yōuxiù de yuángōng jiāng huòdé fēnghòu jiǎngjīn.) - Nhân viên có biểu hiện xuất sắc sẽ nhận được tiền thưởng hậu hĩnh.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "表现 优秀 的 员工 将 获得 丰厚  ______ 。 (Biǎoxiàn yōuxiù de yuángōng jiāng huòdé fēnghòu jiǎngjīn.) - Nhân viên có biểu hiện xuất sắc sẽ nhận được tiền thưởng hậu hĩnh."
+    "study_day": 34,
+    "stage_10d": 4,
+    "example_zh": "表现 优秀 的 员工 将 获得 丰厚 奖金。",
+    "example_pinyin": "Biǎoxiàn yōuxiù de yuángōng jiāng huòdé fēnghòu jiǎngjīn.",
+    "example_vi": "Nhân viên có biểu hiện xuất sắc sẽ nhận được tiền thưởng hậu hĩnh.",
+    "example_cloze": "表现 优秀 的 员工 将 获得 丰厚 ______。",
+    "priority_group": 1
   },
   {
     "id": 238,
@@ -3800,12 +4037,13 @@
     "meaning_vi": "chuyến bay (đón chuyên gia, đi công tác)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 60,
-    "stage_10d": 6,
-    "example_zh": "请 帮 我 查询 去 上海 的 航班。 (Qǐng bāng wǒ cháxún qù Shànghǎi de hángbān.) - Vui lòng giúp tôi tra cứu chuyến bay đi Thượng Hải.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请 帮 我 查询 去 上海 的  ______ 。 (Qǐng bāng wǒ cháxún qù Shànghǎi de hángbān.) - Vui lòng giúp tôi tra cứu chuyến bay đi Thượng Hải."
+    "study_day": 19,
+    "stage_10d": 2,
+    "example_zh": "请 帮 我 查询 去 上海 的 航班。",
+    "example_pinyin": "Qǐng bāng wǒ cháxún qù Shànghǎi de hángbān.",
+    "example_vi": "Vui lòng giúp tôi tra cứu chuyến bay đi Thượng Hải.",
+    "example_cloze": "请 帮 我 查询 去 上海 的 ______。",
+    "priority_group": 1
   },
   {
     "id": 239,
@@ -3816,12 +4054,13 @@
     "meaning_vi": "cuộc hẹn (với khách hàng, đối tác)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 60,
-    "stage_10d": 6,
-    "example_zh": "我已经 跟 客户 约好 下午 开会。 (Wǒ yǐjīng gēn kèhù yuē hǎo xiàwǔ kāihuì.) - Tôi đã hẹn với khách hàng chiều nay họp.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我已经 跟 客户 约好 下午 开会。 (Wǒ yǐjīng gēn kèhù yuē hǎo xiàwǔ kāihuì.) - Tôi đã hẹn với khách hàng chiều nay họp."
+    "study_day": 48,
+    "stage_10d": 5,
+    "example_zh": "我今天下午有个约会，不能参加客户会议。",
+    "example_pinyin": "Wǒ jīntiān xiàwǔ yǒu ge yuēhuì, bù néng cānjiā kèhù huìyì.",
+    "example_vi": "Chiều nay tôi có một cuộc hẹn, không thể tham gia cuộc họp với khách hàng.",
+    "example_cloze": "我今天下午有个______，不能参加客户会议。",
+    "priority_group": 1
   },
   {
     "id": 240,
@@ -3832,12 +4071,13 @@
     "meaning_vi": "Tham quan, đi khảo sát thực tế tại nhà máy hoặc doanh nghiệp đối tác",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 60,
-    "stage_10d": 6,
-    "example_zh": "下午三点客户来公司参观。 (Xiàwǔ sān diǎn kèhù lái gōngsī cān guān.) - 3 giờ chiều khách hàng đến công ty tham quan.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "下午三点客户来公司 ______ 。 (Xiàwǔ sān diǎn kèhù lái gōngsī cān guān.) - 3 giờ chiều khách hàng đến công ty tham quan."
+    "study_day": 48,
+    "stage_10d": 5,
+    "example_zh": "下午三点客户来公司参观。",
+    "example_pinyin": "Xiàwǔ sān diǎn kèhù lái gōngsī cān guān.",
+    "example_vi": "3 giờ chiều khách hàng đến công ty tham quan.",
+    "example_cloze": "下午三点客户来公司______。",
+    "priority_group": 1
   },
   {
     "id": 241,
@@ -3848,12 +4088,13 @@
     "meaning_vi": "Tiện thể, nhân tiện làm việc gì khi đang thực hiện việc khác",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 61,
-    "stage_10d": 7,
-    "example_zh": "你 顺便 把 这 份 文件 带 去 财务部。 (Nǐ shùnbiàn bǎ zhè fèn wénjiàn dài qù cáiwùbù.) - Bạn tiện thể cầm tập tài liệu này sang phòng tài chính nhé.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "你  ______  把 这 份 文件 带 去 财务部。 (Nǐ shùnbiàn bǎ zhè fèn wénjiàn dài qù cáiwùbù.) - Bạn tiện thể cầm tập tài liệu này sang phòng tài chính nhé."
+    "study_day": 72,
+    "stage_10d": 8,
+    "example_zh": "你 顺便 把 这 份 文件 带 去 财务部。",
+    "example_pinyin": "Nǐ shùnbiàn bǎ zhè fèn wénjiàn dài qù cáiwùbù.",
+    "example_vi": "Bạn tiện thể cầm tập tài liệu này sang phòng tài chính nhé.",
+    "example_cloze": "你 ______ 把 这 份 文件 带 去 财务部。",
+    "priority_group": 2
   },
   {
     "id": 242,
@@ -3864,12 +4105,13 @@
     "meaning_vi": "Kiên nhẫn, sự kiên nhẫn trong công việc hoặc xử lý tình huống với khách hàng",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 61,
-    "stage_10d": 7,
-    "example_zh": "做 客服 工作 需要 很多 耐心。 (Zuò kèfú gōngzuò xūyào hěn duō nàixīn.) - Làm công việc chăm sóc khách hàng cần rất nhiều sự kiên nhẫn.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "做 客服 工作 需要 很多  ______ 。 (Zuò kèfú gōngzuò xūyào hěn duō nàixīn.) - Làm công việc chăm sóc khách hàng cần rất nhiều sự kiên nhẫn."
+    "study_day": 34,
+    "stage_10d": 4,
+    "example_zh": "做 客服 工作 需要 很多 耐心。",
+    "example_pinyin": "Zuò kèfú gōngzuò xūyào hěn duō nàixīn.",
+    "example_vi": "Làm công việc chăm sóc khách hàng cần rất nhiều sự kiên nhẫn.",
+    "example_cloze": "做 客服 工作 需要 很多 ______。",
+    "priority_group": 1
   },
   {
     "id": 243,
@@ -3880,12 +4122,13 @@
     "meaning_vi": "Phản ánh tình hình, báo cáo vấn đề phát sinh lên cấp trên",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 61,
-    "stage_10d": 7,
-    "example_zh": "请 把 生产线 的 问题 及时 反映 给 经理。 (Qǐng bǎ shēngchǎnxiàn de wèntí jíshí fǎnyìng gěi jīnglǐ.) - Xin hãy phản ánh kịp thời vấn đề của dây chuyền sản xuất cho giám đốc.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请 把 生产线 的 问题 及时  ______  给 经理。 (Qǐng bǎ shēngchǎnxiàn de wèntí jíshí fǎnyìng gěi jīnglǐ.) - Xin hãy phản ánh kịp thời vấn đề của dây chuyền sản xuất cho giám đốc."
+    "study_day": 19,
+    "stage_10d": 2,
+    "example_zh": "请 把 生产线 的 问题 及时 反映 给 经理。",
+    "example_pinyin": "Qǐng bǎ shēngchǎnxiàn de wèntí jíshí fǎnyìng gěi jīnglǐ.",
+    "example_vi": "Xin hãy phản ánh kịp thời vấn đề của dây chuyền sản xuất cho giám đốc.",
+    "example_cloze": "请 把 生产线 的 问题 及时 ______ 给 经理。",
+    "priority_group": 1
   },
   {
     "id": 244,
@@ -3896,12 +4139,13 @@
     "meaning_vi": "Sổ tay ghi chép hoặc máy tính xách tay (laptop)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 61,
-    "stage_10d": 7,
-    "example_zh": "开会 时 请带 好 笔记本 和 笔。 (Kāihuì shí qǐng dài hǎo bǐjìběn hé bǐ.) - Khi họp vui lòng mang theo sổ tay và bút.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "开会 时 请带 好  ______  和 笔。 (Kāihuì shí qǐng dài hǎo bǐjìběn hé bǐ.) - Khi họp vui lòng mang theo sổ tay và bút."
+    "study_day": 19,
+    "stage_10d": 2,
+    "example_zh": "开会 时 请带 好 笔记本 和 笔。",
+    "example_pinyin": "Kāihuì shí qǐng dài hǎo bǐjìběn hé bǐ.",
+    "example_vi": "Khi họp vui lòng mang theo sổ tay và bút.",
+    "example_cloze": "开会 时 请带 好 ______ 和 笔。",
+    "priority_group": 1
   },
   {
     "id": 245,
@@ -3912,12 +4156,13 @@
     "meaning_vi": "Thẻ tín dụng (dùng khi thanh toán chi phí công tác, mua sắm doanh nghiệp)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 62,
-    "stage_10d": 7,
-    "example_zh": "出差 期间 的 酒店 费用 可以 用 公司 信用卡 支付。 (Chūchāi qījiān de jiǔdiàn fèiyong kěyǐ yòng gōngsī xìnyòngkǎ zhīfù.) - Chi phí khách sạn trong thời gian đi công tác có thể thanh toán bằng thẻ tín dụng của công ty.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "出差 期间 的 酒店 费用 可以 用 公司  ______  支付。 (Chūchāi qījiān de jiǔdiàn fèiyong kěyǐ yòng gōngsī xìnyòngkǎ zhīfù.) - Chi phí khách sạn trong thời gian đi công tác có thể thanh toán bằng thẻ tín dụng của công ty."
+    "study_day": 48,
+    "stage_10d": 5,
+    "example_zh": "出差 期间 的 酒店 费用 可以 用 公司 信用卡 支付。",
+    "example_pinyin": "Chūchāi qījiān de jiǔdiàn fèiyong kěyǐ yòng gōngsī xìnyòngkǎ zhīfù.",
+    "example_vi": "Chi phí khách sạn trong thời gian đi công tác có thể thanh toán bằng thẻ tín dụng của công ty.",
+    "example_cloze": "出差 期间 的 酒店 费用 可以 用 公司 ______ 支付。",
+    "priority_group": 1
   },
   {
     "id": 246,
@@ -3928,12 +4173,13 @@
     "meaning_vi": "Thứ hai là, tiếp theo (dùng khi liệt kê ý trong báo cáo hoặc email)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 62,
-    "stage_10d": 7,
-    "example_zh": "首先 我们 要 保证 质量， 其次 才 是 产量。 (Shǒuxiān wǒmen yào bǎozhèng zhìliàng, qícì cái shì chǎnliàng.) - Trước tiên chúng ta phải đảm bảo chất lượng, thứ hai mới là sản lượng.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "首先 我们 要 保证 质量，  ______  才 是 产量。 (Shǒuxiān wǒmen yào bǎozhèng zhìliàng, qícì cái shì chǎnliàng.) - Trước tiên chúng ta phải đảm bảo chất lượng, thứ hai mới là sản lượng."
+    "study_day": 72,
+    "stage_10d": 8,
+    "example_zh": "首先 我们 要 保证 质量， 其次 才 是 产量。",
+    "example_pinyin": "Shǒuxiān wǒmen yào bǎozhèng zhìliàng, qícì cái shì chǎnliàng.",
+    "example_vi": "Trước tiên chúng ta phải đảm bảo chất lượng, thứ hai mới là sản lượng.",
+    "example_cloze": "首先 我们 要 保证 质量， ______ 才 是 产量。",
+    "priority_group": 2
   },
   {
     "id": 247,
@@ -3944,12 +4190,13 @@
     "meaning_vi": "Biên phiên dịch tài liệu hoặc ngôn ngữ trong môi trường FDI",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 62,
-    "stage_10d": 7,
-    "example_zh": "这份 合同 需要 vn_cn 翻译。 (Zhè fèn hétóng xūyào fānyì.) - Bản hợp đồng này cần được phiên dịch.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "这份 合同 需要 vn_cn  ______ 。 (Zhè fèn hétóng xūyào fānyì.) - Bản hợp đồng này cần được phiên dịch."
+    "study_day": 19,
+    "stage_10d": 2,
+    "example_zh": "这份 合同 需要 vn_cn 翻译。",
+    "example_pinyin": "Zhè fèn hétóng xūyào fānyì.",
+    "example_vi": "Bản hợp đồng này cần được phiên dịch.",
+    "example_cloze": "这份 合同 需要 vn_cn ______。",
+    "priority_group": 1
   },
   {
     "id": 248,
@@ -3960,12 +4207,13 @@
     "meaning_vi": "Đặc điểm sản phẩm, tính năng kỹ thuật hoặc đặc thù công việc",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 62,
+    "study_day": 61,
     "stage_10d": 7,
-    "example_zh": "请 详细 介绍 一下 这 款 新 产品 的 特点。 (Qǐng xiángxì jièshào yīxià zhè kuǎn xīn chǎnpǐn de tèdiǎn.) - Xin hãy giới thiệu chi tiết về đặc điểm của mẫu sản phẩm mới này.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请 详细 介绍 一下 这 款 新 产品 的  ______ 。 (Qǐng xiángxì jièshào yīxià zhè kuǎn xīn chǎnpǐn de tèdiǎn.) - Xin hãy giới thiệu chi tiết về đặc điểm của mẫu sản phẩm mới này."
+    "example_zh": "请 详细 介绍 一下 这 款 新 产品 的 特点。",
+    "example_pinyin": "Qǐng xiángxì jièshào yīxià zhè kuǎn xīn chǎnpǐn de tèdiǎn.",
+    "example_vi": "Xin hãy giới thiệu chi tiết về đặc điểm của mẫu sản phẩm mới này.",
+    "example_cloze": "请 详细 介绍 一下 这 款 新 产品 的 ______。",
+    "priority_group": 1
   },
   {
     "id": 249,
@@ -3976,12 +4224,13 @@
     "meaning_vi": "Thường hay, thường có xu hướng (dùng trong phân tích số liệu, quy trình)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 63,
-    "stage_10d": 7,
-    "example_zh": "2 月份 的 订单 往往 会 比较 多。 (Èr yuèfèn de dìngdān wǎngwǎng huì bǐjiào duō.) - Đơn hàng tháng 2 thường sẽ khá nhiều.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "2 月份 的 订单  ______  会 比较 多。 (Èr yuèfèn de dìngdān wǎngwǎng huì bǐjiào duō.) - Đơn hàng tháng 2 thường sẽ khá nhiều."
+    "study_day": 73,
+    "stage_10d": 8,
+    "example_zh": "2 月份 的 订单 往往 会 比较 多。",
+    "example_pinyin": "Èr yuèfèn de dìngdān wǎngwǎng huì bǐjiào duō.",
+    "example_vi": "Đơn hàng tháng 2 thường sẽ khá nhiều.",
+    "example_cloze": "2 月份 的 订单 ______ 会 比较 多。",
+    "priority_group": 2
   },
   {
     "id": 250,
@@ -3992,12 +4241,13 @@
     "meaning_vi": "Không chỉ (thường đi với 而且 trong văn bản hành chính, thương mại)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 63,
-    "stage_10d": 7,
-    "example_zh": "我们 不但 要 完成 任务， 还要 注意 安全。 (Wǒmen bùdàn yào wánchéng rènwù, háiyào zhùyì ānquán.) - Chúng ta không chỉ phải hoàn thành nhiệm vụ mà còn phải chú ý an toàn.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "我们  ______  要 完成 任务， 还要 注意 安全。 (Wǒmen bùdàn yào wánchéng rènwù, háiyào zhùyì ānquán.) - Chúng ta không chỉ phải hoàn thành nhiệm vụ mà còn phải chú ý an toàn."
+    "study_day": 73,
+    "stage_10d": 8,
+    "example_zh": "我们 不但 要 完成 任务， 还要 注意 安全。",
+    "example_pinyin": "Wǒmen bùdàn yào wánchéng rènwù, háiyào zhùyì ānquán.",
+    "example_vi": "Chúng ta không chỉ phải hoàn thành nhiệm vụ mà còn phải chú ý an toàn.",
+    "example_cloze": "我们 ______ 要 完成 任务， 还要 注意 安全。",
+    "priority_group": 2
   },
   {
     "id": 251,
@@ -4008,12 +4258,13 @@
     "meaning_vi": "Thay thế (linh kiện, nhân sự, quy trình)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 63,
+    "study_day": 61,
     "stage_10d": 7,
-    "example_zh": "这种 材料 可以 代替 原来 的 进口 料。 (Zhè zhǒng cáiliào kěyǐ dàitì yuánlái de jìnkǒu liào.) - Loại vật liệu này có thể thay thế nguyên liệu nhập khẩu ban đầu.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "这种 材料 可以  ______  原来 的 进口 料。 (Zhè zhǒng cáiliào kěyǐ dàitì yuánlái de jìnkǒu liào.) - Loại vật liệu này có thể thay thế nguyên liệu nhập khẩu ban đầu."
+    "example_zh": "这种 材料 可以 代替 原来 的 进口 料。",
+    "example_pinyin": "Zhè zhǒng cáiliào kěyǐ dàitì yuánlái de jìnkǒu liào.",
+    "example_vi": "Loại vật liệu này có thể thay thế nguyên liệu nhập khẩu ban đầu.",
+    "example_cloze": "这种 材料 可以 ______ 原来 的 进口 料。",
+    "priority_group": 1
   },
   {
     "id": 252,
@@ -4024,12 +4275,13 @@
     "meaning_vi": "Đồ gỗ văn phòng, nội thất văn phòng",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 63,
-    "stage_10d": 7,
-    "example_zh": "行政部 正在 采购 新 的 办公室 家具。 (Xíngzhèngbù zhèngzài cǎigòu xīn de bàngōngshì jiājù.) - Phòng Hành chính đang mua sắm nội thất văn phòng mới.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "行政部 正在 采购 新 的 办公室  ______ 。 (Xíngzhèngbù zhèngzài cǎigòu xīn de bàngōngshì jiājù.) - Phòng Hành chính đang mua sắm nội thất văn phòng mới."
+    "study_day": 20,
+    "stage_10d": 2,
+    "example_zh": "行政部 正在 采购 新 的 办公室 家具。",
+    "example_pinyin": "Xíngzhèngbù zhèngzài cǎigòu xīn de bàngōngshì jiājù.",
+    "example_vi": "Phòng Hành chính đang mua sắm nội thất văn phòng mới.",
+    "example_cloze": "行政部 正在 采购 新 的 办公室 ______。",
+    "priority_group": 1
   },
   {
     "id": 253,
@@ -4040,12 +4292,13 @@
     "meaning_vi": "Thương lượng, bàn bạc (về phương án công việc, giá cả, hợp đồng)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 64,
-    "stage_10d": 7,
-    "example_zh": "这 个 项目 的 细节 我们 需要 再 商量 一下。 (Zhè gè xiàngmù de xìjié wǒmen xūyào zài shāngliang yīxià.) - Chi tiết của dự án này chúng ta cần bàn bạc lại một chút.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "这 个 项目 的 细节 我们 需要 再  ______  一下。 (Zhè gè xiàngmù de xìjié wǒmen xūyào zài shāngliang yīxià.) - Chi tiết của dự án này chúng ta cần bàn bạc lại một chút."
+    "study_day": 48,
+    "stage_10d": 5,
+    "example_zh": "这 个 项目 的 细节 我们 需要 再 商量 一下。",
+    "example_pinyin": "Zhè gè xiàngmù de xìjié wǒmen xūyào zài shāngliang yīxià.",
+    "example_vi": "Chi tiết của dự án này chúng ta cần bàn bạc lại một chút.",
+    "example_cloze": "这 个 项目 的 细节 我们 需要 再 ______ 一下。",
+    "priority_group": 1
   },
   {
     "id": 254,
@@ -4056,12 +4309,13 @@
     "meaning_vi": "Hơi, một chút (dùng khi yêu cầu điều chỉnh công việc, tiến độ)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 64,
-    "stage_10d": 7,
-    "example_zh": "请 把 交货 时间 稍微 提前 一点。 (Qǐng bǎ jiāohuò shíjiān shāowēi tíqián yīdiǎn.) - Xin hãy đẩy sớm thời gian giao hàng lên một chút.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "请 把 交货 时间  ______  提前 一点。 (Qǐng bǎ jiāohuò shíjiān shāowēi tíqián yīdiǎn.) - Xin hãy đẩy sớm thời gian giao hàng lên một chút."
+    "study_day": 73,
+    "stage_10d": 8,
+    "example_zh": "请 把 交货 时间 稍微 提前 一点。",
+    "example_pinyin": "Qǐng bǎ jiāohuò shíjiān shāowēi tíqián yīdiǎn.",
+    "example_vi": "Xin hãy đẩy sớm thời gian giao hàng lên một chút.",
+    "example_cloze": "请 把 交货 时间 ______ 提前 一点。",
+    "priority_group": 2
   },
   {
     "id": 255,
@@ -4072,12 +4326,13 @@
     "meaning_vi": "Thiếu hụt (nhân sự, vật tư, linh kiện trong sản xuất)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 64,
+    "study_day": 62,
     "stage_10d": 7,
-    "example_zh": "目前 仓库 缺少 这种 规格 的 螺丝。 (Mùqián cāngkù quēshǎo zhè zhǒng guīgé de luósī.) - Hiện tại kho đang thiếu loại ốc vít quy cách này.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "目前 仓库  ______  这种 规格 的 螺丝。 (Mùqián cāngkù quēshǎo zhè zhǒng guīgé de luósī.) - Hiện tại kho đang thiếu loại ốc vít quy cách này."
+    "example_zh": "目前 仓库 缺少 这种 规格 的 螺丝。",
+    "example_pinyin": "Mùqián cāngkù quēshǎo zhè zhǒng guīgé de luósī.",
+    "example_vi": "Hiện tại kho đang thiếu loại ốc vít quy cách này.",
+    "example_cloze": "目前 仓库 ______ 这种 规格 的 螺丝。",
+    "priority_group": 1
   },
   {
     "id": 256,
@@ -4088,12 +4343,13 @@
     "meaning_vi": "",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 64,
-    "stage_10d": 7,
-    "example_zh": "新 员工 入职 时 必须 阅读 公司 规章 制度。 (Xīn yuángōng rùzhí shí bìxū yuèdú gōngsī guīzhāng zhìdù.) - Nhân viên mới khi nhận việc bắt buộc phải đọc quy chế quy định của công ty.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "新 员工 入职 时 必须  ______  公司 规章 制度。 (Xīn yuángōng rùzhí shí bìxū yuèdú gōngsī guīzhāng zhìdù.) - Nhân viên mới khi nhận việc bắt buộc phải đọc quy chế quy định của công ty."
+    "study_day": 34,
+    "stage_10d": 4,
+    "example_zh": "新 员工 入职 时 必须 阅读 公司 规章 制度。",
+    "example_pinyin": "Xīn yuángōng rùzhí shí bìxū yuèdú gōngsī guīzhāng zhìdù.",
+    "example_vi": "Nhân viên mới khi nhận việc bắt buộc phải đọc quy chế quy định của công ty.",
+    "example_cloze": "新 员工 入职 时 必须 ______ 公司 规章 制度。",
+    "priority_group": 1
   },
   {
     "id": 257,
@@ -4104,12 +4360,13 @@
     "meaning_vi": "Chỗ ngồi (trong văn phòng hoặc phòng họp)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 65,
-    "stage_10d": 7,
-    "example_zh": "行政部 已经 安排 好 了 新 员工 的 座位。 (Xíngzhèngbù yǐjīng ānpái hǎo le xīn yuángōng de zuòwèi.) - Phòng Hành chính đã sắp xếp xong chỗ ngồi cho nhân viên mới.",
-    "example_pinyin": "",
-    "example_vi": "",
-    "example_cloze": "行政部 已经 安排 好 了 新 员工 的  ______ 。 (Xíngzhèngbù yǐjīng ānpái hǎo le xīn yuángōng de zuòwèi.) - Phòng Hành chính đã sắp xếp xong chỗ ngồi cho nhân viên mới."
+    "study_day": 20,
+    "stage_10d": 2,
+    "example_zh": "行政部 已经 安排 好 了 新 员工 的 座位。",
+    "example_pinyin": "Xíngzhèngbù yǐjīng ānpái hǎo le xīn yuángōng de zuòwèi.",
+    "example_vi": "Phòng Hành chính đã sắp xếp xong chỗ ngồi cho nhân viên mới.",
+    "example_cloze": "行政部 已经 安排 好 了 新 员工 的 ______。",
+    "priority_group": 1
   },
   {
     "id": 258,
@@ -4120,12 +4377,13 @@
     "meaning_vi": "đăng ký (tham gia khóa đào tạo, cuộc thi, sự kiện)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 65,
-    "stage_10d": 7,
+    "study_day": 34,
+    "stage_10d": 4,
     "example_zh": "请大家本周五之前完成培训报名。",
     "example_pinyin": "Qǐng dàjiā běn zhōu wǔ zhī qián wán chéng péixùn bàomíng.",
     "example_vi": "Xin mời mọi người hoàn thành đăng ký đào tạo trước thứ Sáu tuần này.",
-    "example_cloze": "请大家本周五之前完成培训 ______ 。"
+    "example_cloze": "请大家本周五之前完成培训 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 259,
@@ -4136,12 +4394,13 @@
     "meaning_vi": "vô cùng, hết sức (dùng trong văn bản hoặc báo cáo)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 65,
-    "stage_10d": 7,
+    "study_day": 73,
+    "stage_10d": 8,
     "example_zh": "这个问题极其重要，请 认真对待。",
     "example_pinyin": "Zhège wèntí jíqí zhòngyào, qǐng rènzhēn duìdài.",
     "example_vi": "Vấn đề này cực kỳ quan trọng, đề nghị đối xử nghiêm túc.",
-    "example_cloze": "这个问题 ______ 重要，请 认真对待。"
+    "example_cloze": "这个问题 ______ 重要，请 认真对待。",
+    "priority_group": 2
   },
   {
     "id": 260,
@@ -4152,12 +4411,13 @@
     "meaning_vi": "tổng kết, rút kinh nghiệm, bản báo cáo tổng kết",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 65,
-    "stage_10d": 7,
+    "study_day": 20,
+    "stage_10d": 2,
     "example_zh": "请经理在月度会议上做工作总结。",
     "example_pinyin": "Qǐng jīnglǐ zài yuèdù huìyì shàng zuò gōngzuò zǒngjié.",
     "example_vi": "Xin mời giám đốc làm báo cáo tổng kết công việc tại cuộc họp tháng.",
-    "example_cloze": "请经理在月度会议上做工作 ______ 。"
+    "example_cloze": "请经理在月度会议上做工作 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 261,
@@ -4168,12 +4428,13 @@
     "meaning_vi": "đạt tiêu chuẩn, đủ điều kiện, chất lượng đạt yêu cầu",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 66,
+    "study_day": 62,
     "stage_10d": 7,
     "example_zh": "这批产品不合格，不能出厂。",
     "example_pinyin": "Zhè pī chǎnpǐn bù hégé, bùnéng chūchǎng.",
     "example_vi": "Lô sản phẩm này không đạt tiêu chuẩn, không thể xuất xưởng.",
-    "example_cloze": "这批产品不 ______ ，不能出厂。"
+    "example_cloze": "这批产品不 ______ ，不能出厂。",
+    "priority_group": 1
   },
   {
     "id": 262,
@@ -4184,12 +4445,13 @@
     "meaning_vi": "điểm mạnh, ưu điểm (trong đánh giá nhân sự)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 66,
-    "stage_10d": 7,
+    "study_day": 35,
+    "stage_10d": 4,
     "example_zh": "在面试中，我们要展现自己的优点。",
     "example_pinyin": "Zài miànshì zhōng, wǒmen yào zhǎnxiàn zìjǐ de yōudiǎn.",
     "example_vi": "Trong buổi phỏng vấn, chúng ta phải thể hiện được điểm mạnh của bản thân.",
-    "example_cloze": "在面试中，我们要展现自己的 ______ 。"
+    "example_cloze": "在面试中，我们要展现自己的 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 263,
@@ -4200,12 +4462,13 @@
     "meaning_vi": "không kịp, không đủ thời gian (để giải quyết việc)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 66,
-    "stage_10d": 7,
+    "study_day": 74,
+    "stage_10d": 8,
     "example_zh": "现在改方案已经来不及了。",
     "example_pinyin": "Xiànzài gǎi fāng'àn yǐjīng láibují le.",
     "example_vi": "Bây giờ sửa phương án thì đã không kịp nữa rồi.",
-    "example_cloze": "现在改方案已经 ______ 了。"
+    "example_cloze": "现在改方案已经 ______ 了。",
+    "priority_group": 2
   },
   {
     "id": 264,
@@ -4216,12 +4479,13 @@
     "meaning_vi": "phổ biến, rộng rãi (tình hình, vấn đề chung)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 66,
-    "stage_10d": 7,
+    "study_day": 20,
+    "stage_10d": 2,
     "example_zh": "这是目前市场普遍存在的现象。",
     "example_pinyin": "Zhè shì mùqián shìchǎng pǔbiàn cúnzài de xiànxiàng.",
     "example_vi": "Đây là hiện tượng phổ biến tồn tại trên thị trường hiện nay.",
-    "example_cloze": "这是目前市场 ______ 存在的现象。"
+    "example_cloze": "这是目前市场 ______ 存在的现象。",
+    "priority_group": 1
   },
   {
     "id": 265,
@@ -4232,12 +4496,13 @@
     "meaning_vi": "làm thêm giờ, tăng ca",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 67,
-    "stage_10d": 7,
+    "study_day": 35,
+    "stage_10d": 4,
     "example_zh": "因为赶订单，今晚需要安排加班。",
     "example_pinyin": "Yīnwèi gǎn dìngdān, jīnwǎn xūyào ānpái jiābān.",
     "example_vi": "Vì gấp đơn hàng, tối nay cần sắp xếp tăng ca.",
-    "example_cloze": "因为赶订单，今晚需要安排 ______ 。"
+    "example_cloze": "因为赶订单，今晚需要安排 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 266,
@@ -4248,12 +4513,13 @@
     "meaning_vi": "thứ tự, trình tự (thực hiện công việc, quy trình)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 67,
+    "study_day": 62,
     "stage_10d": 7,
     "example_zh": "请按照工作顺序进行操作。",
     "example_pinyin": "Qǐng ànzhào gōngzuò shùnxù jìnxíng cāozuò.",
     "example_vi": "Xin vui lòng tiến hành thao tác theo trình tự công việc.",
-    "example_cloze": "请按照工作 ______ 进行操作。"
+    "example_cloze": "请按照工作 ______ 进行操作。",
+    "priority_group": 1
   },
   {
     "id": 267,
@@ -4264,12 +4530,13 @@
     "meaning_vi": "đúng giờ, đúng thời hạn quy định",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 67,
-    "stage_10d": 7,
+    "study_day": 21,
+    "stage_10d": 3,
     "example_zh": "请大家准时 参加明早的部门会议。",
     "example_pinyin": "Qǐng dàjiā zhǔnshí cānjiā míngzǎo de bùmén huìyì.",
     "example_vi": "Xin mời mọi người tham gia đúng giờ cuộc họp bộ phận vào sáng mai.",
-    "example_cloze": "请大家 ______  参加明早的部门会议。"
+    "example_cloze": "请大家 ______  参加明早的部门会议。",
+    "priority_group": 1
   },
   {
     "id": 268,
@@ -4280,12 +4547,13 @@
     "meaning_vi": "Lịch sự, phép xã giao trong công sở",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 67,
-    "stage_10d": 7,
+    "study_day": 21,
+    "stage_10d": 3,
     "example_zh": "接待客户时一定要注意礼貌。",
     "example_pinyin": "Jiēdài kèhù shí yídìng yào zhùyì lǐmào.",
     "example_vi": "Khi tiếp khách hàng nhất định phải chú ý phép lịch sự.",
-    "example_cloze": "接待客户时一定要注意 ______ 。"
+    "example_cloze": "接待客户时一定要注意 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 269,
@@ -4296,12 +4564,13 @@
     "meaning_vi": "Hoãn lại, lùi thời gian",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 68,
-    "stage_10d": 7,
+    "study_day": 74,
+    "stage_10d": 8,
     "example_zh": "因为 A 总有事， meeting 推迟到下午吧。",
     "example_pinyin": "Yīnwèi A zǒng yǒushì, huìyì tuīchí dào xiàwǔ ba.",
     "example_vi": "Vì tổng giám đốc A bận, cuộc họp hoãn lại đến buổi chiều nhé.",
-    "example_cloze": "因为 A 总有事， meeting  ______ 到下午吧。"
+    "example_cloze": "因为 A 总有事， meeting  ______ 到下午吧。",
+    "priority_group": 2
   },
   {
     "id": 270,
@@ -4312,12 +4581,13 @@
     "meaning_vi": "Tiếng Trung (dùng trong giao tiếp và tài liệu công việc)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 68,
-    "stage_10d": 7,
+    "study_day": 21,
+    "stage_10d": 3,
     "example_zh": "这份文件需要翻译成中文。",
     "example_pinyin": "Zhè fèn wénjiàn xūyào fānyì chéng Zhōngwén.",
     "example_vi": "Tài liệu này cần được dịch sang tiếng Trung.",
-    "example_cloze": "这份文件需要翻译成 ______ 。"
+    "example_cloze": "这份文件需要翻译成 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 271,
@@ -4328,12 +4598,13 @@
     "meaning_vi": "Giới tính (trong hồ sơ nhân sự)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 68,
-    "stage_10d": 7,
+    "study_day": 35,
+    "stage_10d": 4,
     "example_zh": "请在求职表格上填写姓名和性别。",
     "example_pinyin": "Qǐng zài qiúzhí biǎogé shàng tiánxiě xìngmíng hé xìngbié.",
     "example_vi": "Vui lòng điền họ tên và giới tính vào mẫu đơn xin việc.",
-    "example_cloze": "请在求职表格上填写姓名和 ______ 。"
+    "example_cloze": "请在求职表格上填写姓名和 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 272,
@@ -4344,12 +4615,13 @@
     "meaning_vi": "Máy fax, gửi fax",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 68,
-    "stage_10d": 7,
+    "study_day": 21,
+    "stage_10d": 3,
     "example_zh": "请把这份合同发传真给供应商。",
     "example_pinyin": "Qǐng bǎ zhè fèn hétóng fā chuánzhēn gěi gòngyīngshāng.",
     "example_vi": "Vui lòng gửi bản fax hợp đồng này cho nhà cung cấp.",
-    "example_cloze": "请把这份合同发 ______ 给供应商。"
+    "example_cloze": "请把这份合同发 ______ 给供应商。",
+    "priority_group": 1
   },
   {
     "id": 273,
@@ -4360,12 +4632,13 @@
     "meaning_vi": "Bắt tay (trong giao tiếp đối tác, ngoại giao)",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 69,
-    "stage_10d": 7,
+    "study_day": 49,
+    "stage_10d": 5,
     "example_zh": "签约 after，双方握手合影。",
     "example_pinyin": "Qiānyué hòumian, shuāngfāng wòshǒu héyǐng.",
     "example_vi": "Sau khi ký kết, hai bên bắt tay chụp ảnh lưu niệm.",
-    "example_cloze": "签约 after，双方 ______ 合影。"
+    "example_cloze": "签约 after，双方 ______ 合影。",
+    "priority_group": 1
   },
   {
     "id": 274,
@@ -4376,12 +4649,13 @@
     "meaning_vi": "Kịp thời, vẫn còn kịp (để hoàn thành công việc)",
     "domain": "CORE_GRAMMAR",
     "hsk_level": 4,
-    "study_day": 69,
-    "stage_10d": 7,
+    "study_day": 74,
+    "stage_10d": 8,
     "example_zh": "现在准备文件，明天开会还来得及。",
     "example_pinyin": "Xiànzài zhǔnbèi wénjiàn, míngtiān kāihuì hái lái de jí.",
     "example_vi": "Bây giờ chuẩn bị tài liệu, họp ngày mai vẫn còn kịp.",
-    "example_cloze": "现在准备文件，明天开会还 ______ 。"
+    "example_cloze": "现在准备文件，明天开会还 ______ 。",
+    "priority_group": 2
   },
   {
     "id": 275,
@@ -4392,12 +4666,13 @@
     "meaning_vi": "Đi công tác",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 69,
-    "stage_10d": 7,
+    "study_day": 35,
+    "stage_10d": 4,
     "example_zh": "经理下周去 Ho Chi Minh 出差。",
     "example_pinyin": "Jīnglǐ xià zhōu qù Ho Chi Minh chūchāi.",
     "example_vi": "Tuần sau giám đốc đi TP.HCM công tác.",
-    "example_cloze": "经理下周去 Ho Chi Minh  ______ 。"
+    "example_cloze": "经理下周去 Ho Chi Minh  ______ 。",
+    "priority_group": 1
   },
   {
     "id": 276,
@@ -4408,12 +4683,13 @@
     "meaning_vi": "Đúng giờ, đúng hạn",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 69,
+    "study_day": 62,
     "stage_10d": 7,
     "example_zh": "请大家按时提交周报。",
     "example_pinyin": "Qǐng dàjiā ànshí tíjiāo zhōubào.",
     "example_vi": "Mọi người vui lòng nộp báo cáo tuần đúng hạn.",
-    "example_cloze": "请大家 ______ 提交周报。"
+    "example_cloze": "请大家 ______ 提交周报。",
+    "priority_group": 1
   },
   {
     "id": 277,
@@ -4424,12 +4700,13 @@
     "meaning_vi": "Tiết kiệm (chi phí, nguyên vật liệu trong nhà xưởng)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 70,
+    "study_day": 63,
     "stage_10d": 7,
     "example_zh": "生产部门需要节约原材料成本。",
     "example_pinyin": "Shēngchǎn bùmén xūyào jiéyuē yuáncáiliào chéngběn.",
     "example_vi": "Bộ phận sản xuất cần tiết kiệm chi phí nguyên vật liệu.",
-    "example_cloze": "生产部门需要 ______ 原材料成本。"
+    "example_cloze": "生产部门需要 ______ 原材料成本。",
+    "priority_group": 1
   },
   {
     "id": 278,
@@ -4440,12 +4717,13 @@
     "meaning_vi": "Tuyển dụng",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 70,
-    "stage_10d": 7,
+    "study_day": 36,
+    "stage_10d": 4,
     "example_zh": "我们公司正在招聘行政主管。",
     "example_pinyin": "Wǒmen gōngsī zhèngzài zhāopìn xíngzhèng zhǔguǎn.",
     "example_vi": "Công ty chúng tôi đang tuyển dụng trưởng phòng hành chính.",
-    "example_cloze": "我们公司正在 ______ 行政主管。"
+    "example_cloze": "我们公司正在 ______ 行政主管。",
+    "priority_group": 1
   },
   {
     "id": 279,
@@ -4456,12 +4734,13 @@
     "meaning_vi": "Visa, thị thực (cho nhân viên đi công tác nước ngoài)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 70,
-    "stage_10d": 7,
+    "study_day": 22,
+    "stage_10d": 3,
     "example_zh": "HR 帮我去办去中国的签证。",
     "example_pinyin": "HR bāng wǒ qù bàn qù Zhōngguó de qiānzhèng.",
     "example_vi": "Nhân sự giúp tôi đi làm visa sang Trung Quốc.",
-    "example_cloze": "HR 帮我去办去中国的 ______ 。"
+    "example_cloze": "HR 帮我去办去中国的 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 280,
@@ -4472,12 +4751,13 @@
     "meaning_vi": "In ấn tài liệu, đóng dấu",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 70,
-    "stage_10d": 7,
+    "study_day": 22,
+    "stage_10d": 3,
     "example_zh": "请帮我打印这份合同的两份副本。",
     "example_pinyin": "Qǐng bāng wǒ dǎyìn zhè fèn hétóng de liǎng fèn fùběn.",
     "example_vi": "Vui lòng giúp tôi in hai bản sao của hợp đồng này.",
-    "example_cloze": "请帮我 ______ 这份合同的两份副本。"
+    "example_cloze": "请帮我 ______ 这份合同的两份副本。",
+    "priority_group": 1
   },
   {
     "id": 281,
@@ -4488,12 +4768,13 @@
     "meaning_vi": "Sắp xếp, bố trí (lịch trình, sản phẩm)",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 71,
-    "stage_10d": 8,
+    "study_day": 63,
+    "stage_10d": 7,
     "example_zh": "仓库里货物的排列要整齐。",
     "example_pinyin": "Cāngkù lǐ huòwù de páiliè yào zhěngqí.",
     "example_vi": "Việc sắp xếp hàng hóa trong kho phải ngăn nắp.",
-    "example_cloze": "仓库里货物的 ______ 要整齐。"
+    "example_cloze": "仓库里货物的 ______ 要整齐。",
+    "priority_group": 1
   },
   {
     "id": 282,
@@ -4504,12 +4785,13 @@
     "meaning_vi": "Tích lũy (kinh nghiệm làm việc)",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 71,
-    "stage_10d": 8,
+    "study_day": 36,
+    "stage_10d": 4,
     "example_zh": "年轻人需要多积累工作经验。",
     "example_pinyin": "Niánqīng rén xūyào duō jīlěi gōngzuò jīngyàn.",
     "example_vi": "Người trẻ tuổi cần tích lũy thêm kinh nghiệm làm việc.",
-    "example_cloze": "年轻人需要多 ______ 工作经验。"
+    "example_cloze": "年轻人需要多 ______ 工作经验。",
+    "priority_group": 1
   },
   {
     "id": 283,
@@ -4520,12 +4802,13 @@
     "meaning_vi": "Ngăn nắp, gọn gàng, đúng quy chuẩn",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 71,
-    "stage_10d": 8,
+    "study_day": 22,
+    "stage_10d": 3,
     "example_zh": "办公桌上的文件要摆放整齐。",
     "example_pinyin": "Bàngōngzhuō shàng de wénjiàn yào bǎifàng zhěngqí.",
     "example_vi": "Tài liệu trên bàn làm việc phải được sắp xếp ngăn nắp.",
-    "example_cloze": "办公桌上的文件要摆放 ______ 。"
+    "example_cloze": "办公桌上的文件要摆放 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 284,
@@ -4536,12 +4819,13 @@
     "meaning_vi": "Biểu mẫu, bảng dữ liệu (Excel, form)",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 71,
-    "stage_10d": 8,
+    "study_day": 22,
+    "stage_10d": 3,
     "example_zh": "请填写这张考勤表格。",
     "example_pinyin": "Qǐng tiánxiě zhè zhāng kǎoqín biǎogé.",
     "example_vi": "Vui lòng điền vào bảng chấm công này.",
-    "example_cloze": "请填写这张考勤 ______ 。"
+    "example_cloze": "请填写这张考勤 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 285,
@@ -4552,12 +4836,13 @@
     "meaning_vi": "Biểu dương, khen thưởng nhân viên",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 72,
-    "stage_10d": 8,
+    "study_day": 36,
+    "stage_10d": 4,
     "example_zh": "公司决定表扬这个月的优秀员工。",
     "example_pinyin": "Gōngsī juédìng biǎoyáng zhège yuè de yōuxiù yuángōng.",
     "example_vi": "Công ty quyết định biểu dương nhân viên xuất sắc của tháng này.",
-    "example_cloze": "公司决定 ______ 这个月的优秀员工。"
+    "example_cloze": "公司决定 ______ 这个月的优秀员工。",
+    "priority_group": 1
   },
   {
     "id": 286,
@@ -4568,12 +4853,13 @@
     "meaning_vi": "Làm ăn, kinh doanh",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 72,
-    "stage_10d": 8,
+    "study_day": 49,
+    "stage_10d": 5,
     "example_zh": "我们公司主要跟海外客户做生意。",
     "example_pinyin": "Wǒmen gōngsī zhǔyào gēn hǎiwài kèhù zuò shēngyì.",
     "example_vi": "Công ty chúng tôi chủ yếu làm ăn với khách hàng nước ngoài.",
-    "example_cloze": "我们公司主要跟海外客户 ______ 。"
+    "example_cloze": "我们公司主要跟海外客户 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 287,
@@ -4584,12 +4870,13 @@
     "meaning_vi": "Xin nghỉ phép",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 72,
-    "stage_10d": 8,
+    "study_day": 36,
+    "stage_10d": 4,
     "example_zh": "员工因病请假需要提供医院证明。",
     "example_pinyin": "Yuángōng yīn bìng qǐngjià xūyào tígōng yīyuàn zhèngmíng.",
     "example_vi": "Nhân viên xin nghỉ ốm cần phải cung cấp giấy chứng nhận của bệnh viện.",
-    "example_cloze": "员工因病 ______ 需要提供医院证明。"
+    "example_cloze": "员工因病 ______ 需要提供医院证明。",
+    "priority_group": 1
   },
   {
     "id": 288,
@@ -4600,12 +4887,13 @@
     "meaning_vi": "Giảm giá, chiết khấu",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 72,
-    "stage_10d": 8,
+    "study_day": 49,
+    "stage_10d": 5,
     "example_zh": "这款产品批量购买可以打折吗？",
     "example_pinyin": "Zhè kuān chǎnpǐn pīliàng gòumǎi kěyǐ dǎzhé ma?",
     "example_vi": "Sản phẩm này mua số lượng lớn có được giảm giá không?",
-    "example_cloze": "这款产品批量购买可以 ______ 吗？"
+    "example_cloze": "这款产品批量购买可以 ______ 吗？",
+    "priority_group": 1
   },
   {
     "id": 289,
@@ -4616,12 +4904,13 @@
     "meaning_vi": "Photocopy, sao chụp tài liệu",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 73,
-    "stage_10d": 8,
+    "study_day": 23,
+    "stage_10d": 3,
     "example_zh": "请帮我复印一式三份的合同。",
     "example_pinyin": "Qǐng bāng wǒ fùyìn yīshì sān fèn de hétóng.",
     "example_vi": "Làm ơn phôtô giúp tôi hợp đồng thành 3 bản.",
-    "example_cloze": "请帮我 ______ 一式三份的合同。"
+    "example_cloze": "请帮我 ______ 一式三份的合同。",
+    "priority_group": 1
   },
   {
     "id": 290,
@@ -4632,12 +4921,13 @@
     "meaning_vi": "Nhân viên bán hàng",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 73,
-    "stage_10d": 8,
+    "study_day": 49,
+    "stage_10d": 5,
     "example_zh": "商场正在招聘优秀的售货员。",
     "example_pinyin": "Shāngchǎng zhèngzài zhāopìn yōuxiù de shòuhuòyuán.",
     "example_vi": "Trung tâm thương mại đang tuyển dụng nhân viên bán hàng xuất sắc.",
-    "example_cloze": "商场正在招聘优秀的 ______ 。"
+    "example_cloze": "商场正在招聘优秀的 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 291,
@@ -4648,12 +4938,13 @@
     "meaning_vi": "Cẩu thả, tắc trách",
     "domain": "PRODUCTION",
     "hsk_level": 4,
-    "study_day": 73,
-    "stage_10d": 8,
+    "study_day": 63,
+    "stage_10d": 7,
     "example_zh": "质检工作绝对不能马虎。",
     "example_pinyin": "Zhìjiǎn gōngzuò juéduì bùnéng mǎhu.",
     "example_vi": "Công việc kiểm tra chất lượng tuyệt đối không được cẩu thả.",
-    "example_cloze": "质检工作绝对不能 ______ 。"
+    "example_cloze": "质检工作绝对不能 ______ 。",
+    "priority_group": 1
   },
   {
     "id": 292,
@@ -4664,12 +4955,13 @@
     "meaning_vi": "Tiền Nhân dân tệ",
     "domain": "RETAIL_COMMERCE",
     "hsk_level": 4,
-    "study_day": 73,
-    "stage_10d": 8,
+    "study_day": 50,
+    "stage_10d": 5,
     "example_zh": "这份报价单的金额是以人民币计算的。",
     "example_pinyin": "Zhè fèn bàojiàdān de jīn'é shì yǐ rénmínbì jìsuàn de.",
     "example_vi": "Số tiền trong bảng báo giá này được tính bằng nhân dân tệ.",
-    "example_cloze": "这份报价单的金额是以 ______ 计算的。"
+    "example_cloze": "这份报价单的金额是以 ______ 计算的。",
+    "priority_group": 1
   },
   {
     "id": 293,
@@ -4680,12 +4972,13 @@
     "meaning_vi": "Vô ý, sơ suất, bất cẩn",
     "domain": "ADMIN_SECRETARY",
     "hsk_level": 4,
-    "study_day": 74,
-    "stage_10d": 8,
+    "study_day": 24,
+    "stage_10d": 3,
     "example_zh": "因为工作粗心，他算错了账目。",
     "example_pinyin": "Yīnwei gōngzuò cūxīn, tā suàn cuòle zhàngmù.",
     "example_vi": "Do sơ suất trong công việc, anh ấy đã tính nhầm sổ sách.",
-    "example_cloze": "因为工作 ______ ，他算错了账目。"
+    "example_cloze": "因为工作 ______ ，他算错了账目。",
+    "priority_group": 1
   },
   {
     "id": 294,
@@ -4696,11 +4989,12 @@
     "meaning_vi": "Điền vào chỗ trống, điền đơn / bổ sung vị trí tuyển dụng",
     "domain": "HR_GENERAL",
     "hsk_level": 4,
-    "study_day": 74,
-    "stage_10d": 8,
+    "study_day": 37,
+    "stage_10d": 4,
     "example_zh": "请在新员工入职表格上填空。",
     "example_pinyin": "Qǐng zài xīn yuángōng rùzhí biǎogé shàng tiánkòng.",
     "example_vi": "Vui lòng điền vào mẫu đơn nhận việc dành cho nhân viên mới.",
-    "example_cloze": "请在新员工入职表格上 ______ 。"
+    "example_cloze": "请在新员工入职表格上 ______ 。",
+    "priority_group": 1
   }
 ]
