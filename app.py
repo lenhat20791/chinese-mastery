@@ -369,7 +369,7 @@ with tab_study:
                             st.rerun()
         else:
             st.session_state.phase = "SHADOWING"
-            st.rerun()
+            st.rerun() 
 
     # =========================================================================
     # CHẶNG 2: LUYỆN ĐỌC CẢ CÂU (SHADOWING)
