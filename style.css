@@ -61,7 +61,10 @@ header[data-testid="stHeader"] { background: transparent; }
 
 /* ---------- Ô nhập liệu: nền trắng, chữ tối ---------- */
 div[data-baseweb="input"],
-div[data-baseweb="textarea"] {
+div[data-baseweb="textarea"],
+[data-testid="stTextInputRootElement"],
+[data-testid="stNumberInputContainer"],
+[data-testid="stTextAreaRootElement"] {
     background-color: #ffffff !important;
     border: 2px solid #c9a0dc !important;
     border-radius: 10px !important;
@@ -71,24 +74,41 @@ div[data-baseweb="base-input"] {
     border: none !important;
 }
 div[data-baseweb="input"]:focus-within,
-div[data-baseweb="textarea"]:focus-within {
+div[data-baseweb="textarea"]:focus-within,
+[data-testid="stTextInputRootElement"]:focus-within,
+[data-testid="stNumberInputContainer"]:focus-within {
     border-color: #e040fb !important;
     box-shadow: 0 0 0 3px rgba(224, 64, 251, 0.3);
 }
-.stApp div[data-baseweb="input"] input,
-.stApp div[data-baseweb="textarea"] textarea {
+.stApp input[type="text"],
+.stApp input[type="password"],
+.stApp input[type="number"],
+.stApp input[type="email"],
+.stApp textarea,
+[data-testid="stTextInput"] input,
+[data-testid="stNumberInput"] input,
+[data-testid="stTextArea"] textarea {
     background-color: #ffffff !important;
     color: #1a1a1a !important;
     -webkit-text-fill-color: #1a1a1a !important;
     caret-color: #8a0f8f;
 }
-.stApp div[data-baseweb="input"] input::placeholder,
-.stApp div[data-baseweb="textarea"] textarea::placeholder {
+.stApp input::placeholder, .stApp textarea::placeholder {
     color: #7a7a8a !important;
     -webkit-text-fill-color: #7a7a8a !important;
 }
+[data-testid="stTextInputRootElement"] svg,
+[data-testid="stNumberInputContainer"] svg,
 div[data-baseweb="input"] svg { fill: #4a4a5a !important; }
+[data-testid="stTextInputRootElement"] button,
 div[data-baseweb="input"] button { background: transparent !important; }
+
+/* Ô chọn (selectbox) giữ nền tối */
+[data-testid="stSelectbox"] input {
+    background-color: transparent !important;
+    color: var(--ink) !important;
+    -webkit-text-fill-color: var(--ink) !important;
+}
 
 /* ---------- Tab ---------- */
 button[data-baseweb="tab"] { font-weight: 600; font-size: 1rem; }
