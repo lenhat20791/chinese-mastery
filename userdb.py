@@ -70,7 +70,77 @@ SCHEMA = [
         key TEXT PRIMARY KEY,
         value TEXT
     )""",
+    # --- Trò chơi tu tiên (xem game_core.py) ---
+    """CREATE TABLE IF NOT EXISTS game_profile (
+        user_id INTEGER PRIMARY KEY,
+        linh_thach INTEGER NOT NULL DEFAULT 0,
+        equipped_artifact INTEGER,
+        equipped_title TEXT,
+        pity_mid INTEGER NOT NULL DEFAULT 0,
+        pity_high INTEGER NOT NULL DEFAULT 0,
+        fortune_streak INTEGER NOT NULL DEFAULT 0,
+        fortune_last_day TEXT
+    )""",
+    """CREATE TABLE IF NOT EXISTS game_daily (
+        user_id INTEGER NOT NULL,
+        day TEXT NOT NULL,
+        plays INTEGER NOT NULL DEFAULT 0,
+        PRIMARY KEY (user_id, day)
+    )""",
+    """CREATE TABLE IF NOT EXISTS game_inventory (
+        user_id INTEGER NOT NULL,
+        item_code TEXT NOT NULL,
+        qty INTEGER NOT NULL DEFAULT 0,
+        PRIMARY KEY (user_id, item_code)
+    )""",
+    """CREATE TABLE IF NOT EXISTS game_recipes (
+        user_id INTEGER NOT NULL,
+        recipe_code TEXT NOT NULL,
+        PRIMARY KEY (user_id, recipe_code)
+    )""",
+    """CREATE TABLE IF NOT EXISTS game_artifacts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        recipe_code TEXT NOT NULL,
+        quality INTEGER NOT NULL,
+        upgrade INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )""",
+    "CREATE INDEX IF NOT EXISTS idx_game_artifacts_user ON game_artifacts (user_id, id)",
+    """CREATE TABLE IF NOT EXISTS game_fortune (
+        user_id INTEGER NOT NULL,
+        day TEXT NOT NULL,
+        vocab_id INTEGER NOT NULL,
+        tier TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending',
+        buff TEXT,
+        PRIMARY KEY (user_id, day)
+    )""",
+    """CREATE TABLE IF NOT EXISTS game_achievements (
+        user_id INTEGER NOT NULL,
+        code TEXT NOT NULL,
+        unlocked_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (user_id, code)
+    )""",
+    """CREATE TABLE IF NOT EXISTS game_counters (
+        user_id INTEGER NOT NULL,
+        key TEXT NOT NULL,
+        value INTEGER NOT NULL DEFAULT 0,
+        PRIMARY KEY (user_id, key)
+    )""",
+    """CREATE TABLE IF NOT EXISTS game_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        ts TEXT DEFAULT CURRENT_TIMESTAMP,
+        kind TEXT NOT NULL,
+        text TEXT NOT NULL
+    )""",
+    "CREATE INDEX IF NOT EXISTS idx_game_log_user ON game_log (user_id, id)",
 ]
+
+# Bảng theo user_id của trò chơi (xóa tài khoản, sao lưu)
+GAME_TABLES = ["game_profile", "game_daily", "game_inventory", "game_recipes", "game_artifacts",
+               "game_fortune", "game_achievements", "game_counters", "game_log"]
 
 
 class Row:
@@ -194,6 +264,15 @@ class TursoConnection:
         results = self._pipeline([{"type": "execute", "stmt": self._stmt(sql, params)}])
         return TursoCursor(results[0]["response"]["result"])
 
+    def execute_many(self, statements):
+        """Chạy nhiều câu độc lập trong một lần gọi HTTP, trả về danh sách cursor theo thứ tự."""
+        if not statements:
+            return []
+        results = self._pipeline([
+            {"type": "execute", "stmt": self._stmt(sql, params)} for sql, params in statements
+        ])
+        return [TursoCursor(item["response"]["result"]) for item in results[:len(statements)]]
+
     def batch(self, statements):
         """Chạy danh sách (sql, params) trong một giao dịch; lỗi ở bước nào cũng hoàn tác toàn bộ."""
         if not statements:
@@ -231,6 +310,9 @@ class LocalConnection:
         cursor = self._conn.execute(sql, params)
         self._conn.commit()
         return cursor
+
+    def execute_many(self, statements):
+        return [self.execute(sql, params) for sql, params in statements]
 
     def batch(self, statements):
         try:

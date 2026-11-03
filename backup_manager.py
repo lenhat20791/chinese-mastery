@@ -33,8 +33,18 @@ BACKUP_TABLES = {
     "exam_history": ["id", "user_id", "exam_type", "stage_number", "total_questions", "correct_answers",
                      "score_percent", "is_passed", "weak_words_tested", "taken_at"],
     "session_state": ["user_id", "data", "updated_at"],
+    "game_profile": ["user_id", "linh_thach", "equipped_artifact", "equipped_title", "pity_mid", "pity_high",
+                     "fortune_streak", "fortune_last_day"],
+    "game_daily": ["user_id", "day", "plays"],
+    "game_inventory": ["user_id", "item_code", "qty"],
+    "game_recipes": ["user_id", "recipe_code"],
+    "game_artifacts": ["id", "user_id", "recipe_code", "quality", "upgrade", "created_at"],
+    "game_fortune": ["user_id", "day", "vocab_id", "tier", "status", "buff"],
+    "game_achievements": ["user_id", "code", "unlocked_at"],
+    "game_counters": ["user_id", "key", "value"],
+    "game_log": ["id", "user_id", "ts", "kind", "text"],
 }
-CLEARED_ON_RESTORE = list(BACKUP_TABLES) + ["auth_tokens"]
+CORE_TABLES = ["users", "user_progress", "word_mastery", "exam_history", "session_state"]
 
 
 def _secret_exists(name):
@@ -118,13 +128,16 @@ def import_progress(raw):
         payload = json.loads(raw.decode("utf-8"))
         tables = payload["tables"]
         assert payload["format"] == BACKUP_FORMAT
-        assert all(isinstance(tables[name], list) for name in BACKUP_TABLES)
+        assert all(isinstance(tables[name], list) for name in CORE_TABLES)
         assert any(u.get("is_admin") for u in tables["users"]), "thiếu tài khoản admin"
     except (ValueError, KeyError, TypeError, AssertionError, AttributeError) as exc:
         return False, f"File sao lưu không hợp lệ ({exc})."
 
-    statements = [(f"DELETE FROM {name}", ()) for name in CLEARED_ON_RESTORE]
-    for name, columns in BACKUP_TABLES.items():
+    # Bản sao lưu cũ chưa có bảng trò chơi: giữ nguyên dữ liệu trò chơi hiện tại
+    present = [name for name in BACKUP_TABLES if isinstance(tables.get(name), list)]
+    statements = [(f"DELETE FROM {name}", ()) for name in present + ["auth_tokens"]]
+    for name in present:
+        columns = BACKUP_TABLES[name]
         for row in tables[name]:
             used = [c for c in columns if c in row]
             marks = ", ".join("?" for _ in used)

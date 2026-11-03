@@ -29,6 +29,9 @@ from database import (
 )
 from exam_engine import generate_tribulation_exam
 from extra_tabs import render_notebook, render_pronunciation, render_radicals
+from cultivation_tab import render_cultivation
+from game_core import realm_info
+from game_questions import learned_day_for as game_learned_day, load_pool as load_game_pool
 # --- CẤU HÌNH TRANG ---
 st.set_page_config(
     page_title="Thực Chiến Tiếng Trung - Phản Xạ Nhanh",
@@ -36,7 +39,6 @@ st.set_page_config(
     layout="wide"
 )
 
-TOTAL_DAYS = 74
 LOGO_B64 = base64.b64encode((Path(__file__).parent / "logo_cropped.png").read_bytes()).decode()
 
 # --- GIAO DIỆN: CSS nằm ở style.css ---
@@ -184,7 +186,7 @@ PRIORITY_GROUP_LABELS = {
     1: "Từ vựng giao tiếp công việc",
     2: "Từ kết nối và bổ trợ câu",
     3: "Đời sống xoay quanh công việc",
-    4: "Mở rộng vốn từ HSK 4–5",
+    4: "Mở rộng vốn từ HSK 1–5",
 }
 
 
@@ -216,16 +218,21 @@ with st.sidebar:
     total_energy = user["spiritual_energy"] + elapsed_minutes
     cost = get_tribulation_cost(is_major_breakthrough=False)
     energy_pct = min(100, int(total_energy / cost * 100))
-    day_pct = min(100, int(user["current_day"] / TOTAL_DAYS * 100))
+    sidebar_words = len(load_game_pool(game_learned_day(user, st.session_state.phase)))
+    sidebar_realm = realm_info(sidebar_words)
+    day_pct = int(sidebar_realm["progress"] * 100)
+    next_need = sidebar_realm["next_need"]
+    words_label = f"{sidebar_words} / {next_need}" if next_need else f"{sidebar_words}"
 
     st.markdown(
         f"""
         <div class='hero-card'>
-            <div class='realm-badge'>⚡ {user['current_realm']}</div>
+            <div class='realm-badge'>⚡ {sidebar_realm['name']}</div>
             <div class='stat-row'><span>✨ Linh Lực</span><b>{total_energy}</b></div>
             <div class='bar gold'><span style='width:{energy_pct}%'></span></div>
-            <div class='stat-row'><span>📅 Ngày tu luyện</span><b>{user['current_day']} / {TOTAL_DAYS}</b></div>
+            <div class='stat-row'><span>📖 Căn cơ (từ đã học)</span><b>{words_label}</b></div>
             <div class='bar'><span style='width:{day_pct}%'></span></div>
+            <div class='stat-row'><span>📅 Ngày tu luyện</span><b>{user['current_day']}</b></div>
             <div class='stat-row'><span>⏱️ Hôm nay</span><b>+{elapsed_minutes} phút</b></div>
         </div>
         """,
@@ -262,15 +269,19 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-TAB_LABELS = ["⚔️ Tu Luyện Hàng Ngày", "📊 Tâm Ma Bảng & Thống Kê", "📒 Sổ Tay", "🗣️ Tập Phát Âm", "🧩 Bộ Thủ"]
+TAB_LABELS = ["⚔️ Tu Luyện Hàng Ngày", "🏯 Động Phủ", "📊 Tâm Ma Bảng & Thống Kê", "📒 Sổ Tay",
+              "🗣️ Tập Phát Âm", "🧩 Bộ Thủ"]
 if st.session_state.auth_is_admin:
     TAB_LABELS.append("👑 Quản Lý")
 tabs = st.tabs(TAB_LABELS)
-tab_study, tab_stats, tab_notebook, tab_pron, tab_radicals = tabs[:5]
+tab_study, tab_game, tab_stats, tab_notebook, tab_pron, tab_radicals = tabs[:6]
 
 if st.session_state.auth_is_admin:
-    with tabs[5]:
+    with tabs[6]:
         render_admin_panel()
+
+with tab_game:
+    render_cultivation(st.session_state.user, game_learned_day(st.session_state.user, st.session_state.phase))
 
 with tab_notebook:
     render_notebook(st.session_state.user["current_day"])

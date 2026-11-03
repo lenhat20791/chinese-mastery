@@ -11,7 +11,7 @@ from pathlib import Path
 import streamlit as st
 
 from database import ensure_user_progress, import_legacy_progress
-from userdb import get_user_db, init_schema
+from userdb import GAME_TABLES, get_user_db, init_schema
 
 PBKDF2_ITERATIONS = 200_000
 TOKEN_MINUTES = 60
@@ -126,7 +126,8 @@ def delete_user(user_id):
         (f"DELETE FROM {table} WHERE {col} = ?", (user_id,))
         for table, col in [("word_mastery", "user_id"), ("exam_history", "user_id"),
                            ("session_state", "user_id"), ("user_progress", "user_id"),
-                           ("auth_tokens", "user_id"), ("users", "id")]
+                           ("auth_tokens", "user_id")]
+        + [(table, "user_id") for table in GAME_TABLES] + [("users", "id")]
     ])
     return True, "Đã xóa tài khoản và toàn bộ tiến độ của người đó."
 

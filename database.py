@@ -139,6 +139,39 @@ def record_feedback(vocab_id, action):
     )
 
 
+def record_review_batch(results):
+    """Ghi hàng loạt kết quả ôn trong trò chơi: [(vocab_id, đúng?)] bằng một lần gọi DB."""
+    if not results:
+        return
+    user_id = current_user_id()
+    statements = []
+    for vocab_id, correct in results:
+        if correct:
+            statements.append((
+                """
+                INSERT INTO word_mastery (user_id, vocab_id, review_count, mastered_count, last_status)
+                VALUES (?, ?, 1, 1, 'MASTERED')
+                ON CONFLICT (user_id, vocab_id) DO UPDATE SET
+                    review_count = review_count + 1,
+                    mastered_count = mastered_count + 1,
+                    last_status = 'MASTERED',
+                    last_reviewed_at = CURRENT_TIMESTAMP
+                """, (user_id, vocab_id)))
+        else:
+            statements.append((
+                """
+                INSERT INTO word_mastery (user_id, vocab_id, review_count, failed_count, last_status, is_inner_demon)
+                VALUES (?, ?, 1, 1, 'FAILED', 1)
+                ON CONFLICT (user_id, vocab_id) DO UPDATE SET
+                    review_count = review_count + 1,
+                    failed_count = failed_count + 1,
+                    last_status = 'FAILED',
+                    is_inner_demon = 1,
+                    last_reviewed_at = CURRENT_TIMESTAMP
+                """, (user_id, vocab_id)))
+    get_user_db().batch(statements)
+
+
 def exorcise_inner_demon(vocab_id):
     get_user_db().execute(
         """
@@ -359,14 +392,25 @@ def load_session_snapshot():
 # Kho chữ dùng chung (chỉ đọc)
 # ---------------------------------------------------------------------------
 
-def load_day_words(day):
+@st.cache_data(show_spinner=False)
+def _load_vocabulary():
     conn = get_db()
     vocabulary = [dict(r) for r in conn.execute(
         "SELECT * FROM vocab ORDER BY study_day ASC, priority_group ASC, id ASC"
     ).fetchall()]
     conn.close()
-    words = [word for word in vocabulary if word["study_day"] == day]
+    return vocabulary
+
+
+@st.cache_data(show_spinner=False)
+def _load_day_words_cached(day):
+    vocabulary = _load_vocabulary()
+    words = [dict(word) for word in vocabulary if word["study_day"] == day]
     return _compose_day_examples(words, vocabulary)
+
+
+def load_day_words(day):
+    return _load_day_words_cached(day)
 
 
 def get_vocab_by_ids(ids):
