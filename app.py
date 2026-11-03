@@ -699,7 +699,7 @@ with tab_study:
 # TAB 2: TÂM MA BẢNG & THỐNG KÊ CHI TIẾT
 # =========================================================================
 with tab_stats:
-    st.subheader("📊 Bảng Phong Thần - Quản Lý Tiến Độ & Tâm Ma")
+    st.subheader("📊 Quản Lý Tiến Độ & Tâm Ma")
     stats = get_cultivation_stats()
     
     col_m1, col_m2, col_m3, col_m4 = st.columns(4)
