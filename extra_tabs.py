@@ -52,9 +52,16 @@ function speak(text) {
 }
 document.querySelectorAll('[data-say]').forEach(b => b.addEventListener('click', () => speak(b.dataset.say)));
 function fit() {
-    if (window.frameElement) window.frameElement.style.height = document.documentElement.scrollHeight + 'px';
+    const fe = window.frameElement;
+    if (!fe) return;
+    const h = Math.ceil(document.documentElement.scrollHeight) + 'px';
+    fe.style.height = h;
+    fe.setAttribute('height', h);
+    let p = fe.parentElement;
+    for (let i = 0; i < 2 && p; i++, p = p.parentElement) { p.style.height = h; }
 }
 new ResizeObserver(fit).observe(document.body);
+window.addEventListener('resize', fit);
 fit();
 """
 

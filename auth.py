@@ -1,23 +1,21 @@
-"""Đăng nhập, quản lý tài khoản và phiên đăng nhập (cookie)."""
+"""Đăng nhập, quản lý tài khoản và phiên đăng nhập (token trên URL, giữ qua F5)."""
 import base64
 import datetime
 import hashlib
 import hmac
-import json
 import re
 import secrets
 import time
 from pathlib import Path
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 from database import ensure_user_progress, import_legacy_progress
 from userdb import get_user_db, init_schema
 
 PBKDF2_ITERATIONS = 200_000
-TOKEN_DAYS = 30
-COOKIE_NAME = "cm_auth"
+TOKEN_MINUTES = 60
+TOKEN_PARAM = "s"
 USERNAME_RE = re.compile(r"^[a-z0-9_.-]{2,32}$")
 MIN_PASSWORD_LEN = 4
 
@@ -151,7 +149,7 @@ def _token_hash(token):
 def issue_token(user_id):
     token = secrets.token_urlsafe(32)
     expires = (datetime.datetime.now(datetime.timezone.utc)
-               + datetime.timedelta(days=TOKEN_DAYS)).strftime("%Y-%m-%dT%H:%M:%S")
+               + datetime.timedelta(minutes=TOKEN_MINUTES)).strftime("%Y-%m-%dT%H:%M:%S")
     get_user_db().execute(
         "INSERT INTO auth_tokens (token_hash, user_id, expires_at) VALUES (?, ?, ?)",
         (_token_hash(token), user_id, expires),
@@ -171,9 +169,9 @@ def user_from_token(token):
     return {k: row[k] for k in ("id", "username", "display_name", "is_admin")} if row else None
 
 
-def _cookie_token():
+def _url_token():
     try:
-        return st.context.cookies.get(COOKIE_NAME)
+        return st.query_params.get(TOKEN_PARAM)
     except Exception:
         return None
 
@@ -184,6 +182,7 @@ def _start_session(user, token):
     st.session_state.auth_name = user["display_name"] or user["username"]
     st.session_state.auth_is_admin = bool(user["is_admin"])
     st.session_state.auth_token = token
+    st.query_params[TOKEN_PARAM] = token
 
 
 def logout():
@@ -191,20 +190,7 @@ def logout():
     if token:
         get_user_db().execute("DELETE FROM auth_tokens WHERE token_hash = ?", (_token_hash(token),))
     st.session_state.clear()
-
-
-def _sync_cookie():
-    """Ghi token vào cookie trình duyệt (iframe cao 0 bị ẩn bằng CSS)."""
-    token = st.session_state.get("auth_token")
-    if token:
-        script = (
-            "<script>window.parent.document.cookie = "
-            f"{json.dumps(f'{COOKIE_NAME}={token}; max-age={TOKEN_DAYS * 86400}; path=/; SameSite=Lax')};"
-            "</script>"
-        )
-        components.html(script, height=0)
-
-
+    st.query_params.clear()
 def _render_login():
     logo = base64.b64encode((Path(__file__).parent / "logo_cropped.png").read_bytes()).decode()
     _, col, _ = st.columns([1, 1.4, 1])
@@ -236,11 +222,12 @@ def require_login():
     """Dừng trang và hiện màn hình đăng nhập nếu chưa đăng nhập."""
     bootstrap()
     if not st.session_state.get("auth_user_id"):
-        token = _cookie_token()
+        token = _url_token()
         user = user_from_token(token) if token else None
         if user:
             _start_session(user, token)
         else:
+            if token:
+                st.query_params.clear()
             _render_login()
             st.stop()
-    _sync_cookie()
