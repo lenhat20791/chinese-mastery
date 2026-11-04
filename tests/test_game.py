@@ -116,6 +116,18 @@ class PureLogicTests(unittest.TestCase):
             self.assertIn("\n", game_hunt.area_tooltip(area))
         self.assertTrue(all(r["min_idx"] // 2 == r["region"] for r in cfg.RECIPES))
 
+    def test_match_modes(self):
+        import game_minigames as gm
+        words = [{"id": i, "hanzi": h, "pinyin": p, "meaning_vi": m}
+                 for i, (h, p, m) in enumerate([("你", "nǐ", "bạn"), ("好", "hǎo", "tốt"),
+                                                ("我", "wǒ", "tôi"), ("他", "tā", "anh ấy")])]
+        for seed in range(50):
+            modes = gm.build_match_modes(words, random.Random(seed))
+            self.assertEqual(len(modes), 4)
+            self.assertLessEqual(sum(m in ("ap", "ah") for m in modes.values()), 2)
+            faces = [gm._right_face(w, modes[w["id"]]) for w in words]
+            self.assertEqual(len(set(faces)), 4)
+
 
 class DatabaseFlowTests(unittest.TestCase):
     def setUp(self):

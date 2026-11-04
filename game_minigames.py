@@ -73,22 +73,62 @@ def render_fortune(ctx):
 # Ghép bài
 # ---------------------------------------------------------------------------
 
+MATCH_MODES = {
+    "hm": "Hán ↔ nghĩa", "hp": "Hán ↔ pinyin", "ap": "Nghe ↔ pinyin", "ah": "Nghe ↔ Hán",
+}
+
+
+def _right_face(word, mode):
+    if mode == "hm":
+        return gq.short_meaning(word, 40)
+    if mode in ("hp", "ap"):
+        return word.get("pinyin") or ""
+    return word["hanzi"]
+
+
+def build_match_modes(words, rng=random):
+    """Gán thể thức cho từng cặp: tối đa n//2 cặp dạng nghe; mặt cột phải không trùng nhau."""
+    n = len(words)
+    audio_slots = set(rng.sample(range(n), rng.randint(1, n // 2))) if n >= 2 else set()
+    modes, used = {}, set()
+    for i, word in enumerate(words):
+        options = ["ap", "ah"] if i in audio_slots else ["hm", "hp"]
+        rng.shuffle(options)
+        options.append("hm")
+        for mode in options:
+            if mode == "ap" and not word.get("pinyin"):
+                continue
+            face = _right_face(word, mode)
+            if face and face not in used:
+                used.add(face)
+                modes[word["id"]] = mode
+                break
+        else:
+            return None
+    return modes
+
+
 def start_match(ctx):
     pool = ctx["pool"]
-    words, seen_meaning = [], set()
-    for word in gq.pick_words(pool, ctx["mastery"], len(pool)):
-        meaning = gq.short_meaning(word, 40)
-        if meaning and meaning not in seen_meaning:
-            seen_meaning.add(meaning)
-            words.append(word)
-        if len(words) >= cfg.MATCH_MAX_PAIRS:
+    candidates = list(gq.pick_words(pool, ctx["mastery"], min(len(pool), cfg.MATCH_MAX_PAIRS * 3)))
+    words, modes = [], None
+    for _ in range(10):
+        words = candidates[:cfg.MATCH_MAX_PAIRS]
+        modes = build_match_modes(words)
+        if modes:
             break
+        random.shuffle(candidates)
+    if not modes:
+        words = candidates[:cfg.MATCH_MAX_PAIRS]
+        modes = {w["id"]: "hm" for w in words}
     left = [w["id"] for w in words]
     right = left[:]
     random.shuffle(left)
     random.shuffle(right)
+    audio_no = {wid: n for n, wid in enumerate([i for i in left if modes[i] in ("ap", "ah")], 1)}
     st.session_state.g_match = {
-        "words": {w["id"]: w for w in words}, "left": left, "right": right,
+        "words": {w["id"]: w for w in words}, "modes": modes, "audio_no": audio_no,
+        "left": left, "right": right,
         "status": {f"L{i}": "idle" for i in left} | {f"R{i}": "idle" for i in right},
         "sel": {"L": None, "R": None}, "correct": 0, "wrong": 0, "results": [], "done": None,
     }
@@ -143,7 +183,8 @@ def _match_finish(m, ctx):
 def render_match(ctx):
     state = core.get_state()
     st.markdown("### 🃏 Lật Bài Linh Thạch")
-    st.caption("Chọn một chữ Hán ở cột trái và nghĩa tương ứng ở cột phải. Ghép sai sẽ khóa cả hai nút. "
+    st.caption("Mỗi ván 4 cặp, trộn nhiều thể thức: Hán ↔ nghĩa, Hán ↔ pinyin, 🔊 nghe ↔ pinyin/Hán (tối đa 2 cặp nghe). "
+               "Bấm nút 🔊 để nghe, rồi chọn mặt khớp ở cột phải. Ghép sai sẽ khóa cả hai nút. "
                + _remaining_plays_note(state))
     m = st.session_state.get("g_match")
     if m is None:
@@ -158,12 +199,17 @@ def render_match(ctx):
     locked = m["done"] is not None
     for i in m["left"]:
         word = m["words"][i]
-        col_left.button(word["hanzi"], key=f"ml_{i}", use_container_width=True, on_click=_match_click,
+        mode = m["modes"][i]
+        label = f"🔊 {m['audio_no'][i]}" if mode in ("ap", "ah") else word["hanzi"]
+        col_left.button(label, key=f"ml_{i}", use_container_width=True, on_click=_match_click,
                         args=("L", i, ctx), disabled=locked or m["status"][f"L{i}"] in ("done", "bad"))
     for i in m["right"]:
-        col_right.button(gq.short_meaning(m["words"][i], 40), key=f"mr_{i}", use_container_width=True,
+        col_right.button(_right_face(m["words"][i], m["modes"][i]), key=f"mr_{i}", use_container_width=True,
                          on_click=_match_click, args=("R", i, ctx),
                          disabled=locked or m["status"][f"R{i}"] in ("done", "bad"))
+    audio = {f"ml_{i}": m["words"][i]["hanzi"] for i in m["left"] if m["modes"][i] in ("ap", "ah")}
+    if audio and not locked:
+        game_ui.audio_listener(audio)
     if locked:
         d = m["done"]
         (st.success if d["perfect"] else st.info)(

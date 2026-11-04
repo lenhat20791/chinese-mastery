@@ -55,8 +55,9 @@ Rút quẻ để nhận lời sấm và **buff trong ngày** (thêm Linh Thạch
 Giải đúng câu đố của quẻ để nhận thưởng; sai thì quẻ chuyển Hung và từ đó vào Tâm Ma.
 
 ### 🃏 Lật Bài
-Hai cột: chữ Hán và nghĩa tiếng Việt. Bấm một chữ rồi bấm nghĩa tương ứng. Đúng: giữ màu xanh. Sai: chuyển đỏ và
-không chọn lại. Chơi vô hạn để cày Linh Thạch (thưởng giảm dần theo số lượt trong ngày).
+Mỗi ván 4 cặp, trộn nhiều thể thức: **Hán ↔ nghĩa**, **Hán ↔ pinyin**, **🔊 nghe ↔ pinyin**, **🔊 nghe ↔ Hán**
+(tối đa 2 cặp là dạng nghe; nút 🔊 có đánh số, bấm để phát âm rồi chọn mặt khớp ở cột phải). Đúng: giữ màu xanh.
+Sai: chuyển đỏ và không chọn lại. Chơi vô hạn để cày Linh Thạch (thưởng giảm dần theo số lượt trong ngày).
 
 ### 🧩 Đối Câu / Sắp Xếp Câu
 Sắp các từ thành câu đúng ngữ pháp. Mở khóa từ Trúc Cơ Kỳ và ≥ {cfg.GAME_UNLOCKS['sentence']['words']} từ đã học.

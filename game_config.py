@@ -1,4 +1,4 @@
-"""Cấu hình trò chơi tu tiên: mọi con số cân bằng nằm ở đây để chỉnh mà không sửa logic."""
+﻿"""Cấu hình trò chơi tu tiên: mọi con số cân bằng nằm ở đây để chỉnh mà không sửa logic."""
 
 TZ_OFFSET_HOURS = 7  # ngày chơi tính theo giờ Việt Nam (server mây chạy giờ UTC)
 
@@ -42,9 +42,9 @@ DAILY_MID_PLAYS = 30       # trận 11-30 nhận MULT_MID, từ trận 31 nhận
 MULT_MID = 0.4
 MULT_LOW = 0.1
 
-MATCH_MAX_PAIRS = 6
+MATCH_MAX_PAIRS = 4
 MATCH_MIN_PAIRS = 3
-MATCH_PAIR_REWARD = 2
+MATCH_PAIR_REWARD = 3
 MATCH_PERFECT_BONUS = 2
 
 SENTENCE_ROUNDS = 5

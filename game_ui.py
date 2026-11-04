@@ -45,6 +45,30 @@ def speak(text, autoplay=False, label="🔊 Nghe"):
     components.html(html, height=48)
 
 
+def audio_listener(mapping):
+    """mapping: {khóa nút: văn bản}. Bấm nút có khóa đó sẽ phát âm (listener gắn vào trang cha để trình duyệt cho phép)."""
+    rate = float(st.session_state.get("speech_rate", 1.0))
+    payload = json.dumps(mapping)
+    components.html(f"""<script>
+    const P = window.parent; const D = P.document;
+    P.__zhMap = {payload}; P.__zhRate = {rate};
+    if (!P.__zhBound) {{
+      P.__zhBound = true;
+      D.addEventListener('click', function (e) {{
+        const btn = e.target.closest('button'); if (!btn) return;
+        for (const k in P.__zhMap) {{
+          if (btn.closest('.st-key-' + k)) {{
+            const t = P.__zhMap[k];
+            const u = new P.SpeechSynthesisUtterance(t); u.lang = 'zh-CN';
+            u.rate = P.__zhRate * (t.length <= 6 ? 0.55 : 0.85);
+            P.speechSynthesis.cancel(); P.speechSynthesis.speak(u); break;
+          }}
+        }}
+      }}, true);
+    }}
+    </script>""", height=0)
+
+
 STATE_COLORS = {
     "sel": ("#f5c542", "#3b2a00"),
     "done": ("#2e9e5b", "#ffffff"),
