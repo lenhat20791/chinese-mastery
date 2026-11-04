@@ -47,7 +47,7 @@ function speak(text) {
     s.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'zh-CN';
-    u.rate = rate * 0.85;
+    u.rate = rate * (text.length <= 6 ? 0.55 : 0.85);
     s.speak(u);
 }
 document.querySelectorAll('[data-say]').forEach(b => b.addEventListener('click', () => speak(b.dataset.say)));

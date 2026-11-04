@@ -29,12 +29,14 @@ def show_image_or_emoji(folder, code, emoji, width=150):
 def speak(text, autoplay=False, label="🔊 Nghe"):
     """Nút phát âm Web Speech (zh-CN); autoplay thử phát ngay khi câu hỏi mới hiện (trình duyệt có thể chặn)."""
     payload = json.dumps(text)
+    rate = float(st.session_state.get("speech_rate", 1.0))
     html = f"""
     <button id="b" style="font-size:16px;padding:6px 14px;border-radius:8px;border:1px solid #c9a24b;
       background:#fff8e6;cursor:pointer">{label}</button>
     <script>
     function say() {{
-      const u = new SpeechSynthesisUtterance({payload}); u.lang = 'zh-CN'; u.rate = 0.85;
+      const t = {payload};
+      const u = new SpeechSynthesisUtterance(t); u.lang = 'zh-CN'; u.rate = {rate} * (t.length <= 6 ? 0.55 : 0.85);
       speechSynthesis.cancel(); speechSynthesis.speak(u);
     }}
     document.getElementById('b').onclick = say;

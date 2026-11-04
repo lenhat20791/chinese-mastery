@@ -1,4 +1,4 @@
-import random
+﻿import random
 import tempfile
 import unittest
 from pathlib import Path
@@ -65,7 +65,7 @@ class PureLogicTests(unittest.TestCase):
         self.assertTrue(gq.evaluate(gq.make_question(pool[0], pool, "pinyin"), "zi0"))
 
     def test_economy(self):
-        recipe = cfg.RECIPE_BY_CODE["lk1"]
+        recipe = cfg.RECIPE_BY_CODE["thanh_phong_kiem"]
         self.assertEqual(core.recipe_craft_cost(recipe), 400)
         self.assertEqual(core.recipe_price(recipe), 150)
         for recipe in cfg.RECIPES:
@@ -74,19 +74,47 @@ class PureLogicTests(unittest.TestCase):
             for code, _ in mats:
                 self.assertIn(code, cfg.ITEMS)
 
+    def test_stat_bonuses(self):
+        zero = core.stat_bonuses()
+        self.assertEqual((zero["crit"], zero["hp"], zero["dao_tam"]), (0, 0, 0))
+        big = core.stat_bonuses(words=10**6, answers=10**6, streak=10**6)
+        self.assertLess(big["crit"], cfg.CRIT_MAX)
+        self.assertLess(big["hp"], cfg.CAN_CO_HP_MAX + 1e-9)
+        self.assertLess(big["dao_tam"], cfg.DAO_TAM_MAX)
+        mid = core.stat_bonuses(words=1250, answers=3000, streak=90)
+        self.assertAlmostEqual(mid["crit"], cfg.CRIT_MAX / 2)
+        self.assertAlmostEqual(mid["dao_tam"], cfg.DAO_TAM_MAX / 2)
+        base = core.player_stats(3)
+        boosted = core.player_stats(3, bonuses=mid)
+        self.assertAlmostEqual(boosted["hp"], base["hp"] * (1 + mid["hp"]))
+        self.assertAlmostEqual(boosted["crit"], mid["crit"])
+
     def test_combat_math(self):
-        hp, atk = game_hunt.monster_stats(0)
+        atk, hp = game_hunt.monster_stats(0)
         self.assertAlmostEqual(hp, cfg.PLAYER_BASE_ATK * cfg.MONSTER_HITS)
-        dmg = game_hunt.hit_damage(1000, 5, hp, cfg.MONSTER_MIN_HITS, random.Random(1))
+        dmg, crit = game_hunt.hit_damage(1000, 5, hp, cfg.MONSTER_MIN_HITS, random.Random(1), crit=1.0)
+        self.assertTrue(crit)
         self.assertLessEqual(dmg, hp / cfg.MONSTER_MIN_HITS + 1)
-        loot = game_hunt.roll_loot(2, True, random.Random(3))
+        loot = game_hunt.roll_loot(2, "boss", random.Random(3))
         self.assertTrue(all(code.startswith("r2_") for code in loot))
+        normal = game_hunt.roll_loot(1, "normal", random.Random(3))
+        self.assertTrue(all(int(code[-1]) < 3 for code in normal))
         self.assertEqual(game_hunt.scale_loot({"r0_0": 3}, 0, random.Random(1)), {})
 
-    def test_map_svg(self):
-        svg = game_hunt.build_map_svg([0, 1], 0)
-        self.assertIn("<svg", svg)
-        self.assertGreaterEqual(svg.count("<polygon points"), cfg.REGION_COUNT)
+    def test_depth_scaling(self):
+        base_atk, base_hp = game_hunt.monster_stats(3)
+        atk, hp = game_hunt.monster_stats(3, wins=5)
+        self.assertAlmostEqual(hp, base_hp * (1 + 5 * cfg.DEPTH_STEP))
+        self.assertAlmostEqual(game_hunt.monster_stats(3, wins=10 ** 6)[1], base_hp * cfg.DEPTH_MAX)
+        self.assertGreater(game_hunt.monster_stats(3, "elite")[1], base_hp)
+
+    def test_areas(self):
+        self.assertEqual(len(cfg.AREAS), 2 * len(cfg.MAJOR_REALMS))
+        for area in cfg.AREAS:
+            self.assertEqual(area["item_set"], area["realm"] // 2)
+            self.assertEqual("boss" in area, area["kind"] == "elite")
+            self.assertIn("\n", game_hunt.area_tooltip(area))
+        self.assertTrue(all(r["min_idx"] // 2 == r["region"] for r in cfg.RECIPES))
 
 
 class DatabaseFlowTests(unittest.TestCase):
@@ -114,9 +142,9 @@ class DatabaseFlowTests(unittest.TestCase):
         state = core.get_state()
         self.assertEqual(state["ls"], 0)
         core.apply_changes(ls=1000, items={"r0_0": 10, "r0_1": 10, "r0_2": 10, "r0_3": 3})
-        ok, _ = core.buy_recipe("lk1", 0)
+        ok, _ = core.buy_recipe("thanh_phong_kiem", 0)
         self.assertTrue(ok)
-        ok, msg, quality = core.craft("lk1", 0, rng=random.Random(2))
+        ok, msg, quality = core.craft("thanh_phong_kiem", 0, rng=random.Random(2))
         self.assertTrue(ok, msg)
         state = core.get_state()
         self.assertEqual(len(state["artifacts"]), 1)
@@ -124,8 +152,16 @@ class DatabaseFlowTests(unittest.TestCase):
         self.assertEqual(state["inventory"]["r0_0"], 4)
         ok, _ = core.equip(state["artifacts"][0]["id"], 0)
         self.assertTrue(ok)
-        self.assertIsNotNone(core.equipped_artifact(core.get_state()))
-        ok, _, _ = core.craft("lk1", 0)
+        self.assertEqual(len(core.equipped_artifacts(core.get_state())), 1)
+        stats = core.player_stats(0, core.equipped_artifacts(core.get_state()))
+        self.assertGreater(stats["atk"], cfg.PLAYER_BASE_ATK)
+        ok, _ = core.sell_artifact(state["artifacts"][0]["id"])
+        self.assertTrue(ok)
+        state = core.get_state()
+        self.assertEqual(state["artifacts"], [])
+        self.assertEqual(state["equipped"], [None, None])
+        self.assertEqual(state["ls"], 1000 - 150 - 400 + 200)
+        ok, _, _ = core.craft("thanh_phong_kiem", 0)
         self.assertFalse(ok)
 
     def test_settle_and_badges(self):

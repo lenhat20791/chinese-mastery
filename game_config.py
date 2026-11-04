@@ -7,9 +7,10 @@ TZ_OFFSET_HOURS = 7  # ngày chơi tính theo giờ Việt Nam (server mây ch�
 # ---------------------------------------------------------------------------
 MAJOR_REALMS = [
     "Linh Khí Kỳ", "Trúc Cơ Kỳ", "Kim Đan Kỳ", "Nguyên Anh Kỳ", "Xuất Khiếu Kỳ", "Hóa Thần Kỳ",
-    "Luyện Hư Kỳ", "Hợp Thể Kỳ", "Độ Kiếp Kỳ", "Tán Tiên", "Kim Tiên", "Chân Tiên",
-    "Địa Tiên", "Đại La Kim Tiên", "Tiên Tôn", "Tiên Đế",
+    "Luyện Hư Kỳ", "Hợp Thể Kỳ", "Độ Kiếp Kỳ", "Tán Tiên", "Địa Tiên", "Chân Tiên",
+    "Kim Tiên", "Đại La Kim Tiên", "Tiên Tôn", "Tiên Đế",
 ]
+PHAM_REALMS = 9   # 9 cảnh giới đầu thuộc Phàm Giới, 7 cảnh giới có chữ Tiên thuộc Tiên Giới
 SUB_REALMS = ("Sơ Kỳ", "Trung Kỳ", "Hậu Kỳ")
 HSK4_WORDS = 1200   # xong HSK 4 ở cuối Độ Kiếp Kỳ
 HSK5_WORDS = 2500   # xong HSK 5 ở cuối Tiên Đế
@@ -96,10 +97,23 @@ MONSTER_ATK_RATIO = 0.11    # sát thương yêu thú trên HP gốc người ch
 BOSS_ATK_RATIO = 0.14
 COMBO_STEP = 0.10
 COMBO_MAX = 5
-SPECIAL_EVENTS = 3          # số sự kiện thăm dò trước khi gặp boss ở động phủ / bí cảnh
-SPECIAL_MIN_KILLS = 5       # số yêu thú đã hạ trong vùng để mở nơi đặc biệt
+SPECIAL_EVENTS = 3          # số cơ quan phải vượt qua trước khi gặp boss
+SPECIAL_MIN_KILLS = 3       # số tinh anh đã hạ trong khu để mở thách đấu boss
+ELITE_HP_MULT = 1.4         # tinh anh trâu hơn quái thường
+ELITE_ATK_MULT = 1.25
+DEPTH_EVERY = 5             # cứ 5 trận thắng liên tiếp trong một lượt vào khu thì "đi sâu" hơn
+DEPTH_STEP = 0.05           # mỗi trận thắng tăng 5% HP và sát thương của quái
+DEPTH_MAX = 2.5
 
-SKILLS = ["Kiếm Khí Tung Hoành", "Ngự Kiếm Trảm", "Linh Quang Chưởng", "Phong Lôi Chỉ", "Thanh Liên Kiếm Ý"]
+SKILL_NAME = "Hỏa Cầu Thuật"   # tuyệt kỹ mặc định, bổ sung thêm tuyệt kỹ sau
+
+# Chỉ số tu luyện: bonus = trần × điểm / (điểm + K) (lợi suất giảm dần, không thể vượt trần)
+CRIT_MAX, CRIT_K = 0.25, 3000        # Ngộ tính (số câu đáp đúng) -> tỉ lệ chí mạng
+CRIT_MULT = 1.5
+CAN_CO_HP_MAX, CAN_CO_ATK_MAX, CAN_CO_K = 0.075, 0.075, 1250   # Căn cơ (từ đã học) -> HP và sát thương
+DAO_TAM_MAX, DAO_TAM_K = 0.25, 90    # Đạo tâm (chuỗi ngày) -> giảm sát thương Tâm Ma Kiếp
+TAM_MA_K = 30                        # cường độ tâm ma T = demons / (demons + K)
+TAM_MA_Q_MAJOR = 10                  # số câu Tâm Ma Kiếp ở cuối Đại Thiên Kiếp (50 câu)
 TRAPS = [
     ("Cơ Quan Chữ Hán", "Một trận pháp khắc chữ Hán chặn lối, cần giải mã để đi qua."),
     ("Rương Cổ Phong Ấn", "Chiếc rương cổ phát ra linh quang, ấn chú trên nắp đòi một đáp án."),
@@ -108,94 +122,54 @@ TRAPS = [
 ]
 
 # ---------------------------------------------------------------------------
-# Vùng đất: mỗi vùng gồm 2 đại cảnh giới, 2 khu săn thường và 1 nơi đặc biệt có boss
-# monsters: (mã, tên, emoji). Ảnh tùy chọn: assets/monsters/<mã>.png (hoặc .webp/.jpg)
-# items: 6 vật phẩm [3 phổ thông, 2 hiếm, 1 quý]: (tên, emoji)
+# Bộ vật phẩm: mỗi bộ dùng chung cho 2 đại cảnh giới liền kề (cảnh giới 2s và 2s+1 rơi bộ s).
+# Khu thường rơi vật phẩm phổ thông; khu tinh anh/boss rơi vật phẩm hiếm và quý (core item).
+# 6 vật phẩm / bộ: [3 phổ thông, 2 hiếm, 1 quý]: (tên, emoji). Mã vật phẩm: r{bộ}_{0..5}
 # ---------------------------------------------------------------------------
-REGIONS = [
+ITEM_SETS = [
     {
         "name": "Thanh Vân Địa Giới",
-        "zones": [
-            ("Thanh Vân Sơn Cước", [("da_lang", "Dã Lang Yêu", "🐺"), ("thanh_xa", "Thanh Xà Tinh", "🐍")]),
-            ("Hắc Thủy Đầm", [("hac_quy", "Hắc Thủy Quy", "🐢"), ("doc_thiem", "Độc Thiềm Yêu", "🐸")]),
-        ],
-        "special": ("Cổ Động Phủ Vô Danh", "động phủ", ("khoi_loi", "Thủ Phủ Khôi Lỗi", "🗿")),
         "items": [("Hắc Thiết", "⛏️"), ("Yêu Lang Bì", "🧵"), ("Thanh Linh Thảo", "🌿"),
                   ("Tinh Thiết", "🔩"), ("Hạ Phẩm Yêu Đan", "🔮"), ("Linh Mộc Tâm", "🪵")],
     },
     {
         "name": "Xích Mộc Cương Vực",
-        "zones": [
-            ("Xích Diễm Cốc", [("diem_ho", "Xích Diễm Hổ", "🐅"), ("hoa_dieu", "Hỏa Linh Điểu", "🦅")]),
-            ("Vạn Mộc Lâm", [("co_moc", "Cổ Mộc Yêu", "🌳"), ("huyet_dang", "Huyết Đằng Ma", "🌿")]),
-        ],
-        "special": ("Huyết Nguyệt Bí Cảnh", "bí cảnh", ("nguyet_vuong", "Huyết Nguyệt Yêu Vương", "🦇")),
         "items": [("Huyền Thiết", "⛏️"), ("Hỏa Giao Lân", "🐉"), ("Tử Linh Chi", "🍄"),
                   ("Xích Tinh Thạch", "🔶"), ("Trung Phẩm Yêu Đan", "🔮"), ("Kim Đan Tinh Hoa", "✨")],
     },
     {
         "name": "Hàn Lôi Cực Địa",
-        "zones": [
-            ("Hàn Băng Nguyên", [("tuyet_lang", "Tuyết Nguyên Lang", "🐺"), ("bang_ho", "Băng Phách Linh Hồ", "🦊")]),
-            ("Tử Điện Sơn Mạch", [("loi_bao", "Lôi Văn Báo", "🐆"), ("dien_giao", "Tử Điện Giao", "🐉")]),
-        ],
-        "special": ("Thiên Lôi Cấm Địa", "cấm địa", ("loi_thu", "Thiên Lôi Thần Thú", "⚡")),
         "items": [("Hàn Thiết", "⛏️"), ("Băng Giao Cốt", "🦴"), ("Tuyết Liên Diệp", "🌸"),
                   ("Hàn Ngọc", "💎"), ("Lôi Tinh", "⚡"), ("Thiên Lôi Mộc", "🪵")],
     },
     {
         "name": "Cửu U Vân Hải",
-        "zones": [
-            ("Cửu U Hoang Mạc", [("sa_hat", "Sa Mạc Yêu Hạt", "🦂"), ("cot_long", "U Minh Cốt Long", "💀")]),
-            ("Vân Hải Tiên Đảo", [("van_kinh", "Vân Hải Kình", "🐋"), ("bich_giao", "Bích Ba Giao Long", "🐲")]),
-        ],
-        "special": ("Thượng Cổ Chiến Trường", "chiến trường", ("chien_tuong", "Chiến Tướng Vong Hồn", "👹")),
         "items": [("U Minh Thiết", "⛏️"), ("Hoang Mạc Sa Tinh", "🏜️"), ("Vân Hải Linh Tảo", "🌊"),
                   ("Cốt Ngọc", "🦴"), ("Giao Long Đan", "🔮"), ("Chiến Hồn Tinh", "👻")],
     },
     {
         "name": "Hỗn Độn Bất Chu",
-        "zones": [
-            ("Hỗn Độn Hải", [("ma_ngu", "Hỗn Độn Ma Ngư", "🦈"), ("cu_mang", "Tiên Hải Cự Mãng", "🐙")]),
-            ("Bất Chu Sơn", [("bach_vien", "Thần Sơn Bạch Viên", "🦍"), ("ky_lan", "Địa Hỏa Kỳ Lân", "🦄")]),
-        ],
-        "special": ("Tiên Ma Chi Môn", "cổ môn", ("ma_tuong", "Thủ Môn Ma Tướng", "😈")),
         "items": [("Hỗn Độn Thiết", "⛏️"), ("Tiên Hải Lân", "🐟"), ("Bất Chu Linh Chi", "🍄"),
                   ("Thần Sơn Ngọc", "💎"), ("Kỳ Lân Giác", "🦄"), ("Tiên Ma Tinh Phách", "🌑")],
     },
     {
         "name": "Ngọc Hư Tiên Cảnh",
-        "zones": [
-            ("Ngọc Hư Vân Hải", [("van_hac", "Ngọc Hư Vân Hạc", "🦢"), ("tien_xa", "Tiên Vân Xà", "🐍")]),
-            ("Bích Tiêu Tiên Sơn", [("bich_ho", "Bích Tiêu Linh Hổ", "🐯"), ("thanh_loan", "Thanh Loan Tiên Điểu", "🦜")]),
-        ],
-        "special": ("Thái Cổ Thần Điện", "thần điện", ("than_dien", "Thần Điện Thủ Hộ Giả", "🛡️")),
         "items": [("Ngọc Hư Kim", "⛏️"), ("Tiên Vân Lân", "☁️"), ("Bích Tiêu Tiên Thảo", "🌿"),
                   ("Tiên Linh Ngọc", "💎"), ("Thanh Loan Vũ", "🪶"), ("Thái Cổ Thần Tinh", "🌟")],
     },
     {
         "name": "Cửu Thiên Tinh Hà",
-        "zones": [
-            ("Tinh Hà Cổ Đạo", [("tinh_thu", "Tinh Hà Cự Thú", "🐘"), ("nguyet_ho", "Nguyệt Quang Linh Hồ", "🦊")]),
-            ("Hồng Mông Cổ Địa", [("hong_ma", "Hồng Mông Ma Viên", "🦧"), ("dia_long", "Địa Mạch Long", "🐲")]),
-        ],
-        "special": ("Hồng Hoang Cấm Khu", "cấm khu", ("hong_hoang", "Hồng Hoang Cự Linh", "🗿")),
         "items": [("Tinh Hà Thiết", "⛏️"), ("Nguyệt Quang Bì", "🧵"), ("Hồng Mông Linh Thảo", "🌱"),
                   ("Tinh Thần Sa", "🌌"), ("Địa Mạch Long Đan", "🔮"), ("Hồng Hoang Cốt", "🦴")],
     },
     {
         "name": "Thiên Đế Cố Cảnh",
-        "zones": [
-            ("Thiên Đế Phế Tích", [("phe_tich", "Phế Tích Hồn Linh", "👻"), ("kim_quang", "Kim Quang Thần Điểu", "🦚")]),
-            ("Vạn Đạo Thiên Lộ", [("dao_thu", "Vạn Đạo Thủ Hộ Thú", "🦁"), ("thien_long", "Thiên Long Ấu Thể", "🐉")]),
-        ],
-        "special": ("Chí Tôn Thiên Môn", "thiên môn", ("chi_ton", "Chí Tôn Thủ Vệ", "👑")),
         "items": [("Thiên Đế Thiết", "⛏️"), ("Kim Quang Vũ", "🪶"), ("Vạn Đạo Linh Thảo", "🌿"),
                   ("Thiên Lộ Tinh Ngọc", "💎"), ("Thiên Long Giác", "🐲"), ("Chí Tôn Đạo Quả", "🍑")],
     },
 ]
-REGION_COUNT = 8
-assert len(REGIONS) == REGION_COUNT
+ITEM_SET_COUNT = 8
+assert len(ITEM_SETS) == ITEM_SET_COUNT
 
 ITEM_RARITIES = ("common", "rare", "precious")
 RARITY_LABEL = {"common": "Phổ thông", "rare": "Hiếm", "precious": "Quý"}
@@ -203,11 +177,11 @@ ITEM_LAYOUT = ("common", "common", "common", "rare", "rare", "precious")
 
 
 def build_items():
-    """Danh mục vật phẩm: mã -> thông tin. Mã dạng r{vùng}_{chỉ số}."""
+    """Danh mục vật phẩm: mã -> thông tin. Mã dạng r{bộ}_{chỉ số}."""
     items = {}
-    for r, region in enumerate(REGIONS):
-        for i, (name, emoji) in enumerate(region["items"]):
-            items[f"r{r}_{i}"] = {"code": f"r{r}_{i}", "name": name, "emoji": emoji, "region": r,
+    for s, item_set in enumerate(ITEM_SETS):
+        for i, (name, emoji) in enumerate(item_set["items"]):
+            items[f"r{s}_{i}"] = {"code": f"r{s}_{i}", "name": name, "emoji": emoji, "region": s,
                                   "rarity": ITEM_LAYOUT[i]}
     items["pham_dan"] = {"code": "pham_dan", "name": "Tụ Phẩm Đan", "emoji": "💊", "region": None,
                          "rarity": "special"}
@@ -216,10 +190,77 @@ def build_items():
 
 ITEMS = build_items()
 
-# Rơi vật phẩm: (số lần quay phổ thông, số lượng mỗi lần) ...
-DROP_NORMAL = {"common_rolls": 2, "common_qty": (1, 2), "rare_chance": 0.12}
+# ---------------------------------------------------------------------------
+# Quái, boss và bản đồ. Ảnh: assets/monsters/<mã>.png, assets/boss/<mã>.png (thiếu ảnh -> emoji)
+# ---------------------------------------------------------------------------
+MONSTERS = [
+    ("thanh_phong_lang", "Thanh Phong Lang", "🐺"), ("nhat_muc_xa_yeu", "Nhất Mục Xà Yêu", "🐍"),
+    ("hac_loi_dieu", "Hắc Lôi Điểu", "🦅"), ("kim_mao_thu", "Kim Mao Thử", "🐹"),
+    ("tu_bi_giao_long", "Tử Bì Giao Long", "🐉"), ("bach_nien_moc_yeu", "Bách Niên Mộc Yêu", "🌳"),
+    ("thuc_nhan_hoa", "Thực Nhân Hoa", "🌺"), ("cuong_thiet_tru", "Cuồng Thiết Trư", "🐗"),
+    ("thiem_dien_bao", "Thiểm Điện Báo", "🐆"), ("tam_dau_yeu_su", "Tam Đầu Yêu Sư", "🦁"),
+    ("cu_xi_hac_ho", "Cự Xỉ Hắc Hổ", "🐅"),
+]
+BOSSES = [
+    ("ty_huu", "Tỳ Hưu", "🦁"), ("thong_thien_cu_vien", "Thông Thiên Cự Viên", "🦍"),
+    ("phuong_hoang", "Phượng Hoàng", "🦚"), ("thao_thiet", "Thao Thiết", "👹"),
+    ("ky_lan", "Kỳ Lân", "🦄"), ("dai_bang_kim_xi_dieu", "Đại Bàng Kim Xí Điểu", "🦅"),
+    ("bach_ho", "Bạch Hổ", "🐅"), ("huyen_vu", "Huyền Vũ", "🐢"),
+    ("thanh_long", "Thanh Long", "🐲"), ("cuu_vi_thien_ho", "Cửu Vĩ Thiên Hồ", "🦊"),
+]
+
+# Mỗi cảnh giới 2 khu: khu thường (quái thường) và khu tinh anh + boss.
+# (tên khu thường, x, y, tên khu tinh anh, x, y) — x, y là pixel trên ảnh map đã thu nhỏ 1595x890
+MAP_W, MAP_H = 1595, 890
+MAP_ICON_OFFSET_Y = -40   # nút bấm đặt phía trên nhãn tên, trúng hình đảo/địa danh
+_AREA_DATA = [
+    ("Thanh Khê Thôn", 117, 578, "Bích Thảo Nguyên", 283, 547),
+    ("Linh Tuyền Trấn", 448, 551, "Hắc Mộc Lâm", 617, 559),
+    ("Vạn Kiếm Sơn Trang", 343, 806, "U Minh Thành", 433, 759),
+    ("Huyễn Vụ Chiểu Trạch", 607, 732, "Đoạn Hồn Nhai", 700, 706),
+    ("Liệt Hỏa Sơn", 805, 558, "U Đầm Cốc", 931, 626),
+    ("Băng Thành", 1033, 763, "Cấm Địa Hỏa Vực", 1139, 640),
+    ("Bí Cảnh Động Phủ", 1046, 541, "Vạn Yêu Sào", 1257, 545),
+    ("Cổ Di Tích", 1316, 760, "Vạn Niên Diễm Uyên", 1383, 615),
+    ("Cửu Trọng Lôi Hải", 1494, 588, "Phi Thăng Thiên Đài", 1498, 771),
+    ("Tru Tiên Nhai", 136, 258, "Nhiễm Ma Tiên Đầm", 337, 194),
+    ("Tử Hà Cổ Động", 295, 325, "Bách Thảo Tiên Cung", 458, 319),
+    ("Thiên Tuyền Giang", 711, 305, "Ngọc Hư Phong", 532, 192),
+    ("Thái Ất Tiên Khư", 905, 319, "Kim Diễm Linh Trì", 1111, 344),
+    ("Đại La Vạn Tiên Đảo", 1028, 209, "Vạn Đạo Tôn Điện", 1246, 230),
+    ("Thần Lăng Tiên Uyên", 1170, 150, "Cửu Tiêu Băng Cung", 1300, 380),   # Thần Lăng chưa có nhãn trên ảnh
+    ("Tuyên Cổ Điện", 1480, 378, "Vĩnh Hằng Đế Thành", 1427, 173),
+]
+assert len(_AREA_DATA) == len(MAJOR_REALMS)
+
+
+def build_areas():
+    """Danh sách 32 khu: chỉ số = 2 * cảnh giới + (0 khu thường | 1 khu tinh anh + boss)."""
+    areas = []
+    for r, (n_name, nx, ny, e_name, ex, ey) in enumerate(_AREA_DATA):
+        common = {"realm": r, "item_set": r // 2}
+        areas.append({**common, "kind": "normal", "name": n_name, "x": nx, "y": ny,
+                      "monsters": [MONSTERS[(2 * r) % len(MONSTERS)], MONSTERS[(2 * r + 1) % len(MONSTERS)]]})
+        areas.append({**common, "kind": "elite", "name": e_name, "x": ex, "y": ey,
+                      "monsters": [MONSTERS[(2 * r + 5) % len(MONSTERS)], MONSTERS[(2 * r + 6) % len(MONSTERS)]],
+                      "boss": BOSSES[r % len(BOSSES)]})
+    return areas
+
+
+AREAS = build_areas()
+AREA_KIND_LABEL = {"normal": "Khu săn quái", "elite": "Khu tinh anh & Boss"}
+
+
+def world_of(realm_idx):
+    return "Phàm Giới" if realm_idx < PHAM_REALMS else "Tiên Giới"
+
+
+# Rơi vật phẩm (số lần quay, số lượng mỗi lần ...)
+DROP_NORMAL = {"common_rolls": 2, "common_qty": (1, 2)}
+DROP_ELITE = {"common_rolls": 1, "common_qty": (1, 2), "rare_chance": 0.5, "precious_chance": 0.04}
 DROP_BOSS = {"common_rolls": 4, "common_qty": (1, 3), "rare_rolls": 2, "rare_qty": (1, 2), "precious_chance": 0.40}
 DROP_EVENT = {"common_chance": 0.7, "common_qty": (1, 2)}
+HUNT_ELITE_REWARD = 14
 
 # ---------------------------------------------------------------------------
 # Pháp bảo: 5 cấp x 3 phẩm. Mỗi bí phương cố định hình dáng + cấp + vùng nguyên liệu.
@@ -246,23 +287,31 @@ PITY_HIGH_AT = 12    # sau 11 lần chế không ra Thượng Phẩm thì lần 
 RECIPE_PRICE_DAYS = 1.5
 PILL_PRICE_DAYS = 1.0
 
-# Mã bí phương (khớp tên ảnh): tên, cấp, vùng nguyên liệu, cảnh giới tối thiểu
+# Mã bí phương = tên file ảnh. kind: atk (tăng công) | def (tăng HP).
+# region = bộ vật phẩm cần (= cảnh giới tối thiểu // 2): nguyên liệu farm ở 2 khu của cảnh giới đó.
 RECIPES = [
-    {"code": "lk1", "name": "Thanh Phong Kiếm", "tier": "linh_khi", "region": 0, "min_idx": 0},
-    {"code": "lk2", "name": "Hộ Tâm Kính", "tier": "linh_khi", "region": 0, "min_idx": 1},
-    {"code": "pb1", "name": "Xích Diễm Đao", "tier": "phap_bao", "region": 1, "min_idx": 2},
-    {"code": "pb2", "name": "Huyền Quy Thuẫn", "tier": "phap_bao", "region": 1, "min_idx": 3},
-    {"code": "lb1", "name": "Hàn Băng Châu", "tier": "linh_bao", "region": 2, "min_idx": 4},
-    {"code": "lb2", "name": "Cửu U Phiên", "tier": "linh_bao", "region": 3, "min_idx": 6},
-    {"code": "tb1", "name": "Vân Hải Chung", "tier": "tien_bao", "region": 3, "min_idx": 7},
-    {"code": "tb2", "name": "Hỗn Độn Ấn", "tier": "tien_bao", "region": 4, "min_idx": 8},
-    {"code": "tk1", "name": "Ngọc Hư Tiên Kiếm", "tier": "tien_khi", "region": 5, "min_idx": 10},
-    {"code": "tk2", "name": "Tinh Hà Thần Châu", "tier": "tien_khi", "region": 6, "min_idx": 12},
+    {"code": "thanh_phong_kiem", "name": "Thanh Phong Kiếm", "tier": "linh_khi", "kind": "atk", "region": 0, "min_idx": 0},
+    {"code": "ho_tam_kinh", "name": "Hộ Tâm Kính", "tier": "linh_khi", "kind": "def", "region": 0, "min_idx": 1},
+    {"code": "xich_diem_dao", "name": "Xích Diễm Đao", "tier": "phap_bao", "kind": "atk", "region": 1, "min_idx": 2},
+    {"code": "huyen_quy_thuan", "name": "Huyền Quy Thuẫn", "tier": "phap_bao", "kind": "def", "region": 1, "min_idx": 3},
+    {"code": "han_bang_chau", "name": "Hàn Băng Châu", "tier": "linh_bao", "kind": "atk", "region": 2, "min_idx": 5},
+    {"code": "cuu_uu_phien", "name": "Cửu U Phiên", "tier": "linh_bao", "kind": "def", "region": 3, "min_idx": 6},
+    {"code": "van_hai_chung", "name": "Vân Hải Chung", "tier": "tien_bao", "kind": "def", "region": 4, "min_idx": 8},
+    {"code": "hon_don_an", "name": "Hỗn Độn Ấn", "tier": "tien_bao", "kind": "atk", "region": 5, "min_idx": 10},
+    {"code": "ngoc_hu_tien_kiem", "name": "Ngọc Hư Tiên Kiếm", "tier": "tien_khi", "kind": "atk", "region": 6, "min_idx": 12},
 ]
+assert all(r["region"] == r["min_idx"] // 2 for r in RECIPES)
 RECIPE_BY_CODE = {r["code"]: r for r in RECIPES}
+LEGACY_RECIPE_CODES = {"lk1": "thanh_phong_kiem", "lk2": "ho_tam_kinh", "pb1": "xich_diem_dao", "pb2": "huyen_quy_thuan",
+                       "lb1": "han_bang_chau", "lb2": "cuu_uu_phien", "tb1": "van_hai_chung", "tb2": "hon_don_an",
+                       "tk1": "ngoc_hu_tien_kiem"}
+KIND_LABEL = {"atk": "Công", "def": "Thủ"}
+ARTIFACT_SLOTS = 2
+SELL_REFUND_RATIO = 0.5    # bán pháp bảo hoàn 50% Linh Thạch chế tạo (không tính nâng cấp)
+ARTIFACT_PCT_PER_TIER = 0.04   # +% sức công/HP gốc của người chơi, nhân số bậc (1-5), phẩm và cấp nâng
 
-ARTIFACT_ATK_RATIO = 0.7   # cộng thêm so với sức công gốc tại cảnh giới tối thiểu của pháp bảo
-ARTIFACT_HP_RATIO = 0.5
+ARTIFACT_ATK_RATIO = 0.7   # cộng thêm so với sức công gốc tại cảnh giới tối thiểu của pháp bảo công
+ARTIFACT_HP_RATIO = 0.5    # tương tự cho HP của pháp bảo thủ
 UPGRADE_MAX = 9
 UPGRADE_STAT_STEP = 0.10
 UPGRADE_LS_RATIO = 0.12    # trên giá chế tạo, nhân (1 + 0.4 * cấp hiện tại)

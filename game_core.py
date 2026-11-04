@@ -93,22 +93,47 @@ def roll_quality(odds, pity_mid, pity_high, rng=random):
 
 
 def artifact_bonus(recipe, quality, upgrade):
-    """(cộng công, cộng HP) của pháp bảo."""
+    """(cộng thẳng, cộng % trên chỉ số gốc của người chơi). Pháp bảo công -> sức công, thủ -> HP."""
     mult = cfg.QUALITY_MULT[quality] * (1 + cfg.UPGRADE_STAT_STEP * upgrade)
-    base_atk = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** recipe["min_idx"]
-    base_hp = cfg.PLAYER_BASE_HP * cfg.POWER_PER_REALM ** recipe["min_idx"]
-    return base_atk * cfg.ARTIFACT_ATK_RATIO * mult, base_hp * cfg.ARTIFACT_HP_RATIO * mult
+    if recipe["kind"] == "atk":
+        base, ratio = cfg.PLAYER_BASE_ATK, cfg.ARTIFACT_ATK_RATIO
+    else:
+        base, ratio = cfg.PLAYER_BASE_HP, cfg.ARTIFACT_HP_RATIO
+    flat = base * cfg.POWER_PER_REALM ** recipe["min_idx"] * ratio * mult
+    pct = cfg.ARTIFACT_PCT_PER_TIER * (cfg.ARTIFACT_TIERS[recipe["tier"]]["order"] + 1) * mult
+    return flat, pct
 
 
-def player_stats(idx, artifact=None):
-    atk = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** idx
-    hp = cfg.PLAYER_BASE_HP * cfg.POWER_PER_REALM ** idx
-    if artifact:
-        bonus_atk, bonus_hp = artifact_bonus(cfg.RECIPE_BY_CODE[artifact["recipe_code"]],
-                                             artifact["quality"], artifact["upgrade"])
-        atk += bonus_atk
-        hp += bonus_hp
-    return {"atk": atk, "hp": hp}
+def diminishing(points, cap, k):
+    """Lợi suất giảm dần: cap × p / (p + k)."""
+    points = max(0, points or 0)
+    return cap * points / (points + k)
+
+
+def stat_bonuses(words=0, answers=0, streak=0):
+    """Hiệu ứng của Căn cơ (từ đã học), Ngộ tính (đáp đúng), Đạo tâm (chuỗi ngày)."""
+    can_co = words / (words + cfg.CAN_CO_K) if words > 0 else 0.0
+    return {
+        "crit": diminishing(answers, cfg.CRIT_MAX, cfg.CRIT_K),
+        "hp": cfg.CAN_CO_HP_MAX * can_co,
+        "atk": cfg.CAN_CO_ATK_MAX * can_co,
+        "dao_tam": diminishing(streak, cfg.DAO_TAM_MAX, cfg.DAO_TAM_K),
+    }
+
+
+def player_stats(idx, artifacts=None, bonuses=None):
+    base_atk = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** idx
+    base_hp = cfg.PLAYER_BASE_HP * cfg.POWER_PER_REALM ** idx
+    atk, hp = base_atk, base_hp
+    for art in artifacts or []:
+        recipe = cfg.RECIPE_BY_CODE[art["recipe_code"]]
+        flat, pct = artifact_bonus(recipe, art["quality"], art["upgrade"])
+        if recipe["kind"] == "atk":
+            atk += flat + base_atk * pct
+        else:
+            hp += flat + base_hp * pct
+    b = bonuses or {}
+    return {"atk": atk * (1 + b.get("atk", 0)), "hp": hp * (1 + b.get("hp", 0)), "crit": b.get("crit", 0.0)}
 
 
 def upgrade_cost(recipe, level):
@@ -167,19 +192,29 @@ def _load(uid):
     p = cursors[0].fetchone()
     plays = cursors[1].fetchone()
     fortune = cursors[5].fetchone()
+    legacy = cfg.LEGACY_RECIPE_CODES
+    artifacts = [{"id": r[0], "recipe_code": legacy.get(r[1], r[1]), "quality": r[2], "upgrade": r[3]}
+                 for r in cursors[4].fetchall()]
+    artifacts = [a for a in artifacts if a["recipe_code"] in cfg.RECIPE_BY_CODE]
+    counters = {r[0]: r[1] for r in cursors[7].fetchall()}
+    if "equip_1" in counters or "equip_2" in counters:
+        slots = [counters.get("equip_1") or None, counters.get("equip_2") or None]
+    else:
+        slots = [p[1], None]
+    owned_ids = {a["id"] for a in artifacts}
+    slots = [s if s in owned_ids else None for s in slots]
     return {
         "uid": uid, "day": day,
-        "ls": p[0], "equipped": p[1], "title": p[2], "pity_mid": p[3], "pity_high": p[4],
+        "ls": p[0], "equipped": slots, "title": p[2], "pity_mid": p[3], "pity_high": p[4],
         "streak": p[5], "streak_day": p[6],
         "plays": plays[0] if plays else 0,
         "inventory": {r[0]: r[1] for r in cursors[2].fetchall() if r[1] > 0},
-        "recipes": {r[0] for r in cursors[3].fetchall()},
-        "artifacts": [{"id": r[0], "recipe_code": r[1], "quality": r[2], "upgrade": r[3]}
-                      for r in cursors[4].fetchall()],
+        "recipes": {legacy.get(r[0], r[0]) for r in cursors[3].fetchall()},
+        "artifacts": artifacts,
         "fortune": ({"vocab_id": fortune[0], "tier": fortune[1], "status": fortune[2], "buff": fortune[3]}
                     if fortune else None),
         "achievements": {r[0] for r in cursors[6].fetchall()},
-        "counters": {r[0]: r[1] for r in cursors[7].fetchall()},
+        "counters": counters,
         "log": [{"ts": r[0], "kind": r[1], "text": r[2]} for r in cursors[8].fetchall()],
     }
 
@@ -193,8 +228,10 @@ def get_state(force=False):
     return state
 
 
-def equipped_artifact(state):
-    return next((a for a in state["artifacts"] if a["id"] == state["equipped"]), None)
+def equipped_artifacts(state):
+    """Danh sách pháp bảo đang mang (tối đa ARTIFACT_SLOTS)."""
+    by_id = {a["id"]: a for a in state["artifacts"]}
+    return [by_id[i] for i in state["equipped"] if i in by_id]
 
 
 def active_buff(state):
@@ -371,18 +408,61 @@ def craft(code, idx, use_pill=False, rng=random):
     return True, f"Chế tạo thành công: {name}!", quality
 
 
-def equip(artifact_id, idx):
+def _slot_statements(uid, slots):
+    """Ghi 2 ô pháp bảo vào game_counters (equip_1, equip_2); 0 = ô trống."""
+    statements = [("UPDATE game_profile SET equipped_artifact = NULL WHERE user_id = ?", (uid,))]
+    for number, artifact_id in enumerate(slots, 1):
+        statements.append((
+            "INSERT INTO game_counters (user_id, key, value) VALUES (?, ?, ?) "
+            "ON CONFLICT (user_id, key) DO UPDATE SET value = excluded.value", (uid, f"equip_{number}", artifact_id or 0)))
+    return statements
+
+
+def equip(artifact_id, idx, slot=None):
+    """Trang bị pháp bảo vào ô slot (0/1); không chỉ định ô thì dùng ô trống đầu tiên."""
     state = get_state()
-    if artifact_id is not None:
-        art = next((a for a in state["artifacts"] if a["id"] == artifact_id), None)
-        if art is None:
-            return False, "Không tìm thấy pháp bảo."
-        recipe = cfg.RECIPE_BY_CODE[art["recipe_code"]]
-        if idx < recipe["min_idx"]:
-            return False, f"Cần đạt {cfg.MAJOR_REALMS[recipe['min_idx']]} để dùng pháp bảo này."
-    apply_changes(extra=[("UPDATE game_profile SET equipped_artifact = ? WHERE user_id = ?",
-                          (artifact_id, state["uid"]))])
-    return True, "Đã thay đổi pháp bảo trang bị."
+    art = next((a for a in state["artifacts"] if a["id"] == artifact_id), None)
+    if art is None:
+        return False, "Không tìm thấy pháp bảo."
+    recipe = cfg.RECIPE_BY_CODE[art["recipe_code"]]
+    if idx < recipe["min_idx"]:
+        return False, f"Cần đạt {cfg.MAJOR_REALMS[recipe['min_idx']]} để dùng pháp bảo này."
+    slots = list(state["equipped"])
+    if artifact_id in slots:
+        return False, "Pháp bảo này đã được trang bị."
+    if slot is None:
+        slot = next((i for i, s in enumerate(slots) if s is None), None)
+        if slot is None:
+            return False, "Cả 2 ô đã đầy, hãy chọn ô để thay thế."
+    slots[slot] = artifact_id
+    apply_changes(extra=_slot_statements(state["uid"], slots))
+    return True, "Đã trang bị pháp bảo."
+
+
+def unequip(slot):
+    state = get_state()
+    slots = list(state["equipped"])
+    slots[slot] = None
+    apply_changes(extra=_slot_statements(state["uid"], slots))
+    return True, "Đã tháo pháp bảo."
+
+
+def sell_artifact(artifact_id):
+    """Bán pháp bảo, hoàn một phần Linh Thạch chế tạo (không tính nâng cấp)."""
+    state = get_state()
+    art = next((a for a in state["artifacts"] if a["id"] == artifact_id), None)
+    if art is None:
+        return False, "Không tìm thấy pháp bảo."
+    recipe = cfg.RECIPE_BY_CODE[art["recipe_code"]]
+    refund = round(recipe_craft_cost(recipe) * cfg.SELL_REFUND_RATIO)
+    slots = [None if s == artifact_id else s for s in state["equipped"]]
+    name = f"{cfg.QUALITY_NAMES[art['quality']]} {recipe['name']} +{art['upgrade']}"
+    uid = state["uid"]
+    apply_changes(
+        ls=refund, log=("market", f"Bán {name}, thu hồi {refund} Linh Thạch."),
+        extra=[("DELETE FROM game_artifacts WHERE id = ? AND user_id = ?", (artifact_id, uid))]
+        + _slot_statements(uid, slots))
+    return True, f"Đã bán {name}, nhận {refund} 💎."
 
 
 def upgrade(artifact_id, rng=random):

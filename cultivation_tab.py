@@ -1,6 +1,7 @@
 """Tab Động Phủ: trang chủ tu tiên, các trò chơi ôn tập, phường thị và huy hiệu."""
 import base64
 import time
+from pathlib import Path
 
 import streamlit as st
 
@@ -33,6 +34,10 @@ def avatar_svg(idx):
 
 
 def _show_avatar(idx):
+    path = Path(__file__).parent / "assets" / "hinh tu luyen" / "avatar_web.webp"
+    if path.exists():
+        st.image(str(path), use_container_width=True)
+        return
     encoded = base64.b64encode(avatar_svg(idx).encode()).decode()
     st.markdown(f'<img src="data:image/svg+xml;base64,{encoded}" style="width:100%;max-width:200px;border-radius:16px"/>',
                 unsafe_allow_html=True)
@@ -70,27 +75,32 @@ def _render_home(state, ctx, user):
             st.progress(1.0, text="Đã đạt cảnh giới tối cao")
         else:
             st.progress(realm["progress"], text=f"Đột phá tiểu kỳ tiếp theo: {ctx['words']} / {realm['next_need']} từ")
-        art = core.equipped_artifact(state)
-        if art:
-            recipe = cfg.RECIPE_BY_CODE[art["recipe_code"]]
-            st.markdown(f"**Pháp bảo:** {cfg.QUALITY_NAMES[art['quality']]} {recipe['name']} +{art['upgrade']}")
-        else:
-            st.caption("Chưa trang bị pháp bảo — ghé Phường Thị để mua bí phương.")
+        arts = core.equipped_artifacts(state)
+        for n in range(cfg.ARTIFACT_SLOTS):
+            if n < len(state["equipped"]) and state["equipped"][n]:
+                art = next(a for a in arts if a["id"] == state["equipped"][n])
+                recipe = cfg.RECIPE_BY_CODE[art["recipe_code"]]
+                st.markdown(f"**Pháp bảo {n + 1}:** {cfg.QUALITY_NAMES[art['quality']]} {recipe['name']} "
+                            f"+{art['upgrade']} ({cfg.KIND_LABEL[recipe['kind']]})")
+            else:
+                st.caption(f"Ô pháp bảo {n + 1}: trống" + (" — ghé Phường Thị để mua bí phương." if n == 0 else ""))
         buff = core.active_buff(state)
         if buff:
             name, desc, _, _ = cfg.FORTUNE_BUFFS[buff[0]]
             st.caption(f"✨ {name}: {desc.format(v=buff[1])}")
-    stats = core.player_stats(ctx["idx"], core.equipped_artifact(state))
+    stats = core.player_stats(ctx["idx"], core.equipped_artifacts(state), ctx["bonuses"])
     demons = len(_demon_rows())
+    bn = ctx["bonuses"]
     c = st.columns(4)
     c[0].metric("💎 Linh Thạch", f"{state['ls']:,}")
-    c[1].metric("⚔️ Công kích", f"{stats['atk']:.0f}")
-    c[2].metric("❤️ Sinh lực", f"{stats['hp']:.0f}")
+    c[1].metric("⚔️ Công kích", f"{stats['atk']:.0f}", f"+{bn['atk'] * 100:.1f}% căn cơ")
+    c[2].metric("❤️ Sinh lực", f"{stats['hp']:.0f}", f"+{bn['hp'] * 100:.1f}% căn cơ")
     c[3].metric("📖 Căn cơ (từ đã học)", ctx["words"])
     c = st.columns(4)
     answers = state["counters"].get("answers_correct", 0)
-    c[0].metric("🧠 Ngộ tính (đáp đúng)", answers)
-    c[1].metric("🔥 Đạo tâm (chuỗi ngày)", user.get("consecutive_streak", 0))
+    c[0].metric("🧠 Ngộ tính (đáp đúng)", answers, f"chí mạng {bn['crit'] * 100:.1f}%")
+    c[1].metric("🔥 Đạo tâm (chuỗi ngày)", user.get("consecutive_streak", 0),
+                f"giảm sát thương Tâm Ma Kiếp {bn['dao_tam'] * 100:.1f}%")
     c[2].metric("👿 Tâm ma", demons)
     c[3].metric("⚡ Linh lực", user.get("spiritual_energy", 0))
     st.markdown("#### 📔 Nhật Ký Tu Tiên")
@@ -118,8 +128,22 @@ def _cb_craft(code, idx, pill_key):
     _toast_result((ok, message))
 
 
-def _cb_equip(artifact_id, idx):
-    _toast_result(core.equip(artifact_id, idx))
+def _cb_equip(artifact_id, idx, slot=None):
+    _toast_result(core.equip(artifact_id, idx, slot))
+
+
+def _cb_unequip(slot):
+    _toast_result(core.unequip(slot))
+
+
+def _cb_sell(artifact_id):
+    _toast_result(core.sell_artifact(artifact_id))
+
+
+def _farm_text(recipe):
+    s = recipe["region"]
+    names = [cfg.AREAS[i]["name"] for i in range(4 * s, 4 * s + 4)]
+    return (f"Nguyên liệu thường: {names[0]}, {names[2]} · hiếm/quý: {names[1]}, {names[3]}")
 
 
 def _cb_upgrade(artifact_id):
@@ -142,8 +166,9 @@ def _render_market(state, ctx):
             c1, c2, c3 = st.columns([1, 4, 2])
             with c1:
                 game_ui.show_image_or_emoji("artifacts", recipe["code"], tier["emoji"], 70)
-            c2.markdown(f"**{recipe['name']}** · {tier['name']}  \n"
-                        f"Cần {cfg.MAJOR_REALMS[recipe['min_idx']]} · nguyên liệu vùng {cfg.REGIONS[recipe['region']]['name']}")
+            c2.markdown(f"**{recipe['name']}** · {tier['name']} · {cfg.KIND_LABEL[recipe['kind']]}  \n"
+                        f"Cần {cfg.MAJOR_REALMS[recipe['min_idx']]} · bộ nguyên liệu {cfg.ITEM_SETS[recipe['region']]['name']}  \n"
+                        f"{_farm_text(recipe)}")
             if recipe["code"] in state["recipes"]:
                 c3.success("Đã sở hữu")
             else:
@@ -182,18 +207,28 @@ def _render_market(state, ctx):
         for art in reversed(state["artifacts"]):
             recipe = cfg.RECIPE_BY_CODE[art["recipe_code"]]
             tier = cfg.ARTIFACT_TIERS[recipe["tier"]]
-            atk, hp = core.artifact_bonus(recipe, art["quality"], art["upgrade"])
+            flat, pct = core.artifact_bonus(recipe, art["quality"], art["upgrade"])
+            stat = "công" if recipe["kind"] == "atk" else "HP"
             c1, c2, c3 = st.columns([1, 4, 3])
             with c1:
                 game_ui.show_image_or_emoji("artifacts", recipe["code"], tier["emoji"], 70)
-            equipped = art["id"] == state["equipped"]
+            slot = state["equipped"].index(art["id"]) if art["id"] in state["equipped"] else None
             c2.markdown(f"**{cfg.QUALITY_NAMES[art['quality']]} {recipe['name']} +{art['upgrade']}**"
-                        f"{' · ✅ đang dùng' if equipped else ''}  \n{tier['name']} · +{atk:.0f} công · +{hp:.0f} HP")
-            if equipped:
-                c3.button("Gỡ", key=f"unequip_{art['id']}", on_click=_cb_equip, args=(None, idx))
+                        f"{f' · ✅ ô {slot + 1}' if slot is not None else ''}  \n"
+                        f"{tier['name']} · {cfg.KIND_LABEL[recipe['kind']]} · +{flat:.0f} {stat} · +{pct * 100:.0f}% {stat} gốc")
+            if slot is not None:
+                c3.button("Tháo", key=f"unequip_{art['id']}", on_click=_cb_unequip, args=(slot,))
             else:
-                c3.button("Trang bị", key=f"equip_{art['id']}", on_click=_cb_equip, args=(art["id"], idx),
-                          disabled=idx < recipe["min_idx"])
+                free = state["equipped"].count(None)
+                if free:
+                    c3.button("Trang bị", key=f"equip_{art['id']}", on_click=_cb_equip, args=(art["id"], idx),
+                              disabled=idx < recipe["min_idx"])
+                else:
+                    for n in range(cfg.ARTIFACT_SLOTS):
+                        c3.button(f"Thay ô {n + 1}", key=f"equip_{art['id']}_{n}", on_click=_cb_equip,
+                                  args=(art["id"], idx, n), disabled=idx < recipe["min_idx"])
+            refund = round(core.recipe_craft_cost(recipe) * cfg.SELL_REFUND_RATIO)
+            c3.button(f"Bán (+{refund:,} 💎)", key=f"sell_{art['id']}", on_click=_cb_sell, args=(art["id"],))
             if art["upgrade"] < cfg.UPGRADE_MAX:
                 ls, mats = core.upgrade_cost(recipe, art["upgrade"])
                 c3.caption(f"Nâng +{art['upgrade'] + 1}: {ls:,} 💎 · {_items_text(mats, state['inventory'])} · "
@@ -243,7 +278,9 @@ def _body(user, learned_day):
     words = len(pool)
     realm = core.realm_info(words)
     ctx = {"pool": pool, "words": words, "realm": realm, "idx": realm["idx"], "mastery": {},
-           "grammar": _unlocked("grammar_battle", realm["idx"], words)}
+           "grammar": _unlocked("grammar_battle", realm["idx"], words),
+           "bonuses": core.stat_bonuses(words, state["counters"].get("answers_correct", 0),
+                                        user.get("consecutive_streak", 0))}
     page = st.radio("Điều hướng", list(NAV), format_func=lambda k: NAV[k], horizontal=True, key="game_nav",
                     label_visibility="collapsed")
     if page in UNLOCK_KEY and not _unlocked(UNLOCK_KEY[page], realm["idx"], words):

@@ -30,7 +30,10 @@ from database import (
 from exam_engine import generate_tribulation_exam
 from extra_tabs import render_notebook, render_pronunciation, render_radicals
 from cultivation_tab import render_cultivation
-from game_core import realm_info
+from guide_tab import render_guide
+from game_core import realm_info, stat_bonuses
+import game_config as game_cfg
+from database import _demon_rows
 from game_questions import learned_day_for as game_learned_day, load_pool as load_game_pool
 # --- CẤU HÌNH TRANG ---
 st.set_page_config(
@@ -62,6 +65,11 @@ SESSION_DEFAULTS = {
     "exam_score": lambda: 0,
     "exam_completed": lambda: False,
     "exam_type": lambda: "MINI_3D",  # "MINI_3D" | "MAJOR_10D" | "LÔI KIẾP"
+    "exam_extra": lambda: 0.0,
+    "exam_wrong": lambda: 0,
+    "exam_tm_t": lambda: 0.0,
+    "exam_dao_tam": lambda: 0.0,
+    "exam_last_hit": lambda: "",
     "card_idx": lambda: 0,
     "shadowing_idx": lambda: 0,
     "shadowing_revealed": lambda: False,
@@ -87,6 +95,13 @@ def start_exam(is_major, exam_type):
     st.session_state.exam_result_saved = False
     st.session_state.exam_type = exam_type
     st.session_state.exam_major = is_major
+    # Tâm Ma Kiếp: tâm ma càng nhiều lôi kiếp càng mạnh, Đạo tâm giảm bớt sát thương
+    demons = len(_demon_rows())
+    st.session_state.exam_tm_t = demons / (demons + game_cfg.TAM_MA_K)
+    st.session_state.exam_dao_tam = stat_bonuses(streak=st.session_state.user.get("consecutive_streak", 0))["dao_tam"]
+    st.session_state.exam_extra = 0.0
+    st.session_state.exam_wrong = 0
+    st.session_state.exam_last_hit = ""
     st.session_state.phase = "loi_kiep"
 
 
@@ -239,13 +254,21 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
+    st.markdown("""<style>
+    .st-key-guide_open button{background:linear-gradient(135deg,#ff9800,#e53935) !important;color:#fff !important;
+    border:2px solid #ffd54f !important;font-weight:700;box-shadow:0 0 10px rgba(255,152,0,.7);}
+    .st-key-guide_open button p{color:#fff !important;}
+    </style>""", unsafe_allow_html=True)
+    st.button("📖 Hướng Dẫn", key="guide_open", use_container_width=True,
+              on_click=lambda: st.session_state.update(show_guide=True))
+
     st.markdown("**Lộ trình buổi học**")
     st.markdown(stepper_html(st.session_state.phase), unsafe_allow_html=True)
 
     st.divider()
     st.session_state.speech_rate = st.selectbox(
         "🎧 Tốc độ phát âm",
-        options=[1.0, 0.85, 0.75],
+        options=[1.0, 0.85, 0.75, 0.6],
         index=0,
         format_func=lambda x: f"Tốc độ {x}x",
     )
@@ -268,6 +291,10 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+if st.session_state.get("show_guide"):
+    render_guide()
+    st.stop()
 
 TAB_LABELS = ["⚔️ Tu Luyện Hàng Ngày", "🏯 Động Phủ", "📊 Tâm Ma Bảng & Thống Kê", "📒 Sổ Tay",
               "🗣️ Tập Phát Âm", "🧩 Bộ Thủ"]
@@ -632,10 +659,23 @@ with tab_study:
             total_q = len(st.session_state.exam_questions)
             curr_idx = st.session_state.exam_idx
             q = st.session_state.exam_questions[curr_idx]
-            
+            in_tam_ma = q.get("phase") == "tam_ma"
+            need = int(total_q * 0.85)
+            allowed = max(total_q - need, 1)
+            lost = st.session_state.exam_wrong + st.session_state.exam_extra
+            body_left = max(0.0, 1 - lost / allowed)
+
             st.progress((curr_idx) / total_q)
-            st.caption(f"Đạo lôi thứ {curr_idx + 1} / {total_q} | Sinh tử kiếp")
-            
+            if in_tam_ma:
+                st.error(f"👿 TÂM MA KIẾP — Đạo lôi thứ {curr_idx + 1} / {total_q}. "
+                         f"Tâm ma hiện hình, mỗi câu sai bị lôi kiếp giáng mạnh hơn "
+                         f"(+{st.session_state.exam_tm_t * (1 - st.session_state.exam_dao_tam):.2f} điểm trừ).")
+            else:
+                st.caption(f"Đạo lôi thứ {curr_idx + 1} / {total_q} | Sinh tử kiếp")
+            st.progress(body_left, text=f"🛡️ Đạo thể: {body_left * 100:.0f}% (cạn là độ kiếp thất bại)")
+            if st.session_state.get("exam_last_hit"):
+                st.warning(st.session_state.exam_last_hit)
+
             st.markdown(f"<div class='quiz-prompt'>{q['question_text']}</div>", unsafe_allow_html=True)
             
             
@@ -643,10 +683,19 @@ with tab_study:
             for i, opt in enumerate(q["options"]):
                 with cols[i % 2]:
                     if st.button(opt['hanzi'], key=f"lk_opt_{curr_idx}_{i}", use_container_width=True):
+                        st.session_state.exam_last_hit = ""
                         if opt['id'] == q["correct_id"]:
                             st.session_state.exam_score += 1
                             exorcise_inner_demon(q["vocab_id"]) # Thanh tẩy tâm ma
                             speak_text = opt['hanzi']
+                        else:
+                            st.session_state.exam_wrong += 1
+                            if in_tam_ma:
+                                hit = st.session_state.exam_tm_t * (1 - st.session_state.exam_dao_tam)
+                                st.session_state.exam_extra += hit
+                                st.session_state.exam_last_hit = (
+                                    f"⚡ Lôi kiếp giáng xuống! Tâm ma khiến đạo thể tổn thêm {hit:.2f} điểm "
+                                    f"(Đạo tâm hộ thể giảm {st.session_state.exam_dao_tam * 100:.1f}%).")
                         
                         if curr_idx + 1 < total_q:
                             st.session_state.exam_idx += 1
@@ -656,8 +705,9 @@ with tab_study:
         else:
             total_q = len(st.session_state.exam_questions)
             score = st.session_state.exam_score
-            pass_pct = 0.85 # Tỉ lệ yêu cầu: 85% mới được qua
-            is_passed = (score >= int(total_q * pass_pct))
+            need = int(total_q * 0.85)  # Tỉ lệ yêu cầu: 85% mới được qua
+            effective = score - st.session_state.exam_extra  # câu sai ở Tâm Ma Kiếp bị trừ thêm
+            is_passed = effective >= need - 1e-9
 
             # Chỉ ghi nhận kết quả & thăng cấp 1 lần (màn hình này chạy lại sau mỗi lần bấm nút)
             if not st.session_state.exam_result_saved:
@@ -670,6 +720,9 @@ with tab_study:
                 st.session_state.exam_result_saved = True
 
             st.markdown(f"<h2 style='text-align:center;'>Kết quả Lôi Kiếp: {score}/{total_q}</h2>", unsafe_allow_html=True)
+            if st.session_state.exam_extra > 0:
+                st.caption(f"👿 Tâm Ma Kiếp trừ thêm {st.session_state.exam_extra:.2f} điểm → điểm hiệu dụng "
+                           f"{effective:.2f} (cần ≥ {need}).")
             
             if is_passed:
                 st.balloons()
@@ -694,14 +747,7 @@ with tab_study:
         elapsed = max(1, int((datetime.datetime.now() - st.session_state.session_start).total_seconds() / 60))
         st.info(f"⚡ Bạn đã tu luyện tập trung trong **{elapsed} phút**, quy đổi thành **+{elapsed} Điểm Linh Lực**.")
         
-        col_save, col_next_day = st.columns(2)
-        with col_save:
-            if st.button("💾 Lưu Tu Vi & Hoàn Tất", use_container_width=True):
-                update_user_energy(elapsed)
-                st.toast("Đã lưu tiến độ vào cơ sở dữ liệu thành công!", icon="✅")
-                st.rerun()
-                
-        with col_next_day:
+        if True:
             curr_d = st.session_state.user["current_day"]
             
             if curr_d % 10 == 0:
@@ -826,9 +872,9 @@ js_handler = f"""
         const utter = new SpeechSynthesisUtterance(text);
         utter.lang = 'zh-CN';
         
-        // Hãm tốc độ gốc của trình duyệt: lấy tốc độ chọn trên UI nhân với 0.85
+        // Từ ngắn (<= 6 ký tự) đọc chậm hơn câu để nghe rõ từng âm tiết
         const uiRate = {st.session_state.get('speech_rate', 1.0)};
-        utter.rate = uiRate * 0.85; 
+        utter.rate = uiRate * (text.length <= 6 ? 0.55 : 0.85);
         
         synth.speak(utter);
     }}
