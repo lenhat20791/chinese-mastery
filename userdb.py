@@ -136,6 +136,16 @@ SCHEMA = [
         text TEXT NOT NULL
     )""",
     "CREATE INDEX IF NOT EXISTS idx_game_log_user ON game_log (user_id, id)",
+    # --- Đa khóa học (Profiles) ---
+    """CREATE TABLE IF NOT EXISTS profiles (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        course TEXT NOT NULL,
+        level TEXT,
+        occupation TEXT DEFAULT 'OFFICE',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(user_id, course)
+    )""",
 ]
 
 # Bảng theo user_id của trò chơi (xóa tài khoản, sao lưu)
@@ -356,7 +366,17 @@ def get_user_db():
 
 
 def init_schema():
-    get_user_db().batch([(sql, ()) for sql in SCHEMA])
+    conn = get_user_db()
+    conn.batch([(sql, ()) for sql in SCHEMA])
+    columns = {row["name"] for row in conn.execute("PRAGMA table_info(profiles)").fetchall()}
+    if "occupation" not in columns:
+        conn.execute("ALTER TABLE profiles ADD COLUMN occupation TEXT DEFAULT 'OFFICE'")
+        conn.execute("UPDATE profiles SET occupation = NULL WHERE course != 'en'")
+    conn.execute(
+        """INSERT INTO profiles (id, user_id, course, level, occupation)
+           SELECT id, id, 'zh', NULL, NULL FROM users
+           WHERE id NOT IN (SELECT user_id FROM profiles WHERE course = 'zh')"""
+    )
 
 
 def get_meta(key, default=None):

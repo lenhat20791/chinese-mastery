@@ -1,13 +1,14 @@
-﻿# PROJECT_OVERVIEW — Thực Chiến Tiếng Trung (chinese-mastery)
+﻿# PROJECT_OVERVIEW — Thực Chiến Tiếng Trung & Tiếng Anh (chinese-mastery)
 
 > **AI đọc file này TRƯỚC khi viết/sửa code.** Cập nhật lại sau mỗi đợt thay đổi lớn. Giao diện và comment viết bằng tiếng Việt.
-> Cập nhật gần nhất: sau đợt 3 (chỉ số, Tâm Ma Kiếp, ảnh tu sĩ, phát âm). Mục 12 là checklist để gắn khóa học MỚI (ví dụ tiếng Anh) vào hệ thống.
+> Cập nhật gần nhất: hoàn tất lựa chọn nghề nghiệp Công sở / Giáo viên THCS cho khóa tiếng Anh, lọc lộ trình theo nghề và kiểm tra kho từ vựng giáo viên.
 
 ## 1. Tổng quan
-- Streamlit app học tiếng Trung, phong cách tu tiên. Học từ mới mỗi ngày (tab 1), ôn lại bằng mini game "Động Phủ" (tab 2).
+- Streamlit app học tiếng Trung và tiếng Anh, phong cách tu tiên. Học từ mới mỗi ngày (tab 1), ôn lại bằng mini game "Động Phủ" (tab 2).
 - Mục tiêu lý tưởng (không bắt buộc): HSK4 (~1200 từ) trong ~1 năm, sau đó HSK5 (~2500 từ) không giới hạn thời gian.
-- Nhiều người dùng (đăng nhập tài khoản), tiến độ lưu theo `user_id`. Admin có tab quản lý.
-- Python 3.10, Streamlit 1.52. Chạy: `streamlit run app.py`. Test: `python -W ignore -m unittest discover -s tests -t .` (17 test).
+- Nhiều người dùng (đăng nhập tài khoản), tiến độ học/game lưu theo `profile_id` riêng của từng khóa; tài khoản và admin vẫn dùng `user_id`.
+- Khóa tiếng Anh có trình độ CEFR và lựa chọn nghề nghiệp Công sở / Giáo viên THCS; kho từ riêng theo nghề vẫn bao gồm từ `GENERAL`.
+- Python 3.10, Streamlit 1.52. Chạy: `streamlit run app.py`. Test toàn bộ: `python -W ignore -m unittest discover -s tests -t .` (21 test gần nhất).
 - Windows: đặt `$env:PYTHONIOENCODING="utf-8"` khi in tiếng Việt/Hán. Khi chạy thử, nhớ tắt tiến trình Streamlit cũ (Ctrl+F5 ở trình duyệt) kẻo chạy bản code cũ.
 - Triển khai: Streamlit Cloud + Turso (DB người dùng) + Google Drive (sao lưu thủ công). `.github/workflows/keep_alive.yml` ping app mỗi 6 giờ để khỏi ngủ.
 - Cấm commit: `credentials.json`, `token.json`, `.streamlit/secrets.toml`, `user_data.db`, `makemehanzi_dict.txt` (đã trong `.gitignore`).
@@ -15,11 +16,12 @@
 ## 2. Cấu trúc thư mục
 ```
 chinese-mastery/
-├─ app.py                  Điểm vào: login, sidebar, 6–7 tab, toàn bộ luồng học hằng ngày + thiên kiếp (~870 dòng)
+├─ app.py                  Điểm vào: login, chọn/chuyển khóa, sidebar, các tab, luồng học hằng ngày + thiên kiếp
 ├─ auth.py                 Đăng nhập, token URL, tạo/xóa user, màn hình login
 ├─ admin_panel.py          Tab "Quản Lý" (chỉ admin): tài khoản + sao lưu
-├─ database.py             Đọc kho từ vựng + ghi tiến độ học / tâm ma / thi (dùng user_id từ session)
+├─ database.py             Đọc kho từ theo khóa/trình độ/nghề + ghi tiến độ học / tâm ma / thi
 ├─ userdb.py               Kết nối DB người dùng (Turso hoặc SQLite cục bộ) + schema + GAME_TABLES
+├─ course_config.py        Cấu hình riêng cho khóa tiếng Trung/tiếng Anh
 ├─ backup_manager.py       Sao lưu/khôi phục lên Google Drive (BACKUP_TABLES, CORE_TABLES)
 ├─ exam_engine.py          Sinh đề thiên kiếp (Tiểu 20 câu; Đại 40 Lôi Kiếp + 10 Tâm Ma Kiếp)
 ├─ extra_tabs.py           Sổ tay, tập phát âm, bộ thủ, dialog chi tiết từ, iframe Web Speech
@@ -35,7 +37,8 @@ chinese-mastery/
 ├─ guide_tab.py            Trang "📖 Hướng Dẫn" (7 tab con)
 ├─ style.css               CSS toàn app (theme tối tím vàng)
 ├─ requirements.txt        streamlit, google-api-python-client, google-auth-*, google-genai, requests
-├─ chinese_mastery.db      SQLite từ vựng gốc (bảng `vocab`) — commit vào git
+├─ chinese_mastery.db      SQLite kho từ tiếng Trung (bảng `vocab`)
+├─ english_mastery.db      SQLite kho từ tiếng Anh (bảng `vocab`, dữ liệu CC BY-SA 4.0)
 ├─ vocab_cleaned_final.json  Dữ liệu từ vựng nguồn (chiết tự…)
 ├─ logo.png / logo_cropped.png
 ├─ PROJECT_OVERVIEW.md     (file này)
@@ -43,10 +46,12 @@ chinese-mastery/
 ├─ .github/                keep_alive.py + workflows/keep_alive.yml
 ├─ tools/
 │   ├─ translate_vocab.py  Dùng Gemini dịch HSK1–5 sang tiếng Việt (cần GEMINI_API_KEY)
-│   └─ import_hsk_vocab.py Nhập HSK vào `vocab` (idempotent)
+│   ├─ import_hsk_vocab.py Nhập HSK vào `vocab` (idempotent)
+│   └─ english/             Pipeline tạo/kiểm tra kho từ tiếng Anh và ghi công nguồn
 ├─ tests/
 │   ├─ __init__.py
-│   └─ test_game.py        Test logic thuần + luồng DB trên SQLite tạm
+│   ├─ test_game.py        Test logic thuần + luồng DB trên SQLite tạm
+│   └─ test_english_occupation.py  Test lọc kho nghề, đổi nghề và migration hồ sơ
 └─ assets/
     ├─ monsters/           11 ảnh quái (tên file = mã quái, .png)
     ├─ boss/               10 ảnh boss
@@ -57,13 +62,20 @@ chinese-mastery/
 Tên file ảnh = mã trong `game_config`; thiếu ảnh → emoji dự phòng (`game_ui.show_image_or_emoji`).
 
 ## 3. Dữ liệu
-### 3.1 Kho từ vựng — `chinese_mastery.db` (chỉ đọc khi chạy, `database.DB_PATH`)
+### 3.1 Kho từ vựng tiếng Trung — `chinese_mastery.db` (chỉ đọc khi chạy)
 Bảng `vocab`: `id, hanzi, traditional, pinyin, hanviet, meaning_vi, domain, hsk_level, study_day, stage_10d, example_zh, example_pinyin, example_vi, example_cloze, chiet_tu, priority_group` (mặc định 4).
 - 294 từ HSK4 công sở/giao tiếp (`priority_group` 1–3, học trước) + ~2200 từ HSK1–5 mở rộng (`domain='HSK_OPEN'`, `priority_group` 4) nhập bằng `tools/`. `study_day` = ngày học (mỗi ngày 4 từ).
 - Cache: `database._load_vocabulary` (`st.cache_data`) nạp toàn bộ bảng, `load_day_words(day)` lọc theo ngày. Bảng `user_progress`/`word_mastery`/`exam_history` trong file này là DI SẢN (dữ liệu cũ một người dùng, `import_legacy_progress` chuyển sang tài khoản admin); đừng dùng.
 - Chỉ commit file này khi nguồn từ vựng thay đổi (tiến độ học KHÔNG commit).
 
-### 3.2 DB người dùng — `userdb.py` (`get_user_db()`)
+### 3.2 Kho từ vựng tiếng Anh — `english_mastery.db`
+Bảng `vocab` dùng cùng schema với kho tiếng Trung; ánh xạ từ tiếng Anh vào `hanzi`, IPA vào `pinyin`, câu tiếng Anh vào `example_zh`, CEFR vào `hsk_level`.
+- Dữ liệu hiện có 5.500 từ: 2.512 `OFFICE`, 1.208 `TEACHER`, 1.780 `GENERAL`; 4 từ/ngày tương đương 1.375 ngày trong kho đầy đủ.
+- Kho giáo viên có từ lớp học và Sinh học THCS (ví dụ `teacher`, `student`, `curriculum`, `question`, `discipline`) với câu ví dụ trong bối cảnh giảng dạy. Đây là từ vựng phổ thông được đặt vào ngữ cảnh giáo viên, **chưa phải bộ thuật ngữ sư phạm chuyên sâu**: `lesson plan`, `assessment`, `rubric`, `feedback`, `attendance` và `assignment` chưa có trong DB.
+- Lọc nghề nghiệp lấy các bản ghi có `domain` tương ứng (`OFFICE` hoặc `TEACHER`) cùng `GENERAL`, sau đó đánh lại ngày học liên tục; bộ lọc CEFR và nghề nghiệp được áp dụng đồng thời. ID từ gốc được giữ để tiến độ từ đã thuộc tiếp tục tương thích.
+- Chỉ cập nhật/commit DB khi nguồn từ vựng thay đổi. Ghi công/giấy phép xem `DATA_LICENSE_EN.md`.
+
+### 3.3 DB người dùng — `userdb.py` (`get_user_db()`)
 Dùng Turso (HTTP) nếu có secrets, ngược lại SQLite cục bộ `user_data.db`. Cùng giao diện: `.execute(sql, params)`, `.execute_many([(sql, params), ...])` (atomic), `init_schema()` tạo bảng (gọi khi khởi động), `get_meta/set_meta`.
 | Bảng | Khóa | Nội dung |
 |---|---|---|
@@ -74,6 +86,7 @@ Dùng Turso (HTTP) nếu có secrets, ngược lại SQLite cục bộ `user_dat
 | `exam_history` | id | lịch sử thiên kiếp (`exam_type, stage_number, total_questions, correct_answers, score_percent, is_passed`) |
 | `session_state` | user_id | JSON vị trí buổi học (F5/đổi máy không mất tiến trình) |
 | `meta` | key | cờ hệ thống |
+| `profiles` | id | hồ sơ theo khóa (`user_id, course, level, occupation`); tiến độ/game dùng ID hồ sơ. `occupation` là `OFFICE`/`TEACHER` với tiếng Anh, mặc định `OFFICE` cho hồ sơ cũ |
 | `game_profile` | user_id | `linh_thach, equipped_artifact(di sản), equipped_title, pity_mid, pity_high, fortune_streak, fortune_last_day` |
 | `game_daily` | (user_id, day) | `plays` — số lượt chơi mini game trong ngày |
 | `game_inventory` | (user_id, item_code) | `qty` nguyên liệu/đan dược |
@@ -85,6 +98,7 @@ Dùng Turso (HTTP) nếu có secrets, ngược lại SQLite cục bộ `user_dat
 | `game_log` | id | Nhật Ký Tu Tiên; `settle` tự xóa, chỉ giữ 300 dòng mới nhất/người |
 
 `userdb.GAME_TABLES` liệt kê 9 bảng game (`auth.delete_user` xóa theo danh sách này). `backup_manager.BACKUP_TABLES` = cột của mọi bảng cần sao lưu; `CORE_TABLES` = 5 bảng lõi (users, user_progress, word_mastery, exam_history, session_state) bắt buộc có trong backup; bảng game là tùy chọn (restore chịu được backup cũ).
+Các bảng học/game vẫn dùng cột vật lý tên `user_id`, nhưng giá trị là `profile_id`; chỉ bảng tài khoản/token dùng ID người dùng thực. `profiles.user_id` liên kết hồ sơ với tài khoản.
 
 ## 4. Luồng học hằng ngày (tab 1, trong `app.py`)
 - `st.session_state.phase`: `FLASHCARD` → `SHADOWING` → `CLOZE` → `REVIEW` (ôn từ sai trong ngày) → `COMPLETED`; ngoài ra `be_quan` (cày Linh Lực khi Bình Cảnh) và `loi_kiep` (đang thi). `sub_phase` của FLASHCARD: `flashcard` | `quiz`. Stepper ở sidebar: `PHASE_ORDER`, `stepper_html`.
@@ -94,7 +108,7 @@ Dùng Turso (HTTP) nếu có secrets, ngược lại SQLite cục bộ `user_dat
 - Mỗi 3 ngày → Tiểu Thiên Kiếp (`MINI_3D`, 20 câu); mỗi 10 ngày → Đại Thiên Kiếp (`MAJOR_10D`, 50 câu). Chi phí `get_tribulation_cost`. Cần ≥ 85% để qua; trượt → Bình Cảnh (`is_bottleneck`), phải Bế Quan tích Linh Lực rồi bấm "Kích Hoạt Lôi Kiếp" (`exam_type="LÔI KIẾP"`).
 - **Tâm Ma Kiếp** (chỉ Đại Thiên Kiếp): 40 câu `phase="loi"` + `TAM_MA_Q_MAJOR`(10) câu `phase="tam_ma"` ở cuối (ưu tiên từ tâm ma). `start_exam` đặt `exam_tm_t = demons/(demons+TAM_MA_K)`, `exam_dao_tam` (giảm nhờ Đạo tâm), `exam_extra`, `exam_wrong`. Câu sai ở Tâm Ma Kiếp trừ thêm `T × (1 − dao_tam)` điểm. Qua kiếp khi `đúng − exam_extra ≥ int(tổng × 0.85)`. UI có thanh "🛡️ Đạo thể".
 - Tâm ma: từ có `is_inner_demon=1` (sai nhiều); `exorcise_inner_demon` khi trả lời đúng trong thi; `get_inner_demons(n)`, `get_all_demons_detailed`.
-- Phát âm: Web Speech API (`speechSynthesis`, `lang='zh-CN'`). Tốc độ = lựa chọn sidebar `speech_rate` (1.0/0.85/0.75/0.6) × hệ số (từ ≤ 6 ký tự: 0.55; câu: 0.85). Có ở 3 nơi: JS cuối `app.py`, `extra_tabs.SPEAK_SCRIPT`, `game_ui.speak`. **Khóa học tiếng Anh cần đổi `lang` (en-US) và hệ số.**
+- Phát âm: Web Speech API (`speechSynthesis`), ngôn ngữ và hệ số tốc độ lấy theo khóa học. Tiếng Trung dùng `zh-CN`, tiếng Anh dùng `en-US`; lựa chọn tốc độ sidebar là `speech_rate` (1.0/0.85/0.75/0.6).
 - Các tab phụ: `extra_tabs.render_notebook` (sổ tay), `render_pronunciation`, `render_radicals`; tab 3 thống kê/tâm ma trong `app.py` (`get_cultivation_stats`).
 - Sidebar: hero-card (cảnh giới, Linh Lực, căn cơ, ngày), nút "📖 Hướng Dẫn" (cam, key `guide_open`, đặt `show_guide` → `render_guide()` + `st.stop()` trước khi tạo tab), stepper, tốc độ phát âm, đăng xuất.
 
@@ -161,20 +175,23 @@ Theo `ACHIEVEMENT_LINES` (3 bậc mỗi dòng) dựa trên counter; `check_achie
 7 tab: Học & Thiên Kiếp, Động Phủ, Chỉ Số, Pháp Bảo, Nguyên liệu & Linh Thạch (có mục công dụng LS), Cảnh Giới (bảng 16 cảnh giới + khu săn), Lộ Trình (giao tiếp → đời sống → HSK4–5). Nội dung lấy số trực tiếp từ `game_config` — đổi cân bằng thì hướng dẫn tự cập nhật.
 
 ## 9. Kiểm thử
-`tests/test_game.py` (17 test): ngưỡng cảnh giới, hệ số lượt, bảo hiểm, toán chiến đấu, độ sâu quái, 32 khu, chỉ số (`test_stat_bonuses`), thể thức Lật bài (`test_match_modes`), luồng DB (chế tạo, trang bị, bán). Chưa có test tự động cho Tâm Ma Kiếp (đã thử tay bằng AppTest: 0 exception). Chưa kiểm thử trên Turso thật và trình duyệt thật.
+Lệnh toàn bộ: `python -W ignore -m unittest discover -s tests -t .`. Gần nhất đã chạy 21 test thành công: các test game hiện có và `tests/test_english_occupation.py` (lọc dữ liệu theo nghề/trình độ, đánh lại ngày, đổi nghề, migration cột `occupation`). Chưa kiểm thử trên Turso thật và trình duyệt thật.
 
 ## 10. Lịch sử cập nhật
 - Đợt 1: khung tu tiên (cảnh giới, kinh tế, 3 mini game, săn quái, chợ, chế tạo, huy hiệu), bảng game, công cụ dịch/nhập HSK.
 - Đợt 2: đổi tên quái/boss/pháp bảo theo ảnh, bản đồ 32 khu bấm được, độ sâu quái, 2 ô pháp bảo công/thủ + bán lại, log "tuyệt kỹ", trang Hướng Dẫn, file này.
 - Đợt 4: Lật bài nhiều thể thức (4 cặp/ván, thể thức hm/hp/ap/ah, tối đa 2 cặp nghe), thưởng mỗi cặp 2→3 LS để bù số cặp giảm 6→4, thêm `game_ui.audio_listener`, cập nhật hướng dẫn, test `test_match_modes` (17 test).
 - Đợt 3: chỉ số Ngộ tính/Căn cơ/Đạo tâm (lợi suất giảm dần), chí mạng, Tâm Ma Kiếp, ảnh tu sĩ `avatar_web.webp`, phát âm từ chậm hơn, bỏ nút Lưu Tu Vi, xác nhận rút lui, đề `exam_engine` tách Lôi Kiếp/Tâm Ma Kiếp.
-
+- Đợt 5: Hoàn tất toàn bộ Data Pipeline khóa tiếng Anh (`tools/english/`). Tự động kéo kho dữ liệu, lọc tần suất (giữ 5.500 từ cốt lõi A1-C2), ghép từ điển offline, dùng AI (Gemini 3.5 Flash-Lite) phân loại chủ đề (OFFICE, TEACHER) và sinh câu ví dụ thực chiến. Đóng gói thành công `english_mastery.db` (1.375 ngày học) đạt chuẩn QA và tự động sinh file `DATA_LICENSE_EN.md`.
+- Đợt 6 (05/11/2026): Thêm chọn nghề nghiệp Công sở / Giáo viên THCS khi đăng ký khóa tiếng Anh và đổi nghề ở sidebar; lưu nghề trong hồ sơ, lọc kho theo `domain` nghề + `GENERAL`, kết hợp với CEFR và giữ tiến độ từ đã thuộc khi đổi. Migration tự thêm `occupation` cho DB người dùng cũ.
 ## 11. Việc còn lại / ý tưởng đã duyệt
 - ~~Lật bài nhiều thể thức~~ — đã làm (đợt 4); chưa thử âm thanh trên trình duyệt thật.
 - Chỉnh tọa độ nút bản đồ theo trình duyệt thật; thêm ảnh Hỗn Độn/Cùng Kỳ/Tinh Hà Thần Châu → thêm vào config.
 - Mô phỏng cân bằng LS (kiếm vs tiêu) khi có số liệu chơi thật.
 - Đã loại bỏ (không làm): vật phẩm tiêu hao, nhiệm vụ ngày, tuyệt kỹ theo cảnh giới. Chỉ có một tuyệt kỹ "Hỏa Cầu Thuật" (`SKILL_NAME`).
-- Chưa chạy thật: `tools/translate_vocab.py` (cần `GEMINI_API_KEY`), `tools/import_hsk_vocab.py`, Turso `execute_many` với dữ liệu lớn.
+- ~~Chọn nghề nghiệp và lọc kho tiếng Anh theo nghề~~ — đã làm; kiểm thử logic và migration đã đạt.
+- Bổ sung, rà soát thêm kho thuật ngữ sư phạm THCS và giao tiếp với học sinh; hiện kho `TEACHER` có từ lớp học/Sinh học, nhưng thiếu một số thuật ngữ chuyên môn như lesson plan, assessment, rubric, feedback, attendance, assignment.
+- Chưa kiểm thử giao diện trên trình duyệt thật hoặc kết nối Turso thật.
 
 ## 12. (PHƯƠNG ÁN CŨ — đã được THAY bằng mục 13; chỉ giữ để tham khảo bảng các điểm gắn cứng tiếng Trung)
 Gắn khóa học MỚI (ví dụ: tiếng Anh giao tiếp cho giáo viên THCS / nhân viên hành chính nhân sự)
@@ -198,7 +215,8 @@ Hiện app GẮN CỨNG vào tiếng Trung ở các điểm sau; khóa học m�
 
 Điểm cần chú ý khi nhiều khóa học dùng chung game: `ctx["pool"]`/`words` hiện là kho từ TIẾNG TRUNG; nếu cho tiếng Anh dùng chung Động Phủ (săn quái, lật bài…), phải truyền `ctx` riêng có `pool` tiếng Anh và hàm `make_question` tương ứng, hoặc chỉ làm tab độc lập để tránh sửa lõi.
 
-## 13. KẾ HOẠCH CHÍNH THỨC: thêm khóa học TIẾNG ANH (đa khóa học Anh–Trung) — chưa code
+## 13. KẾ HOẠCH BAN ĐẦU & TRẠNG THÁI KHÓA TIẾNG ANH
+Các mục 13.1–13.8 bên dưới ghi lại thiết kế ban đầu, không còn là danh sách việc chưa làm. Tình trạng đã triển khai hiện tại được tổng hợp ở mục 13.14; khi có khác biệt, ưu tiên mục 13.14 và phần mô tả cấu trúc/dữ liệu phía trên.
 **Nguyên tắc vàng:** toàn bộ cơ chế học, ôn tập, game, tu tiên, thiên kiếp, kinh tế, pháp bảo, săn quái, chỉ số… GIỮ NGUYÊN. Khóa tiếng Anh chỉ thay DỮ LIỆU (kho từ, ngôn ngữ phát âm, nhãn hiển thị) và bỏ vài tính năng riêng tiếng Trung. Không viết lại game; không copy file game sang bản "en_". Mỗi khóa là một "tu tiên đạo" độc lập với tiến độ riêng.
 
 ### 13.1 Mô hình dữ liệu: "profile" theo khóa học (ít sửa nhất)
@@ -317,3 +335,18 @@ Quy tắc chọn từ từ Words-CEFR: chỉ giữ từ viết thường toàn c
 Quy ước: mỗi script có hàm `main()` + `argparse`, dùng `sqlite3`/`csv`/`json` chuẩn (thêm `google-genai` đã có trong `requirements.txt`); KHÔNG import Streamlit; có test thuần cho `select_words` và `build_db` (dữ liệu giả nhỏ) trong `tests/test_english_tools.py`; không commit `work/` và các repo nguồn.
 **Thứ tự làm đề xuất:** `fetch_sources` → `load_cefr_dataset` → `select_words` (xem thống kê) → `lookup_dictionary` (đo độ phủ) → `ai_enrich` (thử 100 từ trước) → `build_db` → `validate_db` → `make_attribution`.
 Test thuần cần có: `select_words` (lọc tên riêng/lemma/làm tròn mức) và `build_db` (4 từ/ngày, nhóm công việc trước).
+
+### 13.13 Đã triển khai: kho từ theo trình độ & đổi trình độ
+- Khóa tiếng Anh dùng **kho từ con theo trình độ** (`database._level_db_path`): từ `english_mastery.db` giữ các từ có CEFR **cao hơn** trình độ profile (A2 → B1+, B1 → B2+, B2 → C1+), giữ nguyên `id` từ, đánh lại `study_day`/`stage_10d` (4 từ/ngày). File dựng tự động trong thư mục tạm của hệ điều hành, tên theo mtime của DB nguồn nên tự làm mới khi DB đổi.
+- Tham số cache/`get_db` dùng **khóa kho từ** `active_variant()` = `zh` | `en:<LEVEL>` | `en:<LEVEL>:<OCCUPATION>` (ví dụ `en:B1:TEACHER`). Mọi hàm `st.cache_data` phụ thuộc kho từ BẮT BUỘC nhận khóa này.
+- `database.change_profile_level(profile_id, level)`: cập nhật `profiles.level`, giữ nguyên bộ lọc nghề, đưa `current_day` về ngày đầu tiên chứa từ chưa học trong kho mới (từ đã học = `study_day < current_day` của kho cũ), xóa `session_state` của profile. Nút đổi ở sidebar (`app.render_level_changer`).
+- Lật bài tiếng Anh chỉ có 2 thể thức: từ ↔ nghĩa (`hm`) và nghe ↔ nghĩa (`am`). Giãn chữ (`letter-spacing`) của từ tiếng Anh được thu nhỏ bằng CSS trong `app.py` khi `has_pinyin=False`.
+- `guide_tab.render_guide` đã có nội dung theo khóa (thể thức Lật bài, loại câu hỏi, mốc cảnh giới, lộ trình CEFR).
+
+### 13.14 Đã triển khai: chọn nghề nghiệp cho khóa tiếng Anh
+- Khi tạo hồ sơ tiếng Anh, người học chọn CEFR và nghề nghiệp: **Công sở** (`OFFICE`) hoặc **Giáo viên THCS** (`TEACHER`). Hồ sơ tiếng Trung không có nghề nghiệp. Hồ sơ tiếng Anh cũ được migration thêm cột `occupation`, mặc định `OFFICE`.
+- Có thể đổi nghề tại sidebar. Ứng dụng chọn dữ liệu thuộc nghề tương ứng và `GENERAL`, kết hợp bộ lọc trình độ CEFR; các từ được đánh lại theo ngày học (4 từ/ngày) và giữ nguyên ID. Khi đổi nghề, ngày học trở về từ đầu tiên có từ chưa học; tiến độ các từ chung đã học được giữ lại.
+- Banner và nhãn nhóm ưu tiên tiếng Anh đổi theo nghề; lựa chọn được giữ trong `profiles` khi chuyển khóa hoặc đăng nhập lại.
+- Kho `TEACHER` hiện có 1.208 từ. Nội dung gồm từ vựng phổ thông/lớp học đặt vào ví dụ Sinh học THCS (như `student`, `question`, `curriculum`, `discipline`), chưa phủ đủ thuật ngữ nghiệp vụ sư phạm và trao đổi với học sinh. Các từ cần xem xét bổ sung gồm lesson plan, assessment, rubric, feedback, attendance, assignment; đây là phần dữ liệu còn thiếu, không phải lỗi lọc nghề.
+- `tools/english/add_teacher_vocab.py` gọi Gemini theo model đang dùng trong `ai_enrich.py` (`gemini-3.5-flash-lite`, fallback `gemini-1.5-flash`) để tạo sáu thuật ngữ bắt buộc và thêm mục giao tiếp lớp học cho đủ 4 từ/ngày. Mặc định chỉ xem trước; thêm `--apply` để ghi vào cuối lịch hiện có, không dựng lại DB hoặc sửa các bản ghi cũ. Cần đặt `GEMINI_API_KEY` trong biến môi trường.
+- Kiểm thử tự động gồm lọc nghề và CEFR đồng thời, lọc kèm `GENERAL`, đánh lại ngày học, đổi nghề, và migration hồ sơ cũ. Kiểm thử hiện tại không xác nhận chất lượng chuyên môn của toàn bộ câu ví dụ hay trải nghiệm trên trình duyệt/Turso.

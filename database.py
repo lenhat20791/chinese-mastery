@@ -1,26 +1,182 @@
 import json
+import os
 import random
 import sqlite3
+import tempfile
+from pathlib import Path
 
 import streamlit as st
 
 from userdb import get_user_db
+from course_config import get_config
 
-DB_PATH = "chinese_mastery.db"  # Kho chữ dùng chung (chỉ đọc khi chạy)
+DB_PATH = "chinese_mastery.db"  # Kho chữ tiếng Trung (chỉ đọc khi chạy)
 
 
-def get_db():
-    """Kết nối kho chữ `vocab`."""
-    conn = sqlite3.connect(DB_PATH)
+def active_course():
+    return st.session_state.get("active_course", "zh")
+
+
+def variant_key(course, level=None, occupation=None):
+    """Khóa kho chữ theo khóa học, trình độ và nghề nghiệp."""
+    if occupation:
+        return f"{course}:{level or ''}:{occupation}"
+    return f"{course}:{level}" if level else course
+
+
+def active_variant():
+    """Khóa kho từ của hồ sơ đang học; dùng làm tham số của các hàm cache."""
+    return variant_key(
+        active_course(),
+        st.session_state.get("course_level"),
+        st.session_state.get("course_occupation"),
+    )
+
+
+CEFR_ORDER = ["A1", "A2", "B1", "B2", "C1", "C2"]
+
+
+def _level_db_path(base_path, level, words_per_day):
+    """Kho từ con theo trình độ: chỉ giữ từ CEFR cao hơn trình độ hiện tại, đánh lại ngày học.
+
+    Giữ nguyên `id` từ để tiến độ/độ thuộc đã lưu vẫn dùng được khi đổi trình độ.
+    """
+    src = Path(base_path)
+    path = Path(tempfile.gettempdir()) / f"cm_{src.stem}_{level}_{int(src.stat().st_mtime)}.db"
+    if path.exists():
+        return str(path)
+    keep = set(CEFR_ORDER[CEFR_ORDER.index(level) + 1:])
+    conn = sqlite3.connect(src)
+    conn.row_factory = sqlite3.Row
+    schema = conn.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='vocab'").fetchone()[0]
+    rows = [dict(r) for r in conn.execute("SELECT * FROM vocab ORDER BY study_day, priority_group, id")
+            if r["hsk_level"] in keep]
+    conn.close()
+    for n, row in enumerate(rows):
+        row["study_day"] = n // words_per_day + 1
+        row["stage_10d"] = (row["study_day"] - 1) // 10 + 1
+    tmp = path.with_suffix(f".{os.getpid()}.tmp")
+    tmp.unlink(missing_ok=True)
+    out = sqlite3.connect(tmp)
+    out.execute(schema)
+    if rows:
+        cols = list(rows[0])
+        out.executemany(
+            f"INSERT INTO vocab ({','.join(cols)}) VALUES ({','.join('?' * len(cols))})",
+            [tuple(r[c] for c in cols) for r in rows])
+    out.commit()
+    out.close()
+    os.replace(tmp, path)
+    return str(path)
+
+
+def _occupation_db_path(base_path, occupation, words_per_day):
+    """Kho tiếng Anh theo nghề nghiệp, kèm từ giao tiếp chung và ngày học liên tục."""
+    if occupation not in {"OFFICE", "TEACHER"}:
+        raise ValueError(f"Nghề nghiệp tiếng Anh không hợp lệ: {occupation}")
+    src = Path(base_path)
+    path = Path(tempfile.gettempdir()) / f"cm_{src.stem}_{occupation}_{int(src.stat().st_mtime)}.db"
+    if path.exists():
+        return str(path)
+    conn = sqlite3.connect(src)
+    conn.row_factory = sqlite3.Row
+    schema = conn.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='vocab'").fetchone()[0]
+    rows = [dict(r) for r in conn.execute(
+        "SELECT * FROM vocab WHERE domain IN (?, 'GENERAL') ORDER BY study_day, priority_group, id",
+        (occupation,),
+    )]
+    conn.close()
+    for n, row in enumerate(rows):
+        row["study_day"] = n // words_per_day + 1
+        row["stage_10d"] = (row["study_day"] - 1) // 10 + 1
+    tmp = path.with_suffix(f".{os.getpid()}.tmp")
+    tmp.unlink(missing_ok=True)
+    out = sqlite3.connect(tmp)
+    out.execute(schema)
+    if rows:
+        cols = list(rows[0])
+        out.executemany(
+            f"INSERT INTO vocab ({','.join(cols)}) VALUES ({','.join('?' * len(cols))})",
+            [tuple(r[c] for c in cols) for r in rows])
+    out.commit()
+    out.close()
+    os.replace(tmp, path)
+    return str(path)
+
+
+def vocab_db_path(variant):
+    parts = variant.split(":", 2)
+    base = parts[0]
+    level = parts[1] if len(parts) > 1 else None
+    occupation = parts[2] if len(parts) > 2 else None
+    cfg = get_config(base)
+    path = cfg["db_path"]
+    if level in CEFR_ORDER[:-1]:
+        path = _level_db_path(path, level, cfg["words_per_day"])
+    if occupation:
+        if base != "en":
+            raise ValueError("Chỉ khóa tiếng Anh hỗ trợ lọc theo nghề nghiệp.")
+        path = _occupation_db_path(path, occupation, cfg["words_per_day"])
+    return path
+
+
+def get_db(course=None):
+    """Kết nối kho từ `vocab` của khóa học (mặc định: khóa đang học)."""
+    conn = sqlite3.connect(vocab_db_path(course or active_variant()))
     conn.row_factory = sqlite3.Row
     return conn
 
 
-def current_user_id():
+def auth_user_id():
+    """Trả về ID của tài khoản đăng nhập (dùng cho bảo mật, quản lý user, đổi mật khẩu)."""
     user_id = st.session_state.get("auth_user_id")
     if user_id is None:
         raise RuntimeError("Chưa đăng nhập")
     return user_id
+
+def current_profile_id():
+    """Trả về ID của tiến độ khóa học hiện tại (dùng cho học tập, game, kho đồ)."""
+    # Nếu chưa có profile_id trong session (user cũ hoặc đang load), fallback về auth_user_id (vì profile 'zh' mặc định có id = user_id)
+    return st.session_state.get("profile_id") or auth_user_id()
+
+def current_user_id():
+    """Alias giữ lại để tương thích ngược 100% với các lệnh gọi từ game_core, game_minigames cũ."""
+    return current_profile_id()
+
+
+# ---------------------------------------------------------------------------
+# Hồ sơ khóa học (profiles): mỗi khóa của một tài khoản có tiến độ riêng
+# ---------------------------------------------------------------------------
+
+EN_PROFILE_MIN_ID = 1_000_000
+
+
+def list_profiles(user_id):
+    """[{id, course, level, occupation}] của tài khoản, khóa tiếng Trung đứng trước."""
+    rows = get_user_db().execute(
+        "SELECT id, course, level, occupation FROM profiles WHERE user_id = ? ORDER BY course DESC", (user_id,)
+    ).fetchall()
+    return [{"id": r[0], "course": r[1], "level": r[2], "occupation": r[3]} for r in rows]
+
+
+def create_profile(user_id, course, level=None, occupation=None):
+    """Tạo hồ sơ khóa học (idempotent) cùng tiến độ mặc định; trả về profile_id."""
+    existing = next((p for p in list_profiles(user_id) if p["course"] == course), None)
+    if existing:
+        return existing["id"]
+    conn = get_user_db()
+    occupation = occupation or ("OFFICE" if course == "en" else None)
+    if course == "zh":
+        profile_id = user_id  # tương thích dữ liệu cũ: profile zh có id = user id
+    else:
+        max_id = conn.execute("SELECT MAX(id) FROM profiles").fetchone()[0] or 0
+        profile_id = max(max_id + 1, EN_PROFILE_MIN_ID)
+    conn.batch([
+        ("INSERT INTO profiles (id, user_id, course, level, occupation) VALUES (?, ?, ?, ?, ?)",
+         (profile_id, user_id, course, level, occupation)),
+        ("INSERT OR IGNORE INTO user_progress (user_id) VALUES (?)", (profile_id,)),
+    ])
+    return profile_id
 
 
 # ---------------------------------------------------------------------------
@@ -281,8 +437,10 @@ def get_tribulation_cost(is_major_breakthrough=False):
     return base_cost * 3 if is_major_breakthrough else base_cost
 
 
-def _compose_day_examples(day_words, vocabulary):
+def _compose_day_examples(day_words, vocabulary, compose=True):
     """Chọn câu tự nhiên có từ mục tiêu và ưu tiên từ đã học hoặc sắp học."""
+    if not compose:  # khóa tiếng Anh: câu ví dụ đã được sinh riêng cho từng từ
+        return [dict(word) for word in day_words]
     sentence_sources = []
     for source in vocabulary:
         sentence = source.get("example_zh") or ""
@@ -393,8 +551,8 @@ def load_session_snapshot():
 # ---------------------------------------------------------------------------
 
 @st.cache_data(show_spinner=False)
-def _load_vocabulary():
-    conn = get_db()
+def _load_vocabulary(course="zh"):
+    conn = get_db(course)
     vocabulary = [dict(r) for r in conn.execute(
         "SELECT * FROM vocab ORDER BY study_day ASC, priority_group ASC, id ASC"
     ).fetchall()]
@@ -403,22 +561,64 @@ def _load_vocabulary():
 
 
 @st.cache_data(show_spinner=False)
-def _load_day_words_cached(day):
-    vocabulary = _load_vocabulary()
+def _load_day_words_cached(day, course="zh"):
+    vocabulary = _load_vocabulary(course)
     words = [dict(word) for word in vocabulary if word["study_day"] == day]
-    return _compose_day_examples(words, vocabulary)
+    return _compose_day_examples(words, vocabulary, get_config(course)["compose_examples"])
 
 
 def load_day_words(day):
-    return _load_day_words_cached(day)
+    return _load_day_words_cached(day, active_variant())
 
 
-def get_vocab_by_ids(ids):
+def change_profile_level(profile_id, new_level):
+    """Đổi trình độ của hồ sơ: lọc lại kho từ, đưa ngày học về từ đầu tiên chưa học, bỏ vị trí buổi học cũ."""
+    conn = get_user_db()
+    profile = conn.execute("SELECT level, occupation FROM profiles WHERE id = ?", (profile_id,)).fetchone()
+    old_level, occupation = profile["level"], profile["occupation"]
+    day = conn.execute("SELECT current_day FROM user_progress WHERE user_id = ?", (profile_id,)).fetchone()[0]
+    learned = {w["id"] for w in _load_vocabulary(variant_key("en", old_level, occupation))
+               if w["study_day"] < day}
+    new_vocab = _load_vocabulary(variant_key("en", new_level, occupation))
+    next_day = min((w["study_day"] for w in new_vocab if w["id"] not in learned),
+                   default=max((w["study_day"] for w in new_vocab), default=1))
+    conn.batch([
+        ("UPDATE profiles SET level = ? WHERE id = ?", (new_level, profile_id)),
+        ("UPDATE user_progress SET current_day = ? WHERE user_id = ?", (next_day, profile_id)),
+        ("DELETE FROM session_state WHERE user_id = ?", (profile_id,)),
+    ])
+    return next_day
+
+
+def change_profile_occupation(profile_id, new_occupation):
+    """Đổi nghề nghiệp, lọc lại lộ trình và giữ tiến độ thuộc từ hiện có."""
+    if new_occupation not in {"OFFICE", "TEACHER"}:
+        raise ValueError(f"Nghề nghiệp tiếng Anh không hợp lệ: {new_occupation}")
+    conn = get_user_db()
+    profile = conn.execute("SELECT level, occupation FROM profiles WHERE id = ?", (profile_id,)).fetchone()
+    level, old_occupation = profile["level"], profile["occupation"]
+    if new_occupation == old_occupation:
+        return None
+    day = conn.execute("SELECT current_day FROM user_progress WHERE user_id = ?", (profile_id,)).fetchone()[0]
+    learned = {w["id"] for w in _load_vocabulary(variant_key("en", level, old_occupation))
+               if w["study_day"] < day}
+    new_vocab = _load_vocabulary(variant_key("en", level, new_occupation))
+    next_day = min((w["study_day"] for w in new_vocab if w["id"] not in learned),
+                   default=max((w["study_day"] for w in new_vocab), default=1))
+    conn.batch([
+        ("UPDATE profiles SET occupation = ? WHERE id = ?", (new_occupation, profile_id)),
+        ("UPDATE user_progress SET current_day = ? WHERE user_id = ?", (next_day, profile_id)),
+        ("DELETE FROM session_state WHERE user_id = ?", (profile_id,)),
+    ])
+    return next_day
+
+
+def get_vocab_by_ids(ids, course=None):
     """Các từ theo danh sách id, giữ nguyên thứ tự; bỏ qua id không tồn tại."""
     ids = list(ids)
     if not ids:
         return []
-    conn = get_db()
+    conn = get_db(course)
     marks = ",".join("?" * len(ids))
     found = {r["id"]: dict(r) for r in conn.execute(f"SELECT * FROM vocab WHERE id IN ({marks})", ids)}
     conn.close()
@@ -455,9 +655,9 @@ def get_learned_words(current_day, limit, offset):
     return [dict(r) for r in rows]
 
 
-def get_hanzi_options(correct_word, limit=4):
-    """Sinh 4 đáp án chữ Hán (1 đúng, 3 sai ngẫu nhiên) cho test nhanh."""
-    conn = get_db()
+def get_hanzi_options(correct_word, limit=4, course=None):
+    """Sinh 4 đáp án (1 đúng, 3 sai ngẫu nhiên) cho test nhanh."""
+    conn = get_db(course)
     rows = conn.execute(
         "SELECT id, hanzi, pinyin FROM vocab WHERE id != ? ORDER BY RANDOM() LIMIT ?",
         (correct_word["id"], limit - 1),
@@ -479,7 +679,7 @@ def get_hanzi_options(correct_word, limit=4):
 # ---------------------------------------------------------------------------
 
 def import_legacy_progress(user_id):
-    conn = get_db()
+    conn = get_db("zh")
     try:
         progress = conn.execute("SELECT * FROM user_progress WHERE id = 1").fetchone()
         mastery = conn.execute("SELECT * FROM word_mastery WHERE review_count > 0").fetchall()

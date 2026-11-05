@@ -24,20 +24,28 @@ from database import (
     get_hanzi_options,
     get_recent_words_for_exam,
     get_vocab_by_ids,
+    active_course,
+    change_profile_level,
+    change_profile_occupation,
+    create_profile,
+    list_profiles,
     load_session_snapshot,
     save_session_snapshot,
 )
 from exam_engine import generate_tribulation_exam
-from extra_tabs import render_notebook, render_pronunciation, render_radicals
+from extra_tabs import render_notebook, render_pronunciation, render_pronunciation_en, render_radicals
 from cultivation_tab import render_cultivation
 from guide_tab import render_guide
 from game_core import realm_info, stat_bonuses
 import game_config as game_cfg
 from database import _demon_rows
 from game_questions import learned_day_for as game_learned_day, load_pool as load_game_pool
+from userdb import get_meta, set_meta
+from course_config import COURSES, get_config
+
 # --- CẤU HÌNH TRANG ---
 st.set_page_config(
-    page_title="Thực Chiến Tiếng Trung - Phản Xạ Nhanh",
+    page_title="Thực Chiến - Phản Xạ Nhanh",
     page_icon="logo_cropped.png",
     layout="wide"
 )
@@ -50,6 +58,205 @@ with open(Path(__file__).parent / "style.css", encoding="utf-8") as _css:
 
 # --- ĐĂNG NHẬP: chưa đăng nhập thì dừng tại đây ---
 require_login()
+
+# --- KHÓA HỌC: chọn khi đăng nhập & chuyển nhanh (mỗi khóa có hồ sơ tiến độ riêng) ---
+# State KHÔNG bị xóa khi chuyển khóa (đăng nhập + tùy chọn chung)
+KEEP_ON_SWITCH = ("auth_", "active_course", "profile_id", "speech_rate", "_profiles")
+EN_LEVELS = {"A2 (dưới B1)": "A2", "B1": "B1", "B2": "B2"}
+EN_OCCUPATIONS = {"Công sở": "OFFICE", "Giáo viên THCS": "TEACHER"}
+COURSE_BLURB = {
+    "zh": "Học phản xạ HSK với phong cách Tu Tiên Động Phủ.",
+    "en": "Giao tiếp công sở & sư phạm THCS (khung CEFR).",
+}
+
+
+def _course_label(course):
+    cfg = COURSES[course]
+    return f"{cfg['flag']} {cfg['title'].split()[-1]}"
+
+
+def _user_profiles(force=False):
+    if force or "_profiles" not in st.session_state:
+        st.session_state["_profiles"] = list_profiles(st.session_state.auth_user_id)
+    return st.session_state["_profiles"]
+
+
+def enter_course(course, profile_id, force=False):
+    """Vào một khóa học: bỏ toàn bộ state gắn với khóa cũ để khởi tạo lại từ hồ sơ mới.
+
+    Vị trí buổi học của khóa cũ đã được lưu ở cuối lượt chạy trước (`session_snapshot`);
+    `restore_session` sẽ nạp vị trí của khóa mới ở lượt chạy kế tiếp.
+    """
+    s = st.session_state
+    if not force and s.get("active_course") == course and s.get("profile_id") == profile_id:
+        s.pop("choose_course", None)
+        return
+    for key in list(s.keys()):
+        if not key.startswith(KEEP_ON_SWITCH):
+            del s[key]
+    s["active_course"] = course
+    s["profile_id"] = profile_id
+    set_meta(f"last_course_{s.auth_user_id}", course)
+
+
+def _pick_course(course, level_key=None, occupation_key=None):
+    level = EN_LEVELS.get(st.session_state.get(level_key)) if level_key else None
+    occupation = EN_OCCUPATIONS.get(st.session_state.get(occupation_key)) if occupation_key else None
+    profile_id = create_profile(st.session_state.auth_user_id, course, level, occupation)
+    _user_profiles(force=True)
+    enter_course(course, profile_id)
+
+
+def _on_change_level():
+    profile = next(p for p in _user_profiles() if p["course"] == st.session_state.active_course)
+    new_level = EN_LEVELS[st.session_state.level_change_select]
+    if new_level == profile["level"]:
+        return
+    change_profile_level(profile["id"], new_level)
+    _user_profiles(force=True)
+    enter_course(profile["course"], profile["id"], force=True)
+    st.session_state["_level_changed"] = new_level
+
+
+def render_level_changer():
+    """Đổi trình độ CEFR của khóa tiếng Anh (kho từ và ngày học được tính lại)."""
+    profile = next((p for p in _user_profiles() if p["course"] == st.session_state.active_course), None)
+    if not profile or not COURSES[profile["course"]]["levels"]:
+        return
+    if st.session_state.pop("_level_changed", None):
+        st.success("Đã đổi trình độ và cập nhật lại từ vựng.")
+    current = profile["level"] or "B1"
+    labels = list(EN_LEVELS)
+    with st.popover(f"🎯 Trình độ: {current} — đổi", use_container_width=True):
+        st.caption("Đổi trình độ sẽ lọc lại kho từ (bỏ từ dễ hơn trình độ mới) và đưa bạn tới từ đầu tiên "
+                   "chưa học. Tiến độ và Linh Thạch được giữ nguyên.")
+        st.selectbox("Trình độ hiện tại", labels, index=list(EN_LEVELS.values()).index(current),
+                     key="level_change_select")
+        st.button("✅ Áp dụng trình độ mới", key="level_change_apply", use_container_width=True,
+                  on_click=_on_change_level)
+
+
+def _on_change_occupation():
+    profile = next(p for p in _user_profiles() if p["course"] == st.session_state.active_course)
+    new_occupation = EN_OCCUPATIONS[st.session_state.occupation_select]
+    if new_occupation == profile["occupation"]:
+        return
+    change_profile_occupation(profile["id"], new_occupation)
+    _user_profiles(force=True)
+    enter_course(profile["course"], profile["id"], force=True)
+    st.session_state["course_occupation"] = new_occupation
+    st.session_state["_occupation_changed"] = new_occupation
+
+
+def render_occupation_changer():
+    profile = next((p for p in _user_profiles() if p["course"] == st.session_state.active_course), None)
+    if not profile or profile["course"] != "en":
+        return
+    if st.session_state.pop("_occupation_changed", None):
+        st.success("Đã đổi nghề nghiệp và cập nhật lại lộ trình từ vựng.")
+    current = profile["occupation"] or "OFFICE"
+    labels = list(EN_OCCUPATIONS)
+    with st.popover(f"💼 Nghề nghiệp: {next(k for k, v in EN_OCCUPATIONS.items() if v == current)}",
+                    use_container_width=True):
+        st.caption("Lộ trình gồm từ vựng theo nghề nghiệp và từ giao tiếp chung. Tiến độ từ đã thuộc được giữ lại.")
+        st.selectbox("Nghề nghiệp học tiếng Anh", labels,
+                     index=list(EN_OCCUPATIONS.values()).index(current),
+                     key="occupation_select", on_change=_on_change_occupation)
+
+
+def _open_course_picker():
+    st.session_state["choose_course"] = True
+
+
+def _close_course_picker():
+    st.session_state.pop("choose_course", None)
+
+
+def _on_switch_radio():
+    label = st.session_state.course_switcher_radio
+    course = next((c for c in COURSES if _course_label(c) == label), None)
+    profile = next((p for p in _user_profiles() if p["course"] == course), None)
+    if profile:
+        enter_course(course, profile["id"])
+
+
+def render_course_picker(profiles):
+    """Màn hình chọn khóa học: hiện sau khi đăng nhập, và khi user bấm "Thêm khóa học"."""
+    have = {p["course"]: p for p in profiles}
+    st.title("🎓 Chọn khóa học")
+    st.write("Bạn muốn tu luyện khóa nào hôm nay? Mỗi khóa có tiến độ, Linh Thạch và kho đồ riêng.")
+    cols = st.columns(len(COURSES))
+    for col, (cid, cfg) in zip(cols, COURSES.items()):
+        with col, st.container(border=True):
+            st.markdown(f"## {cfg['flag']} {cfg['title']}")
+            st.caption(COURSE_BLURB[cid])
+            if cid in have:
+                profile = have[cid]
+                if profile["level"]:
+                    st.write(f"Trình độ đăng ký: **{profile['level']}**")
+                if profile["course"] == "en" and profile["occupation"]:
+                    occupation_label = next((k for k, v in EN_OCCUPATIONS.items() if v == profile["occupation"]),
+                                            profile["occupation"])
+                    st.write(f"Nghề nghiệp: **{occupation_label}**")
+                st.button("▶️ Tiếp tục học", key=f"pick_{cid}", type="primary", use_container_width=True,
+                          on_click=_pick_course, args=(cid,))
+            else:
+                level_key = None
+                occupation_key = None
+                if cfg["levels"]:
+                    level_key = f"pick_level_{cid}"
+                    st.radio("Trình độ hiện tại của bạn", list(EN_LEVELS), key=level_key)
+                    occupation_key = f"pick_occupation_{cid}"
+                    st.radio("Nghề nghiệp của bạn", list(EN_OCCUPATIONS), key=occupation_key)
+                st.button("🚀 Bắt đầu khóa này", key=f"pick_{cid}", type="primary", use_container_width=True,
+                          on_click=_pick_course, args=(cid, level_key, occupation_key))
+    if st.session_state.get("active_course") in have:
+        st.button("← Quay lại khóa đang học", key="pick_cancel", on_click=_close_course_picker)
+
+
+def render_course_switcher():
+    """Chuyển nhanh khóa học ở đầu sidebar (không cần đăng xuất)."""
+    profiles = _user_profiles()
+    if len(profiles) < len(COURSES):
+        st.button("➕ Thêm khóa học", key="course_add", use_container_width=True, on_click=_open_course_picker)
+        if len(profiles) < 2:
+            return
+    st.markdown("**📚 Khóa học**")
+    options = [_course_label(p["course"]) for p in profiles]
+    current = _course_label(st.session_state.active_course)
+    st.radio("Chọn khóa học", options, index=options.index(current) if current in options else 0,
+             horizontal=True, label_visibility="collapsed", key="course_switcher_radio",
+             on_change=_on_switch_radio)
+
+
+_auth_uid = st.session_state.auth_user_id
+_profiles = _user_profiles()
+_by_course = {p["course"]: p for p in _profiles}
+if not _profiles or st.session_state.get("choose_course"):
+    render_course_picker(_profiles)
+    st.stop()
+if st.session_state.get("active_course") not in _by_course:
+    # Phiên khôi phục qua token (F5): vào thẳng khóa dùng lần cuối
+    _last = get_meta(f"last_course_{_auth_uid}")
+    _course = _last if _last in _by_course else _profiles[0]["course"]
+    st.session_state["active_course"] = _course
+st.session_state["profile_id"] = _by_course[st.session_state["active_course"]]["id"]
+st.session_state["course_level"] = _by_course[st.session_state["active_course"]]["level"]
+st.session_state["course_occupation"] = _by_course[st.session_state["active_course"]]["occupation"]
+cfg_now = get_config()
+hero_title = cfg_now["hero_title"]
+if st.session_state.active_course == "en":
+    occupation_label = next(k for k, v in EN_OCCUPATIONS.items()
+                            if v == st.session_state["course_occupation"])
+    hero_title = f"Thực Chiến Tiếng Anh {occupation_label}"
+if not cfg_now["has_pinyin"]:
+    # Chữ Latin không cần giãn cách rộng như chữ Hán
+    st.markdown("""<style>
+    .hanzi-display{letter-spacing:.02em !important; font-family:'Noto Serif SC',Georgia,serif !important;}
+    [class*="st-key-quiz_opt_"] button p,[class*="st-key-review_opt_"] button p,
+    [class*="st-key-bq_opt_"] button p,[class*="st-key-lk_opt_"] button p{letter-spacing:0 !important;}
+    .hz{letter-spacing:.02em !important;}
+    </style>""", unsafe_allow_html=True)
 
 # --- KHỞI TẠO SESSION STATE ---
 
@@ -197,17 +404,11 @@ STAGES = [
     ("Luyện Đọc Cả Câu (Shadowing)", "SHADOWING"),
     ("Gõ Bàn Phím Điền Khuyết", "CLOZE"),
 ]
-PRIORITY_GROUP_LABELS = {
-    1: "Từ vựng giao tiếp công việc",
-    2: "Từ kết nối và bổ trợ câu",
-    3: "Đời sống xoay quanh công việc",
-    4: "Mở rộng vốn từ HSK 1–5",
-}
 
 
 def show_priority_group(word):
     group = word.get("priority_group")
-    label = PRIORITY_GROUP_LABELS.get(group)
+    label = get_config()["priority_labels"].get(group)
     if label:
         st.caption(f"Nhóm ưu tiên {group}: {label}")
 
@@ -228,6 +429,9 @@ def stepper_html(phase):
 
 # --- SIDEBAR: CẢNH GIỚI & TU TIÊN ---
 with st.sidebar:
+    render_course_switcher()
+    render_level_changer()
+    render_occupation_changer()
     user = st.session_state.user
     elapsed_minutes = max(1, int((datetime.datetime.now() - st.session_state.session_start).total_seconds() / 60))
     total_energy = user["spiritual_energy"] + elapsed_minutes
@@ -284,7 +488,7 @@ st.markdown(
     <div class='hero'>
         <img src='data:image/png;base64,{LOGO_B64}' alt='HSK'>
         <div>
-            <div class='hero-title'>Thực Chiến Tiếng Trung Công Sở</div>
+            <div class='hero-title'>{hero_title}</div>
             <div class='hero-sub'>Phản xạ nhanh · Nhớ lâu · Tu luyện mỗi ngày</div>
         </div>
     </div>
@@ -297,25 +501,30 @@ if st.session_state.get("show_guide"):
     st.stop()
 
 TAB_LABELS = ["⚔️ Tu Luyện Hàng Ngày", "🏯 Động Phủ", "📊 Tâm Ma Bảng & Thống Kê", "📒 Sổ Tay",
-              "🗣️ Tập Phát Âm", "🧩 Bộ Thủ"]
+              "🗣️ Tập Phát Âm"]
+if cfg_now["has_radicals"]:
+    TAB_LABELS.append("🧩 Bộ Thủ")
+admin_index = len(TAB_LABELS)
 if st.session_state.auth_is_admin:
     TAB_LABELS.append("👑 Quản Lý")
 tabs = st.tabs(TAB_LABELS)
-tab_study, tab_game, tab_stats, tab_notebook, tab_pron, tab_radicals = tabs[:6]
+tab_study, tab_game, tab_stats, tab_notebook, tab_pron = tabs[:5]
+tab_radicals = tabs[5] if cfg_now["has_radicals"] else None
 
 if st.session_state.auth_is_admin:
-    with tabs[6]:
+    with tabs[admin_index]:
         render_admin_panel()
 
 with tab_game:
     render_cultivation(st.session_state.user, game_learned_day(st.session_state.user, st.session_state.phase))
 
 with tab_notebook:
-    render_notebook(st.session_state.user["current_day"])
+    render_notebook(st.session_state.user["current_day"], label_word=cfg_now["label_word"])
 with tab_pron:
-    render_pronunciation()
-with tab_radicals:
-    render_radicals()
+    (render_pronunciation if cfg_now["pronunciation_tab"] == "render_pronunciation" else render_pronunciation_en)()
+if tab_radicals is not None:
+    with tab_radicals:
+        render_radicals()
 
 # =========================================================================
 # TAB 1: TU LUYỆN HÀNG NGÀY
@@ -362,20 +571,25 @@ with tab_study:
             if st.session_state.sub_phase == 'flashcard':
                 # --- PHA HẤP THỤ ---
                 speak_text = word['hanzi']
+                pinyin_html = f"<div class='pinyin-display'>{word['pinyin']}</div>" if word["pinyin"] else ""
+                hanviet_html = (f"<div class='hanviet-badge'>Âm Hán Việt: {word['hanviet']}</div>"
+                                if cfg_now["has_hanviet"] else "")
+                example_pinyin_html = (f"<div class='example-pinyin'>{word['example_pinyin']}</div>"
+                                       if cfg_now["has_pinyin"] else "")
                 st.markdown(
                     "<div class='vocab-card'>"
                     f"<div class='hanzi-display'>{word['hanzi']}</div>"
-                    f"<div class='pinyin-display'>{word['pinyin']}</div>"
-                    f"<div class='hanviet-badge'>Âm Hán Việt: {word['hanviet']}</div>"
+                    f"{pinyin_html}"
+                    f"{hanviet_html}"
                     f"<div class='meaning-display'>{word['meaning_vi']}</div>"
                     "<div class='example-box'>"
                     f"<div class='example-zh'>📌 {word['example_zh']}</div>"
-                    f"<div class='example-pinyin'>{word['example_pinyin']}</div>"
+                    f"{example_pinyin_html}"
                     f"<div class='example-vi'>{word['example_vi']}</div>"
                     "</div></div>",
                     unsafe_allow_html=True,
                 )
-                chiet_tu_data = word.get('chiet_tu')
+                chiet_tu_data = word.get('chiet_tu') if cfg_now["has_radicals"] else None
                 if chiet_tu_data:
                     try:
                         ct_dict = json.loads(chiet_tu_data) if isinstance(chiet_tu_data, str) else chiet_tu_data
@@ -396,7 +610,7 @@ with tab_study:
                 # --- PHA LUYỆN HÓA ---
                 
 
-                st.warning("⚔️ **THỰC CHIẾN:** Hãy chọn chữ Hán đúng với nghĩa dưới đây!")
+                st.warning(f"⚔️ **THỰC CHIẾN:** Hãy chọn {cfg_now['label_word']} đúng với nghĩa dưới đây!")
                 st.markdown(f"<div class='quiz-prompt'>{word['meaning_vi']}</div>", unsafe_allow_html=True)
                 
                 cols = st.columns(2)
@@ -439,22 +653,26 @@ with tab_study:
             speak_text = word['example_zh']
 
             pinyin_class = "" if st.session_state.shadowing_revealed else "pinyin-hidden"
+            sentence_pinyin_html = (f"<div class='pinyin-display {pinyin_class}'>{word['example_pinyin']}</div>"
+                                    if cfg_now["has_pinyin"] else "")
             st.markdown(
                 "<div class='vocab-card'>"
                 f"<div class='hanzi-display' style='font-size: clamp(1.8rem, 4.5vw, 2.5rem);'>{word['example_zh']}</div>"
-                f"<div class='pinyin-display {pinyin_class}'>{word['example_pinyin']}</div>"
+                f"{sentence_pinyin_html}"
                 f"<div class='meaning-display' style='font-size: 1.15rem;'>{word['example_vi']}</div>"
                 "</div>",
                 unsafe_allow_html=True,
             )
-            if not st.session_state.shadowing_revealed:
+            if cfg_now["has_pinyin"] and not st.session_state.shadowing_revealed:
                 st.caption("🎧 Lắng nghe âm thanh và đọc nhại theo 1-2 lần. Bấm Space để đối soát Pinyin.")
+            elif not cfg_now["has_pinyin"]:
+                st.caption("🎧 Lắng nghe âm thanh và đọc nhại theo 1-2 lần, rồi sang câu kế tiếp.")
             st.write("")
             audio_buttons("sh")
 
             col_sh_reveal, col_sh_next = st.columns(2)
             with col_sh_reveal:
-                if st.button("👁️ Hiện Pinyin (Space)", key="btn_shadowing_reveal", use_container_width=True):
+                if cfg_now["has_pinyin"] and st.button("👁️ Hiện Pinyin (Space)", key="btn_shadowing_reveal", use_container_width=True):
                     st.session_state.shadowing_revealed = True
                     st.rerun()
             with col_sh_next:
@@ -483,12 +701,14 @@ with tab_study:
             audio_buttons("cloze")
 
             st.markdown(f"<div class='cloze-sentence'>{word['example_cloze']}</div>", unsafe_allow_html=True)
-            st.markdown(f"💡 **Gợi ý từ cần điền:** {word['meaning_vi']} *(Âm Hán Việt: {word['hanviet']})*")
+            hanviet_hint = f" *(Âm Hán Việt: {word['hanviet']})*" if cfg_now["has_hanviet"] else ""
+            st.markdown(f"💡 **Gợi ý từ cần điền:** {word['meaning_vi']}{hanviet_hint}")
             st.caption("Dịch nghĩa toàn câu: " + word['example_vi'])
 
             with st.form(key=f"cloze_form_{st.session_state.cloze_idx}"):
                 user_input = st.text_input(
-                    "Bật bộ gõ tiếng Trung, gõ Pinyin và chọn đúng chữ Hán điền vào chỗ trống:",
+                    "Bật bộ gõ tiếng Trung, gõ Pinyin và chọn đúng chữ Hán điền vào chỗ trống:"
+                    if cfg_now["has_pinyin"] else "Gõ từ tiếng Anh còn thiếu vào chỗ trống:",
                     key="input_cloze_answer"
                 )
                 col_submit, col_skip = st.columns([2, 1])
@@ -497,10 +717,13 @@ with tab_study:
                 with col_skip:
                     skipped = st.form_submit_button("Bỏ qua & Xem đáp án", use_container_width=True)
 
+            answer_note = f"**{word['hanzi']}**" + (f" ({word['pinyin']})" if word["pinyin"] else "")
             if submitted:
                 cleaned_input = user_input.strip()
-                if cleaned_input == word["hanzi"]:
-                    st.success(f"🎉 Chính xác! Từ cần điền là: **{word['hanzi']}** ({word['pinyin']})")
+                is_right = (cleaned_input == word["hanzi"] if cfg_now["has_pinyin"]
+                            else cleaned_input.lower() == word["hanzi"].strip().lower())
+                if is_right:
+                    st.success(f"🎉 Chính xác! Từ cần điền là: {answer_note}")
                     
                     # --- THÊM THƯỞNG LINH LỰC KHI GÕ ĐÚNG ---
                     if st.session_state.cloze_status != "CORRECT": # Tránh trường hợp spam nút enter cộng dồn điểm
@@ -512,14 +735,14 @@ with tab_study:
                     st.session_state.cloze_status = "CORRECT"
                     speak_text = word["example_zh"]
                 else:
-                    st.error(f"❌ Chưa chính xác. Đáp án đúng là: **{word['hanzi']}** ({word['pinyin']})")
+                    st.error(f"❌ Chưa chính xác. Đáp án đúng là: {answer_note}")
                     record_feedback(word["id"], 1)
                     if word not in st.session_state.failed_today:
                         st.session_state.failed_today.append(word)
                     st.session_state.cloze_status = "INCORRECT"
 
             if skipped:
-                st.warning(f"Đáp án đúng là: **{word['hanzi']}** ({word['pinyin']})")
+                st.warning(f"Đáp án đúng là: {answer_note}")
                 record_feedback(word["id"], 1)
                 if word not in st.session_state.failed_today:
                     st.session_state.failed_today.append(word)
@@ -550,10 +773,11 @@ with tab_study:
         def show_feedback_dialog(is_correct, word):
             if is_correct:
                 st.success("🎉 **CHÍNH XÁC!** Bạn đã làm chủ từ này.")
-                st.markdown(f"**{word['hanzi']}** ({word['pinyin']}): {word['meaning_vi']}")
+                st.markdown(f"**{word['hanzi']}**" + (f" ({word['pinyin']})" if word["pinyin"] else "") + f": {word['meaning_vi']}")
             else:
                 st.error("❌ **CHƯA CHÍNH XÁC!**")
-                st.markdown(f"Từ vựng: <span style='font-size: 1.8rem; font-weight: bold;'>{word['hanzi']}</span> ({word['pinyin']})", unsafe_allow_html=True)
+                pinyin_suffix = f" ({word['pinyin']})" if word["pinyin"] else ""
+                st.markdown(f"Từ vựng: <span style='font-size: 1.8rem; font-weight: bold;'>{word['hanzi']}</span>{pinyin_suffix}", unsafe_allow_html=True)
                 st.markdown(f"👉 **Nghĩa đúng là:** <span style='color: #16a34a; font-weight: bold; font-size: 1.15rem;'>{word['meaning_vi']}</span>", unsafe_allow_html=True)
                 st.caption("⚠️ Từ này sẽ bị đẩy lại vào hàng đợi để kiểm tra lại.")
             
@@ -574,7 +798,7 @@ with tab_study:
             current_word = st.session_state.review_queue[0]
             st.caption(f"Số từ còn lại trong hàng đợi: {len(st.session_state.review_queue)}")
 
-            st.write("**Chọn chữ Hán đúng với nghĩa dưới đây:**")
+            st.write(f"**Chọn {cfg_now['label_word']} đúng với nghĩa dưới đây:**")
             st.markdown(f"<div class='quiz-prompt'>{current_word['meaning_vi']}</div>", unsafe_allow_html=True)
 
 
@@ -625,7 +849,7 @@ with tab_study:
         
         if st.session_state.get('be_quan_word'):
             bq_word = st.session_state.be_quan_word
-            st.warning("⚔️ **THỰC CHIẾN:** Chọn chữ Hán đúng để nhận Linh Lực!")
+            st.warning(f"⚔️ **THỰC CHIẾN:** Chọn {cfg_now['label_word']} đúng để nhận Linh Lực!")
             st.markdown(f"<div class='quiz-prompt'>{bq_word['meaning_vi']}</div>", unsafe_allow_html=True)
             
             
@@ -862,6 +1086,7 @@ with tab_stats:
 # =========================================================================
 # CHẠY NGẦM: BẮT PHÍM TẮT & PHÁT ÂM QUA WEB SPEECH API (ĐẶT Ở CUỐI FILE)
 # =========================================================================
+js_tts_lang = cfg_now["tts_lang"]
 js_handler = f"""
 <script>
     const synth = window.speechSynthesis;
@@ -870,11 +1095,11 @@ js_handler = f"""
         if (!synth || !text) return;
         synth.cancel();
         const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = 'zh-CN';
+        utter.lang = '{js_tts_lang}';
         
         // Từ ngắn (<= 6 ký tự) đọc chậm hơn câu để nghe rõ từng âm tiết
         const uiRate = {st.session_state.get('speech_rate', 1.0)};
-        utter.rate = uiRate * (text.length <= 6 ? 0.55 : 0.85);
+        utter.rate = uiRate * (text.length <= 6 ? {cfg_now['tts_rate_short_factor']} : {cfg_now['tts_rate_sentence_factor']});
         
         synth.speak(utter);
     }}

@@ -3,6 +3,10 @@ import streamlit as st
 
 import game_config as cfg
 import game_core as core
+from course_config import get_config
+from database import get_db
+
+EN_TARGET = {"A2": "B2", "B1": "C1", "B2": "C2"}
 
 def _realm_rows():
     rows = []
@@ -15,7 +19,11 @@ def _realm_rows():
 
 
 def render_guide():
-    st.markdown("## 📖 Hướng Dẫn Tu Luyện")
+    zh = get_config()["has_pinyin"]
+    st.markdown("## 📖 Hướng Dẫn Tu Luyện" + ("" if zh else " — Khóa Tiếng Anh"))
+    if not zh:
+        st.caption("Cách chơi, Động Phủ, Thiên Kiếp, pháp bảo và cảnh giới dùng chung cho cả hai khóa; "
+                   "phần dưới đã được điều chỉnh cho khóa tiếng Anh. Mỗi khóa có tiến độ, Linh Thạch và kho đồ riêng.")
     st.button("⬅️ Quay lại việc học", key="guide_back", type="primary",
               on_click=lambda: st.session_state.update(show_guide=False))
     t_daily, t_game, t_stat, t_art, t_farm, t_realm, t_road = st.tabs(
@@ -25,7 +33,7 @@ def render_guide():
     with t_daily:
         st.markdown(f"""
 **Tu luyện hằng ngày = học bài MỚI.** Mỗi ngày bạn học 4 từ mới qua 3 chặng:
-1. **Flashcard** – hấp thụ chữ, nghĩa, pinyin.
+1. **Flashcard** – hấp thụ {"chữ, nghĩa, pinyin" if zh else "từ, nghĩa tiếng Việt, phiên âm IPA"}.
 2. **Shadowing** – nghe và nhại lại phát âm.
 3. **Điền từ (Cloze)** – điền vào câu để nhớ cách dùng.
 
@@ -47,6 +55,10 @@ Hoàn thành xong, bấm nút sang bài/thiên kiếp ở cuối buổi: ✨ Lin
 """)
 
     with t_game:
+        LAT_MODES = ("**Hán ↔ nghĩa**, **Hán ↔ pinyin**, **🔊 nghe ↔ pinyin**, **🔊 nghe ↔ Hán**" if zh else
+                     "**từ tiếng Anh ↔ nghĩa tiếng Việt** và **🔊 phát âm ↔ nghĩa tiếng Việt**")
+        QUESTIONS = ("Hán → nghĩa, nghĩa → Hán, nghe → chọn chữ, điền pinyin (và điền từ khi đủ điều kiện)" if zh else
+                     "từ → nghĩa, nghĩa → từ, nghe → chọn từ (và điền từ khi đủ điều kiện)")
         st.markdown(f"""
 Mọi hoạt động trong Động Phủ đều là một bài ôn từ vựng và đều được ghi vào **📔 Nhật Ký Tu Tiên**.
 
@@ -55,7 +67,7 @@ Rút quẻ để nhận lời sấm và **buff trong ngày** (thêm Linh Thạch
 Giải đúng câu đố của quẻ để nhận thưởng; sai thì quẻ chuyển Hung và từ đó vào Tâm Ma.
 
 ### 🃏 Lật Bài
-Mỗi ván 4 cặp, trộn nhiều thể thức: **Hán ↔ nghĩa**, **Hán ↔ pinyin**, **🔊 nghe ↔ pinyin**, **🔊 nghe ↔ Hán**
+Mỗi ván 4 cặp, trộn nhiều thể thức: {LAT_MODES}
 (tối đa 2 cặp là dạng nghe; nút 🔊 có đánh số, bấm để phát âm rồi chọn mặt khớp ở cột phải). Đúng: giữ màu xanh.
 Sai: chuyển đỏ và không chọn lại. Chơi vô hạn để cày Linh Thạch (thưởng giảm dần theo số lượt trong ngày).
 
@@ -63,7 +75,7 @@ Sai: chuyển đỏ và không chọn lại. Chơi vô hạn để cày Linh Th�
 Sắp các từ thành câu đúng ngữ pháp. Mở khóa từ Trúc Cơ Kỳ và ≥ {cfg.GAME_UNLOCKS['sentence']['words']} từ đã học.
 
 ### 🗺️ Săn Yêu Thú (chiến đấu theo lượt)
-- Mỗi lượt là **một câu hỏi**: Hán → nghĩa, nghĩa → Hán, nghe → chọn chữ, điền pinyin (và điền từ khi đủ điều kiện).
+- Mỗi lượt là **một câu hỏi**: {QUESTIONS}.
 - Đúng: bạn dùng tuyệt kỹ **{cfg.SKILL_NAME}** gây sát thương, **combo** tăng sát thương. Sai: quái phản công.
 - Bản đồ chia **Phàm Giới** (9 cảnh giới đầu) và **Tiên Giới** (7 cảnh giới có chữ Tiên). Mỗi cảnh giới có **2 khu**:
   - ⚔️ **Khu thường**: quái thường, rơi nguyên liệu thường.
@@ -141,14 +153,17 @@ Kiếm Linh Thạch bằng cách chơi Quẻ Bói, Lật Bài, Đối Câu và �
 """)
 
     with t_realm:
+        REALM_END = (f"Độ Kiếp Kỳ ứng với hoàn thành **HSK 4 (~{cfg.HSK4_WORDS} từ)** và Tiên Đế ứng với **HSK 5 (~{cfg.HSK5_WORDS} từ)**."
+                     if zh else f"Độ Kiếp Kỳ ứng với khoảng **{cfg.HSK4_WORDS} từ** và Tiên Đế ứng với khoảng **{cfg.HSK5_WORDS} từ** đã học.")
         st.markdown(f"""
 Có **{len(cfg.MAJOR_REALMS)} cảnh giới**, mỗi cảnh giới chia **Sơ – Trung – Hậu Kỳ** (48 tiểu kỳ). Tu vi tăng theo
-**số từ đã học**; Độ Kiếp Kỳ ứng với hoàn thành **HSK 4 (~{cfg.HSK4_WORDS} từ)** và Tiên Đế ứng với **HSK 5 (~{cfg.HSK5_WORDS} từ)**.
+**số từ đã học**; {REALM_END}
 """)
         st.dataframe(_realm_rows(), hide_index=True, use_container_width=True)
 
     with t_road:
-        st.markdown(f"""
+        if zh:
+            st.markdown(f"""
 ### Thứ tự học
 1. **Giao tiếp trước**: các từ/câu dùng hằng ngày và công sở được ưu tiên để nói được sớm.
 2. **Từ vựng đời sống** sau đó.
@@ -158,4 +173,24 @@ Có **{len(cfg.MAJOR_REALMS)} cảnh giới**, mỗi cảnh giới chia **Sơ �
 - **HSK 4 (~{cfg.HSK4_WORDS} từ) trong khoảng 1 năm** (4 từ mới/ngày) – đây là mục tiêu lý tưởng, không bắt buộc.
 - **HSK 5 (~{cfg.HSK5_WORDS} từ)** sau đó, không giới hạn thời gian.
 - Có thể chậm hơn nhưng đều đặn: mỗi ngày học bài mới, rồi dành vài phút ở Động Phủ để ôn từ cũ.
+""")
+        else:
+            level = st.session_state.get("course_level") or "B1"
+            target = EN_TARGET.get(level, "C1")
+            conn = get_db()
+            total = conn.execute("SELECT COUNT(*) FROM vocab").fetchone()[0]
+            conn.close()
+            st.markdown(f"""
+### Thứ tự học
+1. Học theo **trình độ CEFR bạn đã chọn ({level})**: kho từ chỉ gồm các từ **cao hơn** trình độ này, nên không phải học lại từ quá dễ.
+2. Trong kho từ, các nhóm **giao tiếp công sở, hành chính – nhân sự, giảng dạy** được đưa lên trước, sau đó mở rộng vốn từ theo CEFR tăng dần.
+3. Mỗi ngày 4 từ mới, ôn lại ở Động Phủ như khóa tiếng Trung.
+
+### Mục tiêu tham khảo
+- Lý tưởng là **tăng 2 bậc CEFR trong khoảng 1 năm**: A2 → B2, B1 → C1, B2 → C2. Với trình độ **{level}**, mục tiêu là **{target}** — đây chỉ là mục tiêu lý tưởng, không bắt buộc.
+- Kho từ của bạn hiện có **{total} từ** (~{-(-total // get_config()["words_per_day"])} ngày học với {get_config()["words_per_day"]} từ/ngày).
+
+### 🎯 Đổi trình độ
+Thấy từ quá dễ hoặc quá khó? Mở **🎯 Trình độ** ở menu bên trái (dưới ô chọn khóa học) để chọn lại **A2 / B1 / B2**.
+Kho từ được lọc lại theo trình độ mới, ngày học chuyển tới từ đầu tiên bạn chưa học; Linh Thạch, kho đồ và độ thuộc các từ đã học được giữ nguyên.
 """)

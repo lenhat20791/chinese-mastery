@@ -7,6 +7,7 @@ import game_config as cfg
 import game_core as core
 import game_questions as gq
 import game_ui
+from course_config import get_config
 from database import get_vocab_by_ids, record_review_batch
 
 
@@ -74,12 +75,15 @@ def render_fortune(ctx):
 # ---------------------------------------------------------------------------
 
 MATCH_MODES = {
-    "hm": "Hán ↔ nghĩa", "hp": "Hán ↔ pinyin", "ap": "Nghe ↔ pinyin", "ah": "Nghe ↔ Hán",
+    "hm": "Hán ↔ nghĩa", "hp": "Hán ↔ pinyin", "ap": "Nghe ↔ pinyin", "ah": "Nghe ↔ Hán", "am": "Nghe ↔ nghĩa",
 }
 
 
+AUDIO_MODES = ("ap", "ah", "am")
+
+
 def _right_face(word, mode):
-    if mode == "hm":
+    if mode in ("hm", "am"):
         return gq.short_meaning(word, 40)
     if mode in ("hp", "ap"):
         return word.get("pinyin") or ""
@@ -92,7 +96,10 @@ def build_match_modes(words, rng=random):
     audio_slots = set(rng.sample(range(n), rng.randint(1, n // 2))) if n >= 2 else set()
     modes, used = {}, set()
     for i, word in enumerate(words):
-        options = ["ap", "ah"] if i in audio_slots else ["hm", "hp"]
+        if not get_config()["has_pinyin"]:
+            options = ["am"] if i in audio_slots else ["hm"]
+        else:
+            options = ["ap", "ah"] if i in audio_slots else ["hm", "hp"]
         rng.shuffle(options)
         options.append("hm")
         for mode in options:
@@ -125,7 +132,7 @@ def start_match(ctx):
     right = left[:]
     random.shuffle(left)
     random.shuffle(right)
-    audio_no = {wid: n for n, wid in enumerate([i for i in left if modes[i] in ("ap", "ah")], 1)}
+    audio_no = {wid: n for n, wid in enumerate([i for i in left if modes[i] in AUDIO_MODES], 1)}
     st.session_state.g_match = {
         "words": {w["id"]: w for w in words}, "modes": modes, "audio_no": audio_no,
         "left": left, "right": right,
@@ -183,7 +190,11 @@ def _match_finish(m, ctx):
 def render_match(ctx):
     state = core.get_state()
     st.markdown("### 🃏 Lật Bài Linh Thạch")
-    st.caption("Mỗi ván 4 cặp, trộn nhiều thể thức: Hán ↔ nghĩa, Hán ↔ pinyin, 🔊 nghe ↔ pinyin/Hán (tối đa 2 cặp nghe). "
+    if get_config()["has_pinyin"]:
+        modes_note = "Hán ↔ nghĩa, Hán ↔ pinyin, 🔊 nghe ↔ pinyin/Hán"
+    else:
+        modes_note = "từ tiếng Anh ↔ nghĩa tiếng Việt, 🔊 phát âm ↔ nghĩa tiếng Việt"
+    st.caption(f"Mỗi ván 4 cặp, trộn nhiều thể thức: {modes_note} (tối đa 2 cặp nghe). "
                "Bấm nút 🔊 để nghe, rồi chọn mặt khớp ở cột phải. Ghép sai sẽ khóa cả hai nút. "
                + _remaining_plays_note(state))
     m = st.session_state.get("g_match")
@@ -200,15 +211,15 @@ def render_match(ctx):
     for i in m["left"]:
         word = m["words"][i]
         mode = m["modes"][i]
-        label = f"🔊 {m['audio_no'][i]}" if mode in ("ap", "ah") else word["hanzi"]
+        label = f"🔊 {m['audio_no'][i]}" if mode in AUDIO_MODES else word["hanzi"]
         col_left.button(label, key=f"ml_{i}", use_container_width=True, on_click=_match_click,
                         args=("L", i, ctx), disabled=locked or m["status"][f"L{i}"] in ("done", "bad"))
     for i in m["right"]:
         col_right.button(_right_face(m["words"][i], m["modes"][i]), key=f"mr_{i}", use_container_width=True,
                          on_click=_match_click, args=("R", i, ctx),
                          disabled=locked or m["status"][f"R{i}"] in ("done", "bad"))
-    audio = {f"ml_{i}": m["words"][i]["hanzi"] for i in m["left"] if m["modes"][i] in ("ap", "ah")}
-    if audio and not locked:
+    audio = {f"ml_{i}": m["words"][i]["hanzi"] for i in m["left"] if m["modes"][i] in AUDIO_MODES}
+    if audio:
         game_ui.audio_listener(audio)
     if locked:
         d = m["done"]
@@ -238,7 +249,7 @@ def start_sentence(ctx):
                 random.shuffle(shuffled)
                 if shuffled != tokens:
                     break
-            rounds.append({"type": "arrange", "word": word, "tokens": shuffled, "target": "".join(tokens),
+            rounds.append({"type": "arrange", "word": word, "tokens": shuffled, "target": gq.join_tokens(tokens),
                            "picked": [], "result": None})
         elif can_cloze:
             rounds.append({"type": "cloze", "question": gq.make_question(word, pool, "cloze"),
@@ -261,7 +272,7 @@ def _sent_undo():
 
 def _sent_check():
     rnd = st.session_state.g_sent["rounds"][st.session_state.g_sent["idx"]]
-    rnd["result"] = "".join(rnd["tokens"][i] for i in rnd["picked"]) == rnd["target"]
+    rnd["result"] = gq.join_tokens([rnd["tokens"][i] for i in rnd["picked"]]) == rnd["target"]
 
 
 def _sent_cloze(choice):
@@ -309,7 +320,7 @@ def render_sentence(ctx):
     st.progress(m["idx"] / len(m["rounds"]), text=f"Câu {m['idx'] + 1}/{len(m['rounds'])}")
     if rnd["type"] == "arrange":
         st.write(f"Nghĩa: *{word.get('example_vi') or gq.short_meaning(word)}*")
-        picked = "".join(rnd["tokens"][i] for i in rnd["picked"]) or "…"
+        picked = gq.join_tokens([rnd["tokens"][i] for i in rnd["picked"]]) or "…"
         st.markdown(f"<div class='quiz-prompt' style='font-size:30px'>{picked}</div>", unsafe_allow_html=True)
         for row_start in range(0, len(rnd["tokens"]), 6):
             cols = st.columns(6)

@@ -33,6 +33,7 @@ BACKUP_TABLES = {
     "exam_history": ["id", "user_id", "exam_type", "stage_number", "total_questions", "correct_answers",
                      "score_percent", "is_passed", "weak_words_tested", "taken_at"],
     "session_state": ["user_id", "data", "updated_at"],
+    "profiles": ["id", "user_id", "course", "level", "created_at"],
     "game_profile": ["user_id", "linh_thach", "equipped_artifact", "equipped_title", "pity_mid", "pity_high",
                      "fortune_streak", "fortune_last_day"],
     "game_daily": ["user_id", "day", "plays"],
@@ -146,6 +147,8 @@ def import_progress(raw):
                 tuple(row[c] for c in used),
             ))
     try:
+        # Bản sao lưu cũ chưa có hồ sơ khóa học: tạo lại hồ sơ tiếng Trung (id = id tài khoản)
+        statements.append(("INSERT OR IGNORE INTO profiles (id, user_id, course) SELECT id, id, 'zh' FROM users", ()))
         get_user_db().batch(statements)
     except Exception as exc:
         return False, f"Khôi phục thất bại, dữ liệu hiện tại được giữ nguyên: {exc}"

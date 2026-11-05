@@ -6,6 +6,7 @@ import math
 import streamlit as st
 import streamlit.components.v1 as components
 
+from course_config import get_config
 from database import count_learned_words, get_learned_words
 from reference_data import FINAL_GROUPS, INITIAL_GROUPS, TONES, radicals_by_strokes
 
@@ -41,13 +42,16 @@ h4:first-child { margin-top: 4px; }
 
 SPEAK_SCRIPT = """
 const rate = %s;
+const LANG = %s;
+const SHORT_F = %s;
+const LONG_F = %s;
 function speak(text) {
     const s = window.speechSynthesis;
     if (!s || !text) return;
     s.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'zh-CN';
-    u.rate = rate * (text.length <= 6 ? 0.55 : 0.85);
+    u.lang = LANG;
+    u.rate = rate * (text.length <= 6 ? SHORT_F : LONG_F);
     s.speak(u);
 }
 document.querySelectorAll('[data-say]').forEach(b => b.addEventListener('click', () => speak(b.dataset.say)));
@@ -68,8 +72,11 @@ fit();
 
 def _speech_frame(body_html, height=120):
     """Iframe chứa các nút loa (data-say) phát âm bằng Web Speech API, tự co giãn chiều cao."""
+    cfg = get_config()
     rate = float(st.session_state.get("speech_rate", 1.0))
-    doc = f"<style>{IFRAME_CSS}</style>{body_html}<script>{SPEAK_SCRIPT % rate}</script>"
+    script = SPEAK_SCRIPT % (rate, json.dumps(cfg["tts_lang"]), cfg["tts_rate_short_factor"],
+                             cfg["tts_rate_sentence_factor"])
+    doc = f"<style>{IFRAME_CSS}</style>{body_html}<script>{script}</script>"
     components.html(doc, height=height)
 
 
@@ -87,19 +94,23 @@ def render_chiet_tu(chiet_tu_data):
 
 @st.dialog("📖 Chi tiết từ vựng")
 def show_word_dialog(word):
+    cfg = get_config()
     hanzi = html.escape(word["hanzi"])
     _speech_frame(
         f"<div class='head'><span class='hz'>{hanzi}</span>"
         f"<button class='spk' title='Nghe phát âm' data-say='{html.escape(word['hanzi'], quote=True)}'>🔊</button></div>"
-        f"<div class='py'>{html.escape(word['pinyin'])}</div>",
+        f"<div class='py'>{html.escape(word['pinyin'] or '')}</div>",
         height=130,
     )
+    hanviet = (f"<span class='hanviet-badge'>Âm Hán Việt: {html.escape(word['hanviet'] or '')}</span>"
+               if cfg["has_hanviet"] else
+               f"<span class='hanviet-badge'>CEFR: {html.escape(word.get('hsk_level') or '')}</span>")
     st.markdown(
-        f"<div style='text-align:center'><span class='hanviet-badge'>Âm Hán Việt: {html.escape(word['hanviet'] or '')}</span>"
+        f"<div style='text-align:center'>{hanviet}"
         f"<div class='meaning-display'>{html.escape(word['meaning_vi'] or '')}</div></div>",
         unsafe_allow_html=True,
     )
-    if word.get("chiet_tu"):
+    if cfg["has_radicals"] and word.get("chiet_tu"):
         st.markdown("**💡 Mẹo nhớ Hán tự**")
         if not render_chiet_tu(word["chiet_tu"]):
             st.caption("Dữ liệu chiết tự đang được cập nhật...")
@@ -122,7 +133,7 @@ def _jump_page():
     st.session_state.notebook_page = int(st.session_state.notebook_jump)
 
 
-def render_notebook(current_day):
+def render_notebook(current_day, label_word="chữ Hán"):
     """Sổ tay: từ vựng đã/đang học, 20 từ mỗi trang, có điều hướng trang."""
     total = count_learned_words(current_day)
     st.subheader("📒 Sổ Tay Từ Vựng")
@@ -135,17 +146,20 @@ def render_notebook(current_day):
     st.session_state.notebook_page = page
     st.session_state.notebook_jump = page
 
-    st.caption(f"Tổng {total} từ · bấm vào chữ Hán để xem phiên âm, nghe phát âm và mẹo nhớ · Trang {page}/{pages}")
+    st.caption(f"Tổng {total} từ · bấm vào {label_word} để xem phiên âm, nghe phát âm và ví dụ · Trang {page}/{pages}")
 
     words = get_learned_words(current_day, PAGE_SIZE, (page - 1) * PAGE_SIZE)
+    has_hanviet = get_config()["has_hanviet"]
     for word in words:
         col_hz, col_info = st.columns([1.3, 4.7], vertical_alignment="center")
         with col_hz:
             if st.button(word["hanzi"], key=f"nbw_{word['id']}", use_container_width=True):
                 show_word_dialog(word)
         with col_info:
+            badge = (f"<span class='hanviet-badge' style='margin:0 8px 0 0; padding:3px 12px; font-size:.95rem'>"
+                     f"{html.escape(word['hanviet'] or '')}</span>") if has_hanviet else ""
             st.markdown(
-                f"<span class='hanviet-badge' style='margin:0 8px 0 0; padding:3px 12px; font-size:.95rem'>{html.escape(word['hanviet'] or '')}</span>"
+                f"{badge}"
                 f"<b>{html.escape(word['meaning_vi'] or '')}</b> "
                 f"<span style='color:#b3a6c0; font-size:.85rem'>· Ngày {word['study_day']}</span>",
                 unsafe_allow_html=True,
@@ -186,6 +200,44 @@ def _sound_grid(groups):
         )
         parts.append(f"<h4>{html.escape(label)}</h4><div class='grid'>{cells}</div>")
     return "".join(parts)
+
+
+EN_VOWELS = [("iː", "sheep"), ("ɪ", "ship"), ("e", "bed"), ("æ", "cat"), ("ɑː", "father"), ("ɒ", "hot"),
+             ("ɔː", "door"), ("ʊ", "book"), ("uː", "food"), ("ʌ", "cup"), ("ɜː", "bird"), ("ə", "about")]
+EN_DIPHTHONGS = [("eɪ", "day"), ("aɪ", "my"), ("ɔɪ", "boy"), ("aʊ", "now"), ("əʊ", "go"), ("ɪə", "here"),
+                 ("eə", "hair"), ("ʊə", "tour")]
+EN_CONSONANTS = [("p", "pen"), ("b", "bad"), ("t", "tea"), ("d", "day"), ("k", "key"), ("g", "go"),
+                 ("f", "fan"), ("v", "van"), ("θ", "think"), ("ð", "this"), ("s", "see"), ("z", "zoo"),
+                 ("ʃ", "she"), ("ʒ", "vision"), ("h", "hat"), ("tʃ", "chair"), ("dʒ", "job"),
+                 ("m", "man"), ("n", "no"), ("ŋ", "sing"), ("l", "light"), ("r", "red"), ("w", "we"), ("j", "yes")]
+EN_MINIMAL_PAIRS = [("θ / ð", "think", "this"), ("ɪ / iː", "ship", "sheep"), ("l / r", "light", "right"),
+                    ("b / v", "berry", "very"), ("æ / e", "bad", "bed"), ("s / ʃ", "sea", "she")]
+
+
+def _en_grid(label, items):
+    cells = "".join(
+        f"<button class='cell' data-say='{html.escape(word, quote=True)}'>"
+        f"<span class='sym'>/{html.escape(sym)}/</span>"
+        f"<span class='ex'>{html.escape(word)}</span><span class='ico'>🔊</span></button>"
+        for sym, word in items
+    )
+    return f"<h4>{html.escape(label)}</h4><div class='grid'>{cells}</div>"
+
+
+def render_pronunciation_en():
+    """Tập phát âm tiếng Anh (Mỹ): nguyên âm, nguyên âm đôi, phụ âm, cặp dễ nhầm; mỗi ô có nút nghe."""
+    st.subheader("🗣️ Tập Phát Âm (IPA)")
+    st.caption("Bấm vào từng ô để nghe từ mẫu chứa âm đó (giọng Anh–Mỹ).")
+    _speech_frame(_en_grid("Nguyên âm", EN_VOWELS) + _en_grid("Nguyên âm đôi", EN_DIPHTHONGS), height=420)
+    _speech_frame(_en_grid("Phụ âm", EN_CONSONANTS), height=420)
+    pairs = "".join(
+        f"<h4>{html.escape(label)}</h4><div class='grid'>"
+        f"<button class='cell' data-say='{a}'><span class='sym'>{a}</span><span class='ico'>🔊</span></button>"
+        f"<button class='cell' data-say='{b}'><span class='sym'>{b}</span><span class='ico'>🔊</span></button></div>"
+        for label, a, b in EN_MINIMAL_PAIRS
+    )
+    st.markdown("### Cặp âm dễ nhầm")
+    _speech_frame(pairs, height=720)
 
 
 def render_pronunciation():

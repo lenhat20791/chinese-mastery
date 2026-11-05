@@ -122,13 +122,17 @@ def delete_user(user_id):
         return False, "Không tìm thấy tài khoản."
     if row["is_admin"]:
         return False, "Không thể xóa tài khoản admin."
-    conn.batch([
-        (f"DELETE FROM {table} WHERE {col} = ?", (user_id,))
-        for table, col in [("word_mastery", "user_id"), ("exam_history", "user_id"),
-                           ("session_state", "user_id"), ("user_progress", "user_id"),
-                           ("auth_tokens", "user_id")]
-        + [(table, "user_id") for table in GAME_TABLES] + [("users", "id")]
-    ])
+    # Mỗi khóa học có hồ sơ riêng (id khác id tài khoản) nên phải xóa dữ liệu theo mọi id hồ sơ
+    profile_ids = [r[0] for r in conn.execute("SELECT id FROM profiles WHERE user_id = ?", (user_id,)).fetchall()]
+    ids = sorted({user_id, *profile_ids})
+    progress_tables = ["word_mastery", "exam_history", "session_state", "user_progress", *GAME_TABLES]
+    statements = [(f"DELETE FROM {table} WHERE user_id = ?", (i,)) for table in progress_tables for i in ids]
+    statements += [
+        ("DELETE FROM profiles WHERE user_id = ?", (user_id,)),
+        ("DELETE FROM auth_tokens WHERE user_id = ?", (user_id,)),
+        ("DELETE FROM users WHERE id = ?", (user_id,)),
+    ]
+    conn.batch(statements)
     return True, "Đã xóa tài khoản và toàn bộ tiến độ của người đó."
 
 
@@ -214,6 +218,7 @@ def _render_login():
             user = authenticate(username, password)
             if user:
                 _start_session(user, issue_token(user["id"]))
+                st.session_state["choose_course"] = True
                 st.rerun()
             time.sleep(1)  # làm chậm việc dò mật khẩu
             st.error("Sai tên đăng nhập hoặc mật khẩu.")

@@ -5,6 +5,7 @@ from pathlib import Path
 import streamlit as st
 import streamlit.components.v1 as components
 
+from course_config import get_config
 ASSETS = Path(__file__).parent / "assets"
 IMAGE_EXTS = (".png", ".webp", ".jpg", ".jpeg")
 
@@ -26,17 +27,23 @@ def show_image_or_emoji(folder, code, emoji, width=150):
                     unsafe_allow_html=True)
 
 
-def speak(text, autoplay=False, label="🔊 Nghe"):
-    """Nút phát âm Web Speech (zh-CN); autoplay thử phát ngay khi câu hỏi mới hiện (trình duyệt có thể chặn)."""
-    payload = json.dumps(text)
+def _tts_params():
+    cfg = get_config()
     rate = float(st.session_state.get("speech_rate", 1.0))
+    return cfg["tts_lang"], rate, cfg["tts_rate_short_factor"], cfg["tts_rate_sentence_factor"]
+
+
+def speak(text, autoplay=False, label="🔊 Nghe"):
+    """Nút phát âm Web Speech (ngôn ngữ theo khóa học); autoplay thử phát ngay khi câu hỏi mới hiện (trình duyệt có thể chặn)."""
+    payload = json.dumps(text)
+    lang, rate, short_f, long_f = _tts_params()
     html = f"""
     <button id="b" style="font-size:16px;padding:6px 14px;border-radius:8px;border:1px solid #c9a24b;
       background:#fff8e6;cursor:pointer">{label}</button>
     <script>
     function say() {{
       const t = {payload};
-      const u = new SpeechSynthesisUtterance(t); u.lang = 'zh-CN'; u.rate = {rate} * (t.length <= 6 ? 0.55 : 0.85);
+      const u = new SpeechSynthesisUtterance(t); u.lang = '{lang}'; u.rate = {rate} * (t.length <= 6 ? {short_f} : {long_f});
       speechSynthesis.cancel(); speechSynthesis.speak(u);
     }}
     document.getElementById('b').onclick = say;
@@ -46,26 +53,30 @@ def speak(text, autoplay=False, label="🔊 Nghe"):
 
 
 def audio_listener(mapping):
-    """mapping: {khóa nút: văn bản}. Bấm nút có khóa đó sẽ phát âm (listener gắn vào trang cha để trình duyệt cho phép)."""
-    rate = float(st.session_state.get("speech_rate", 1.0))
-    payload = json.dumps(mapping)
+    """mapping: {khóa nút: văn bản}. Bấm nút có khóa đó sẽ phát âm (listener gắn vào trang cha để trình duyệt cho phép).
+
+    Mỗi lần iframe nạp lại phải gỡ listener cũ rồi gắn lại: listener cũ thuộc iframe đã bị xóa nên không còn chạy
+    (nguyên nhân thẻ âm thanh câm từ ván thứ hai).
+    """
+    lang, rate, short_f, long_f = _tts_params()
+    payload = json.dumps({"map": mapping, "lang": lang, "rate": rate, "short": short_f, "long": long_f})
     components.html(f"""<script>
     const P = window.parent; const D = P.document;
-    P.__zhMap = {payload}; P.__zhRate = {rate};
-    if (!P.__zhBound) {{
-      P.__zhBound = true;
-      D.addEventListener('click', function (e) {{
-        const btn = e.target.closest('button'); if (!btn) return;
-        for (const k in P.__zhMap) {{
-          if (btn.closest('.st-key-' + k)) {{
-            const t = P.__zhMap[k];
-            const u = new P.SpeechSynthesisUtterance(t); u.lang = 'zh-CN';
-            u.rate = P.__zhRate * (t.length <= 6 ? 0.55 : 0.85);
-            P.speechSynthesis.cancel(); P.speechSynthesis.speak(u); break;
-          }}
+    P.__ttsCfg = {payload};
+    if (P.__ttsHandler) D.removeEventListener('click', P.__ttsHandler, true);
+    P.__ttsHandler = function (e) {{
+      const btn = e.target.closest('button'); if (!btn) return;
+      const c = P.__ttsCfg;
+      for (const k in c.map) {{
+        if (btn.closest('.st-key-' + k)) {{
+          const t = c.map[k];
+          const u = new P.SpeechSynthesisUtterance(t); u.lang = c.lang;
+          u.rate = c.rate * (t.length <= 6 ? c.short : c.long);
+          P.speechSynthesis.cancel(); P.speechSynthesis.speak(u); break;
         }}
-      }}, true);
-    }}
+      }}
+    }};
+    D.addEventListener('click', P.__ttsHandler, true);
     </script>""", height=0)
 
 

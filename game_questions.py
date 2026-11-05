@@ -5,7 +5,8 @@ import unicodedata
 
 import streamlit as st
 
-from database import current_user_id, get_db
+from course_config import get_config
+from database import active_variant, current_user_id, get_db
 from userdb import get_user_db
 
 QTYPES = ("h2m", "m2h", "audio", "pinyin", "cloze")
@@ -20,9 +21,8 @@ def learned_day_for(user, phase):
 
 
 @st.cache_data(show_spinner=False)
-def load_pool(learned_day):
-    """Các từ đã học (study_day <= learned_day), thứ tự ổn định."""
-    conn = get_db()
+def _load_pool(learned_day, course):
+    conn = get_db(course)
     rows = [dict(r) for r in conn.execute(
         "SELECT * FROM vocab WHERE study_day <= ? ORDER BY study_day, id", (learned_day,)
     ).fetchall()]
@@ -30,12 +30,26 @@ def load_pool(learned_day):
     return rows
 
 
+def load_pool(learned_day):
+    """Các từ đã học (study_day <= learned_day) của khóa đang học, thứ tự ổn định."""
+    return _load_pool(learned_day, active_variant())
+
+
 @st.cache_data(show_spinner=False)
-def all_hanzi():
-    conn = get_db()
+def _all_hanzi(course):
+    conn = get_db(course)
     words = sorted({r[0] for r in conn.execute("SELECT hanzi FROM vocab")}, key=len, reverse=True)
     conn.close()
     return words
+
+
+def all_hanzi():
+    return _all_hanzi(active_variant())
+
+
+def join_tokens(tokens):
+    """Ghép các cụm thành câu: tiếng Trung liền nhau, tiếng Anh cách bằng dấu cách."""
+    return ("" if get_config()["has_pinyin"] else " ").join(tokens)
 
 
 def load_mastery():
@@ -123,7 +137,9 @@ def has_cloze(word):
 
 
 def available_types(word, pool, allow_cloze):
-    types = ["h2m", "m2h", "pinyin"]
+    types = ["h2m", "m2h"]
+    if get_config()["has_pinyin"]:
+        types.append("pinyin")
     if word.get("hanzi"):
         types.append("audio")
     if allow_cloze and has_cloze(word):
@@ -174,7 +190,9 @@ def correct_label(question):
 
 
 def tokenize_sentence(sentence, vocab_hanzi):
-    """Tách câu thành cụm theo từ điển (khớp dài nhất), bỏ dấu câu."""
+    """Tách câu thành cụm, bỏ dấu câu: tiếng Trung khớp dài nhất theo từ điển, tiếng Anh tách theo từ."""
+    if not get_config()["has_pinyin"]:
+        return [t for t in (w.strip(PUNCT) for w in sentence.split()) if t]
     text = "".join(ch for ch in sentence if ch not in PUNCT)
     tokens, i = [], 0
     while i < len(text):
