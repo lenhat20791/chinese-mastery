@@ -129,43 +129,43 @@ TRAPS = [
 ITEM_SETS = [
     {
         "name": "Thanh Vân Địa Giới",
-        "items": [("Hắc Thiết", "⛏️"), ("Yêu Lang Bì", "🧵"), ("Thanh Linh Thảo", "🌿"),
-                  ("Tinh Thiết", "🔩"), ("Hạ Phẩm Yêu Đan", "🔮"), ("Linh Mộc Tâm", "🪵")],
+        "items": [("Hắc Thiết", "01_hac_thiet"), ("Yêu Lang Bì", "02_yeu_lang_bi"), ("Thanh Linh Thảo", "03_thanh_linh_thao"),
+                  ("Tinh Thiết", "04_tinh_thiet"), ("Hạ Phẩm Yêu Đan", "05_ha_pham_yeu_dan"), ("Linh Mộc Tâm", "06_linh_moc_tam")],
     },
     {
         "name": "Xích Mộc Cương Vực",
-        "items": [("Huyền Thiết", "⛏️"), ("Hỏa Giao Lân", "🐉"), ("Tử Linh Chi", "🍄"),
-                  ("Xích Tinh Thạch", "🔶"), ("Trung Phẩm Yêu Đan", "🔮"), ("Kim Đan Tinh Hoa", "✨")],
+        "items": [("Huyền Thiết", "07_huyen_thiet"), ("Hỏa Giao Lân", "08_hoa_giao_lan"), ("Tử Linh Chi", "09_tu_linh_chi"),
+                  ("Xích Tinh Thạch", "10_xich_tinh_thach"), ("Trung Phẩm Yêu Đan", "11_trung_pham_yeu_dan"), ("Kim Đan Tinh Hoa", "12_kim_dan_tinh_hoa")],
     },
     {
         "name": "Hàn Lôi Cực Địa",
-        "items": [("Hàn Thiết", "⛏️"), ("Băng Giao Cốt", "🦴"), ("Tuyết Liên Diệp", "🌸"),
-                  ("Hàn Ngọc", "💎"), ("Lôi Tinh", "⚡"), ("Thiên Lôi Mộc", "🪵")],
+        "items": [("Hàn Thiết", "13_han_thiet"), ("Băng Giao Cốt", "14_bang_giao_cot"), ("Tuyết Liên Diệp", "15_tuyet_lien_diep"),
+                  ("Hàn Ngọc", "16_han_ngoc"), ("Lôi Tinh", "17_loi_tinh"), ("Thiên Lôi Mộc", "18_thien_loi_moc")],
     },
     {
         "name": "Cửu U Vân Hải",
-        "items": [("U Minh Thiết", "⛏️"), ("Hoang Mạc Sa Tinh", "🏜️"), ("Vân Hải Linh Tảo", "🌊"),
-                  ("Cốt Ngọc", "🦴"), ("Giao Long Đan", "🔮"), ("Chiến Hồn Tinh", "👻")],
+        "items": [("U Minh Thiết", "19_u_minh_thiet"), ("Hoang Mạc Sa Tinh", "20_hoang_mac_sa_tinh"), ("Vân Hải Linh Tảo", "21_van_hai_linh_tao"),
+                  ("Cốt Ngọc", "22_cot_ngoc"), ("Giao Long Đan", "23_giao_long_dan"), ("Chiến Hồn Tinh", "24_chien_hon_tinh")],
     },
     {
         "name": "Hỗn Độn Bất Chu",
-        "items": [("Hỗn Độn Thiết", "⛏️"), ("Tiên Hải Lân", "🐟"), ("Bất Chu Linh Chi", "🍄"),
-                  ("Thần Sơn Ngọc", "💎"), ("Kỳ Lân Giác", "🦄"), ("Tiên Ma Tinh Phách", "🌑")],
+        "items": [("Hỗn Độn Thiết", "25_hon_don_thiet"), ("Tiên Hải Lân", "26_tien_hai_lan"), ("Bất Chu Linh Chi", "27_bat_chu_linh_chi"),
+                  ("Thần Sơn Ngọc", "28_than_son_ngoc"), ("Kỳ Lân Giác", "29_ky_lan_giac"), ("Tiên Ma Tinh Phách", "30_tien_ma_tinh_phach")],
     },
     {
         "name": "Ngọc Hư Tiên Cảnh",
-        "items": [("Ngọc Hư Kim", "⛏️"), ("Tiên Vân Lân", "☁️"), ("Bích Tiêu Tiên Thảo", "🌿"),
-                  ("Tiên Linh Ngọc", "💎"), ("Thanh Loan Vũ", "🪶"), ("Thái Cổ Thần Tinh", "🌟")],
+        "items": [("Ngọc Hư Kim", "31_ngoc_hu_kim"), ("Tiên Vân Lân", "32_tien_van_lan"), ("Bích Tiêu Tiên Thảo", "33_bich_tieu_tien_thao"),
+                  ("Tiên Linh Ngọc", "34_tien_linh_ngoc"), ("Thanh Loan Vũ", "35_thanh_loan_vu"), ("Thái Cổ Thần Tinh", "36_thai_co_than_tinh")],
     },
     {
         "name": "Cửu Thiên Tinh Hà",
-        "items": [("Tinh Hà Thiết", "⛏️"), ("Nguyệt Quang Bì", "🧵"), ("Hồng Mông Linh Thảo", "🌱"),
-                  ("Tinh Thần Sa", "🌌"), ("Địa Mạch Long Đan", "🔮"), ("Hồng Hoang Cốt", "🦴")],
+        "items": [("Tinh Hà Thiết", "37_tinh_ha_thiet"), ("Nguyệt Quang Bì", "38_nguyet_quang_bi"), ("Hồng Mông Linh Thảo", "39_hong_mong_linh_thao"),
+                  ("Tinh Thần Sa", "40_tinh_than_sa"), ("Địa Mạch Long Đan", "41_dia_mach_long_dan"), ("Hồng Hoang Cốt", "42_hong_hoang_cot")],
     },
     {
         "name": "Thiên Đế Cố Cảnh",
-        "items": [("Thiên Đế Thiết", "⛏️"), ("Kim Quang Vũ", "🪶"), ("Vạn Đạo Linh Thảo", "🌿"),
-                  ("Thiên Lộ Tinh Ngọc", "💎"), ("Thiên Long Giác", "🐲"), ("Chí Tôn Đạo Quả", "🍑")],
+        "items": [("Thiên Đế Thiết", "43_thien_de_thiet"), ("Kim Quang Vũ", "44_kim_quang_vu"), ("Vạn Đạo Linh Thảo", "45_van_dao_linh_thao"),
+                  ("Thiên Lộ Tinh Ngọc", "46_thien_lo_tinh_ngoc"), ("Thiên Long Giác", "47_thien_long_giac"), ("Chí Tôn Đạo Quả", "48_chi_ton_dao_qua")],
     },
 ]
 ITEM_SET_COUNT = 8
@@ -180,10 +180,10 @@ def build_items():
     """Danh mục vật phẩm: mã -> thông tin. Mã dạng r{bộ}_{chỉ số}."""
     items = {}
     for s, item_set in enumerate(ITEM_SETS):
-        for i, (name, emoji) in enumerate(item_set["items"]):
-            items[f"r{s}_{i}"] = {"code": f"r{s}_{i}", "name": name, "emoji": emoji, "region": s,
+        for i, (name, img_code) in enumerate(item_set["items"]):
+            items[f"r{s}_{i}"] = {"code": f"r{s}_{i}", "name": name, "emoji": "📦", "img_code": img_code, "folder": "icon item", "region": s,
                                   "rarity": ITEM_LAYOUT[i]}
-    items["pham_dan"] = {"code": "pham_dan", "name": "Tụ Phẩm Đan", "emoji": "💊", "region": None,
+    items["pham_dan"] = {"code": "pham_dan", "name": "Tụ Phẩm Đan", "emoji": "💊", "img_code": "49_tu_pham_dan", "folder": "icon item", "region": None,
                          "rarity": "special"}
     return items
 

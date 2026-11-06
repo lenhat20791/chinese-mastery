@@ -464,6 +464,20 @@ def sell_artifact(artifact_id):
         + _slot_statements(uid, slots))
     return True, f"Đã bán {name}, nhận {refund} 💎."
 
+def discard_item(code):
+    """Vứt bỏ toàn bộ stack của 1 loại vật phẩm trong kho."""
+    state = get_state()
+    qty = state["inventory"].get(code, 0)
+    if qty <= 0:
+        return False, "Vật phẩm không tồn tại trong kho."
+    item = cfg.ITEMS.get(code, {"name": code})
+    uid = state["uid"]
+    apply_changes(
+        items={code: -qty},
+        log=("market", f"Vứt bỏ {qty} {item['name']}.")
+    )
+    return True, f"Đã vứt bỏ {qty} {item['name']}."
+
 
 def upgrade(artifact_id, rng=random):
     state = get_state()

@@ -18,13 +18,17 @@ def find_image(folder, code):
     return None
 
 
-def show_image_or_emoji(folder, code, emoji, width=150):
+def show_image_or_emoji(folder, code, emoji, width=150, tooltip=""):
     path = find_image(folder, code)
+    title_attr = f'title="{tooltip}"' if tooltip else ""
     if path:
-        st.image(path, width=width)
+        import base64
+        b64 = base64.b64encode(Path(path).read_bytes()).decode()
+        st.markdown(f'<div style="text-align:center;"><img src="data:image/png;base64,{b64}" width="{width}" {title_attr} style="display:inline-block;max-width:100%;object-fit:contain;"/></div>', unsafe_allow_html=True)
     else:
-        st.markdown(f"<div style='font-size:{int(width * 0.6)}px;line-height:1.1;text-align:center'>{emoji}</div>",
+        st.markdown(f"<div {title_attr} style='font-size:{int(width * 0.6)}px;line-height:1.1;text-align:center;cursor:pointer;'>{emoji}</div>",
                     unsafe_allow_html=True)
+
 
 
 def _tts_params():

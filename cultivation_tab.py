@@ -139,6 +139,9 @@ def _cb_unequip(slot):
 def _cb_sell(artifact_id):
     _toast_result(core.sell_artifact(artifact_id))
 
+def _cb_discard(code):
+    _toast_result(core.discard_item(code))
+
 
 def _farm_text(recipe):
     s = recipe["region"]
@@ -238,10 +241,34 @@ def _render_market(state, ctx):
     with t_inv:
         if not state["inventory"]:
             st.info("Kho đồ trống. Hãy đi săn yêu thú để thu thập nguyên liệu.")
-        for code, qty in sorted(state["inventory"].items()):
-            item = cfg.ITEMS[code]
-            rarity = cfg.RARITY_LABEL.get(item["rarity"], "Đặc biệt")
-            st.markdown(f"{item['emoji']} **{item['name']}** ×{qty} · {rarity}")
+        else:
+            items_list = sorted(state["inventory"].items())
+            cols_per_row = 5
+            for i in range(0, len(items_list), cols_per_row):
+                cols = st.columns(cols_per_row)
+                for j in range(cols_per_row):
+                    idx_item = i + j
+                    if idx_item < len(items_list):
+                        code, qty = items_list[idx_item]
+                        item = cfg.ITEMS[code]
+                        with cols[j]:
+                            import base64
+                            from pathlib import Path
+                            img_path = game_ui.find_image(item["folder"], item["img_code"])
+                            if img_path:
+                                img_b64 = base64.b64encode(Path(img_path).read_bytes()).decode()
+                                img_html = f'<img src="data:image/png;base64,{img_b64}" width="42" title="{item["name"]} (×{qty})" style="display:block; margin:0 auto; object-fit:contain;" />'
+                            else:
+                                img_html = f'<div title="{item["name"]} (×{qty})" style="font-size:32px; text-align:center;">{item["emoji"]}</div>'
+
+                            st.markdown(f"""
+                            <div style="border: 2px dashed #c9a24b; border-radius: 12px; padding: 8px; text-align: center; background: rgba(27,20,36,0.7); height: 105px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; margin-bottom: 2px;">
+                                {img_html}
+                                <div style="position: absolute; bottom: 3px; right: 5px; background: #c9a24b; color: #000; font-weight: 700; font-size: 0.7rem; padding: 0px 4px; border-radius: 4px;">×{qty}</div>
+                            </div>
+                            """, unsafe_allow_html=True)
+                            st.markdown(f"<div style='font-size:0.75rem; font-weight:600; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px;' title='{item['name']}'>{item['name']}</div>", unsafe_allow_html=True)
+                            st.button(f"🗑️ Vứt", key=f"discard_{code}", on_click=_cb_discard, args=(code,), use_container_width=True)
 
 
 def _render_badges(state, ctx):

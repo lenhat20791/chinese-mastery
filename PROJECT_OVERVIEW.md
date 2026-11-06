@@ -1,14 +1,14 @@
 ﻿# PROJECT_OVERVIEW — Thực Chiến Tiếng Trung & Tiếng Anh (chinese-mastery)
 
 > **AI đọc file này TRƯỚC khi viết/sửa code.** Cập nhật lại sau mỗi đợt thay đổi lớn. Giao diện và comment viết bằng tiếng Việt.
-> Cập nhật gần nhất: hoàn tất lựa chọn nghề nghiệp Công sở / Giáo viên THCS cho khóa tiếng Anh, lọc lộ trình theo nghề và kiểm tra kho từ vựng giáo viên.
+> Cập nhật gần nhất: Tích hợp trọn bộ 49 ảnh icon vật phẩm săn yêu thú (từ `01_hac_thiet` đến `49_tu_pham_dan`), thiết kế lại subtab **Kho Đồ** theo dạng lưới (grid) hình chữ nhật ngang, căn chỉnh icon gọn gàng trong ô lưới, hỗ trợ tooltip rê chuột hiển thị tên/số lượng và tính năng vứt bỏ vật phẩm.
 
 ## 1. Tổng quan
 - Streamlit app học tiếng Trung và tiếng Anh, phong cách tu tiên. Học từ mới mỗi ngày (tab 1), ôn lại bằng mini game "Động Phủ" (tab 2).
 - Mục tiêu lý tưởng (không bắt buộc): HSK4 (~1200 từ) trong ~1 năm, sau đó HSK5 (~2500 từ) không giới hạn thời gian.
 - Nhiều người dùng (đăng nhập tài khoản), tiến độ học/game lưu theo `profile_id` riêng của từng khóa; tài khoản và admin vẫn dùng `user_id`.
 - Khóa tiếng Anh có trình độ CEFR và lựa chọn nghề nghiệp Công sở / Giáo viên THCS; kho từ riêng theo nghề vẫn bao gồm từ `GENERAL`.
-- Python 3.10, Streamlit 1.52. Chạy: `streamlit run app.py`. Test toàn bộ: `python -W ignore -m unittest discover -s tests -t .` (21 test gần nhất).
+- Python 3.10, Streamlit 1.52. Chạy: `streamlit run app.py`. Test toàn bộ: `python -W ignore -m unittest discover -s tests -t .` (21 test).
 - Windows: đặt `$env:PYTHONIOENCODING="utf-8"` khi in tiếng Việt/Hán. Khi chạy thử, nhớ tắt tiến trình Streamlit cũ (Ctrl+F5 ở trình duyệt) kẻo chạy bản code cũ.
 - Triển khai: Streamlit Cloud + Turso (DB người dùng) + Google Drive (sao lưu thủ công). `.github/workflows/keep_alive.yml` ping app mỗi 6 giờ để khỏi ngủ.
 - Cấm commit: `credentials.json`, `token.json`, `.streamlit/secrets.toml`, `user_data.db`, `makemehanzi_dict.txt` (đã trong `.gitignore`).
@@ -27,23 +27,33 @@ chinese-mastery/
 ├─ extra_tabs.py           Sổ tay, tập phát âm, bộ thủ, dialog chi tiết từ, iframe Web Speech
 ├─ reference_data.py       Dữ liệu tham chiếu bộ thủ/âm
 ├─ chiet_tu.py             Công cụ sinh chiết tự (dữ liệu makemehanzi) cho DB từ vựng
-├─ game_config.py          TOÀN BỘ số liệu cân bằng + nội dung game (sửa game ở đây trước)
-├─ game_core.py            Trạng thái game, kinh tế, chế tạo, chỉ số, settle, quẻ bói, huy hiệu
+├─ game_config.py          TOÀN BỘ số liệu cân bằng + nội dung game (mã, tên, icon item r{bộ}_{0..5}, pham_dan)
+├─ game_core.py            Trạng thái game, kinh tế, chế tạo, chỉ số, settle, quẻ bói, huy hiệu, discard_item
 ├─ game_questions.py       Kho từ đã học + sinh câu hỏi cho mini game / trận đánh
 ├─ game_minigames.py       Quẻ bói, Lật bài, Đối câu / sắp xếp câu
 ├─ game_hunt.py            Bản đồ 32 khu + trận đánh theo lượt (quái/tinh anh/boss)
-├─ game_ui.py              Ảnh/emoji, nút phát âm `speak`, `audio_listener` (phát âm cho nút Streamlit theo key), CSS tô màu nút
-├─ cultivation_tab.py      Tab "Động Phủ": điều hướng (radio), trang chủ, chợ, huy hiệu
+├─ game_ui.py              Ảnh/emoji, show_image_or_emoji (hỗ trợ tooltip base64), nút phát âm `speak`, `audio_listener`, CSS tô màu nút
+├─ cultivation_tab.py      Tab "Động Phủ": điều hướng (radio), trang chủ, chợ (bí phương, chế tạo, pháp bảo, kho đồ grid vứt item), huy hiệu
 ├─ guide_tab.py            Trang "📖 Hướng Dẫn" (7 tab con)
 ├─ style.css               CSS toàn app (theme tối tím vàng)
 ├─ requirements.txt        streamlit, google-api-python-client, google-auth-*, google-genai, requests
 ├─ chinese_mastery.db      SQLite kho từ tiếng Trung (bảng `vocab`)
 ├─ english_mastery.db      SQLite kho từ tiếng Anh (bảng `vocab`, dữ liệu CC BY-SA 4.0)
 ├─ vocab_cleaned_final.json  Dữ liệu từ vựng nguồn (chiết tự…)
+├─ assets/icon item/       49 ảnh icon item săn yêu thú (từ 01_hac_thiet đến 49_tu_pham_dan)
 ├─ logo.png / logo_cropped.png
 ├─ PROJECT_OVERVIEW.md     (file này)
 ├─ .streamlit/config.toml  Theme tối, headless
-├─ .github/                keep_alive.py + workflows/keep_alive.yml
+```
+
+## 3. Hệ thống cơ sở dữ liệu và Profile
+- Mỗi khóa học (Tiếng Trung `zh`, Tiếng Anh `en`) có `profile_id` độc lập để lưu từ đã học, tiến độ, Linh Thạch, kho đồ (`game_inventory`), pháp bảo (`game_artifacts`).
+- Bảng người dùng chung (`users`) quản lý đăng nhập và quyền admin. `userdb.GAME_TABLES` liệt kê toàn bộ 9 bảng dữ liệu trò chơi.
+
+## 4. Giao diện & Cơ chế game nổi bật
+- **Kho Đồ (Phường Thị - Subtab 4)**: Hiển thị danh sách nguyên liệu và đan dược săn yêu thú dưới dạng lưới hình chữ nhật ngang (Grid 5 cột), sử dụng icon hình ảnh thực tế từ `assets/icon item`, có tính năng tooltip rê chuột hiển thị tên/số lượng và nút vứt bỏ vật phẩm (`discard_item`).
+- **Săn Yêu Thú**: Bản đồ 32 khu vực tương ứng 16 cảnh giới, chiến đấu theo lượt thông qua việc trả lời câu hỏi từ vựng, thu thập nguyên liệu rơi ra theo tỷ lệ (`roll_loot`, `scale_loot`).
+github/                keep_alive.py + workflows/keep_alive.yml
 ├─ tools/
 │   ├─ translate_vocab.py  Dùng Gemini dịch HSK1–5 sang tiếng Việt (cần GEMINI_API_KEY)
 │   ├─ import_hsk_vocab.py Nhập HSK vào `vocab` (idempotent)
