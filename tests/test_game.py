@@ -89,6 +89,52 @@ class PureLogicTests(unittest.TestCase):
         self.assertAlmostEqual(boosted["hp"], base["hp"] * (1 + mid["hp"]))
         self.assertAlmostEqual(boosted["crit"], mid["crit"])
 
+    def test_cultivation_boost(self):
+        """Kiểm tra boost chỉ số cơ bản theo tu vi: +5% ATK và +5% HP mỗi cấp."""
+        # Test hàm cultivation_boost
+        atk_pct_0, hp_pct_0 = core.cultivation_boost(0)
+        self.assertEqual((atk_pct_0, hp_pct_0), (0, 0))
+        
+        atk_pct_1, hp_pct_1 = core.cultivation_boost(1)
+        self.assertAlmostEqual(atk_pct_1, cfg.CULTIVATION_BOOST_ATK_PCT / 100.0)
+        self.assertAlmostEqual(hp_pct_1, cfg.CULTIVATION_BOOST_HP_PCT / 100.0)
+        
+        atk_pct_10, hp_pct_10 = core.cultivation_boost(10)
+        self.assertAlmostEqual(atk_pct_10, 10 * cfg.CULTIVATION_BOOST_ATK_PCT / 100.0)
+        self.assertAlmostEqual(hp_pct_10, 10 * cfg.CULTIVATION_BOOST_HP_PCT / 100.0)
+        
+        # Test player_stats với cultivation boost
+        stats_0 = core.player_stats(0)
+        stats_1 = core.player_stats(1)
+        stats_10 = core.player_stats(10)
+        
+        # Ở realm 0: không có boost
+        expected_atk_0 = cfg.PLAYER_BASE_ATK
+        expected_hp_0 = cfg.PLAYER_BASE_HP
+        self.assertAlmostEqual(stats_0["atk"], expected_atk_0)
+        self.assertAlmostEqual(stats_0["hp"], expected_hp_0)
+        
+        # Ở realm 1: +5% boost
+        expected_atk_1 = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** 1 * (1 + cfg.CULTIVATION_BOOST_ATK_PCT / 100.0)
+        expected_hp_1 = cfg.PLAYER_BASE_HP * cfg.POWER_PER_REALM ** 1 * (1 + cfg.CULTIVATION_BOOST_HP_PCT / 100.0)
+        self.assertAlmostEqual(stats_1["atk"], expected_atk_1)
+        self.assertAlmostEqual(stats_1["hp"], expected_hp_1)
+        
+        # Ở realm 10: +50% boost
+        expected_atk_10 = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** 10 * (1 + 10 * cfg.CULTIVATION_BOOST_ATK_PCT / 100.0)
+        expected_hp_10 = cfg.PLAYER_BASE_HP * cfg.POWER_PER_REALM ** 10 * (1 + 10 * cfg.CULTIVATION_BOOST_HP_PCT / 100.0)
+        self.assertAlmostEqual(stats_10["atk"], expected_atk_10)
+        self.assertAlmostEqual(stats_10["hp"], expected_hp_10)
+        
+        # Test: cultivation boost KHÔNG cộng dồn với bonus khác
+        # Nếu có bonus từ Căn cơ, chỉ cộng thêm một lần
+        bonus = core.stat_bonuses(words=1250)  # trả về bonus từ Căn cơ
+        stats_1_with_bonus = core.player_stats(1, bonuses=bonus)
+        # Expected: base_atk_1 * (1 + cultivation_boost) * (1 + can_co_bonus)
+        base_atk_1_with_cult = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** 1 * (1 + cfg.CULTIVATION_BOOST_ATK_PCT / 100.0)
+        expected_atk_1_with_bonus = base_atk_1_with_cult * (1 + bonus["atk"])
+        self.assertAlmostEqual(stats_1_with_bonus["atk"], expected_atk_1_with_bonus)
+
     def test_combat_math(self):
         atk, hp = game_hunt.monster_stats(0)
         self.assertAlmostEqual(hp, cfg.PLAYER_BASE_ATK * cfg.MONSTER_HITS)
@@ -115,6 +161,84 @@ class PureLogicTests(unittest.TestCase):
             self.assertEqual("boss" in area, area["kind"] == "elite")
             self.assertIn("\n", game_hunt.area_tooltip(area))
         self.assertTrue(all(r["min_idx"] // 2 == r["region"] for r in cfg.RECIPES))
+
+    def test_cultivation_progression_e2e(self):
+        """E2E test: Tăng cấp từ realm 0 -> 15 và xác nhận chỉ số được tính đúng."""
+        prev_atk = None
+        prev_hp = None
+        
+        for idx in range(16):
+            stats = core.player_stats(idx)
+            atk = stats["atk"]
+            hp = stats["hp"]
+            
+            # Kiểm tra chỉ số tăng khi lên cấp (luôn tăng hoặc bằng cấp trước)
+            if prev_atk is not None:
+                self.assertGreaterEqual(atk, prev_atk, 
+                    f"ATK should increase or stay same when level {idx-1} -> {idx}")
+                self.assertGreaterEqual(hp, prev_hp,
+                    f"HP should increase or stay same when level {idx-1} -> {idx}")
+            
+            # Kiểm tra cultivation boost được tính đúng
+            expected_atk_pct, expected_hp_pct = core.cultivation_boost(idx)
+            base_atk = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** idx
+            base_hp = cfg.PLAYER_BASE_HP * cfg.POWER_PER_REALM ** idx
+            expected_atk = base_atk * (1 + expected_atk_pct)
+            expected_hp = base_hp * (1 + expected_hp_pct)
+            
+            self.assertAlmostEqual(atk, expected_atk, places=5,
+                msg=f"Realm {idx}: ATK calculation mismatch (got {atk}, expected {expected_atk})")
+            self.assertAlmostEqual(hp, expected_hp, places=5,
+                msg=f"Realm {idx}: HP calculation mismatch (got {hp}, expected {expected_hp})")
+            
+            # Kiểm tra boost % tăng đều đặn: +5% mỗi cấp
+            if idx > 0:
+                prev_atk_pct, prev_hp_pct = core.cultivation_boost(idx - 1)
+                diff_atk_pct = expected_atk_pct - prev_atk_pct
+                diff_hp_pct = expected_hp_pct - prev_hp_pct
+                expected_diff = cfg.CULTIVATION_BOOST_ATK_PCT / 100.0
+                self.assertAlmostEqual(diff_atk_pct, expected_diff, places=9,
+                    msg=f"Realm {idx}: ATK boost increment should be {expected_diff}, got {diff_atk_pct}")
+                self.assertAlmostEqual(diff_hp_pct, expected_diff, places=9,
+                    msg=f"Realm {idx}: HP boost increment should be {expected_diff}, got {diff_hp_pct}")
+            
+            prev_atk = atk
+            prev_hp = hp
+
+    def test_backward_compatibility_realm_0(self):
+        """Backward compatibility: Realm 0 (Sơ nhập tiên lộ) không có boost, chỉ số giống như cũ."""
+        # Ở realm 0, cultivation boost = 0%
+        atk_pct_0, hp_pct_0 = core.cultivation_boost(0)
+        self.assertEqual((atk_pct_0, hp_pct_0), (0, 0))
+        
+        # player_stats(0) không có boost => chỉ số = chỉ số cơ bản
+        stats_0 = core.player_stats(0)
+        expected_atk_0 = cfg.PLAYER_BASE_ATK
+        expected_hp_0 = cfg.PLAYER_BASE_HP
+        self.assertAlmostEqual(stats_0["atk"], expected_atk_0)
+        self.assertAlmostEqual(stats_0["hp"], expected_hp_0)
+
+    def test_no_double_stacking(self):
+        """Kiểm tra: Cultivation boost KHÔNG cộng dồn với bonus từ Căn cơ/Danh hào/Đạo tâm."""
+        # Tạo state với nhiều bonus
+        bonus = core.stat_bonuses(words=5000, answers=5000, streak=180, honor_code="so_nhap_tien_lo")
+        
+        # Tính stats ở realm 5 với bonus
+        stats_with_bonus = core.player_stats(5, bonuses=bonus)
+        
+        # Tính chỉ số cơ bản boost + bonus từng bước
+        atk_pct, hp_pct = core.cultivation_boost(5)
+        base_atk = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** 5
+        base_hp = cfg.PLAYER_BASE_HP * cfg.POWER_PER_REALM ** 5
+        boosted_base_atk = base_atk * (1 + atk_pct)
+        boosted_base_hp = base_hp * (1 + hp_pct)
+        
+        # Chỉ số cuối = boosted_base * (1 + bonus)
+        expected_atk = boosted_base_atk * (1 + bonus["atk"])
+        expected_hp = boosted_base_hp * (1 + bonus["hp"])
+        
+        self.assertAlmostEqual(stats_with_bonus["atk"], expected_atk, places=5)
+        self.assertAlmostEqual(stats_with_bonus["hp"], expected_hp, places=5)
 
     def test_match_modes(self):
         import game_minigames as gm

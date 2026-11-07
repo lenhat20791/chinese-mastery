@@ -103,6 +103,8 @@ CRIT_MAX, CRIT_K = 0.25, 3000        # Ngộ tính (số câu đáp đúng) -> t
 CRIT_MULT = 1.5
 CAN_CO_HP_MAX, CAN_CO_ATK_MAX, CAN_CO_K = 0.075, 0.075, 1250   # Căn cơ (từ đã học) -> HP và sát thương
 DAO_TAM_MAX, DAO_TAM_K = 0.25, 90    # Đạo tâm (chuỗi ngày) -> giảm sát thương Tâm Ma Kiếp
+CULTIVATION_BOOST_ATK_PCT = 5.0      # tăng 5% sát thương cơ bản mỗi cấp tu vi
+CULTIVATION_BOOST_HP_PCT = 5.0       # tăng 5% HP cơ bản mỗi cấp tu vi
 TAM_MA_K = 30                        # cường độ tâm ma T = demons / (demons + K)
 TAM_MA_Q_MAJOR = 10                  # số câu Tâm Ma Kiếp ở cuối Đại Thiên Kiếp (50 câu)
 TRAPS = [
@@ -360,3 +362,109 @@ HIDDEN_BADGES = [
      "desc": "Hạ boss mà không mất một giọt máu"},
 ]
 NIGHT_HOUR = 23
+
+# ---------------------------------------------------------------------------
+# Phiên 4: Công thức luyện đan (Alchemy System)
+# ---------------------------------------------------------------------------
+PILL_RECIPES = [
+    {
+        "code": "pill_1",
+        "name": "Hạ Phẩm Yêu Đan",
+        "min_realm": 0,
+        "materials": [("r0_0", 2), ("r0_1", 1)],  # 2x Hắc Thiết, 1x Yêu Lang Bì
+        "bonus_atk_pct": 2.0,
+        "success_rate": 0.80,
+    },
+    {
+        "code": "pill_2",
+        "name": "Trung Phẩm Yêu Đan",
+        "min_realm": 3,
+        "materials": [("r0_3", 2), ("pill_1", 1)],  # 2x Tinh Thiết, 1x Hạ Phẩm Yêu Đan
+        "bonus_atk_pct": 5.0,
+        "success_rate": 0.70,
+    },
+    {
+        "code": "pill_3",
+        "name": "Thượng Phẩm Yêu Đan",
+        "min_realm": 6,
+        "materials": [("r1_2", 3), ("r1_4", 2)],  # 3x Huyền Thiết, 2x Xích Tinh Thạch
+        "bonus_atk_pct": 8.0,
+        "success_rate": 0.60,
+    },
+    {
+        "code": "pill_4",
+        "name": "Tối Thượng Yêu Đan",
+        "min_realm": 10,
+        "materials": [("r2_0", 3), ("r2_4", 2), ("r2_5", 1)],  # 3x Hàn Thiết, 2x Thiên Lôi Mộc, 1x Hàn Ngọc
+        "bonus_atk_pct": 12.0,
+        "success_rate": 0.50,
+    },
+    {
+        "code": "pill_5",
+        "name": "Tôn Thần Yêu Đan",
+        "min_realm": 15,
+        "materials": [("r3_2", 4), ("r3_4", 3), ("r3_5", 1)],  # 4x Linh Mộc Tâm, 3x Thiên Lôi Mộc, 1x Tiên Duyên
+        "bonus_atk_pct": 15.0,
+        "success_rate": 0.40,
+    },
+]
+
+# Bảng giá mua công thức (Linh Thạch)
+PILL_RECIPE_PRICES = {
+    "pill_1": 50,
+    "pill_2": 200,
+    "pill_3": 500,
+    "pill_4": 1500,
+    "pill_5": 3000,
+}
+
+# Mapping nhanh
+PILL_RECIPES_BY_CODE = {p["code"]: p for p in PILL_RECIPES}
+
+# Phiên 5: Cấu hình mini-game Luyện Đan
+ALCHEMIST_MIN_WORDS = 4          # Mở khóa mini-game khi đã học ≥ 4 từ
+ALCHEMIST_MAX_LEARNED = 30       # Nếu > 30 từ đã học, bắt buộc giữ tất cả
+ALCHEMIST_PAIRS_PER_RECIPE = {
+    "pill_1": 3,   # Hạ Phẩm: 3 cặp từ
+    "pill_2": 4,   # Trung Phẩm: 4 cặp từ
+    "pill_3": 5,   # Thượng Phẩm: 5 cặp từ
+    "pill_4": 6,   # Tối Thượng: 6 cặp từ
+    "pill_5": 7,   # Tôn Thần: 7 cặp từ
+}
+
+# Tên vật phẩm (cho Phase 4-5)
+ITEM_NAMES = {
+    "r0_0": "Hắc Thiết",
+    "r0_1": "Yêu Lang Bì",
+    "r0_2": "Thanh Linh Thảo",
+    "r0_3": "Tinh Thiết",
+    "r0_4": "Hạ Phẩm Yêu Đan",
+    "r0_5": "Linh Mộc Tâm",
+    
+    "r1_0": "Huyền Thiết",
+    "r1_1": "Hỏa Giao Lân",
+    "r1_2": "Tử Linh Chi",
+    "r1_3": "Xích Tinh Thạch",
+    "r1_4": "Trung Phẩm Yêu Đan",
+    "r1_5": "Kim Đan Tinh Hoa",
+    
+    "r2_0": "Hàn Thiết",
+    "r2_1": "Băng Giao Cốt",
+    "r2_2": "Tuyết Liên Diệp",
+    "r2_3": "Hàn Ngọc",
+    "r2_4": "Lôi Tinh",
+    "r2_5": "Thiên Lôi Mộc",
+    
+    "r3_0": "U Minh Thiết",
+    "r3_1": "Hoang Mạc Sa Tinh",
+    "r3_2": "Vân Hải Linh Tảo",
+    "r3_3": "Cố Ngọc",
+    "r3_4": "Thiên Lôi Mộc",
+    "r3_5": "Tiên Duyên",
+    
+    "pill_1": "Hạ Phẩm Yêu Đan",
+    "pill_2": "Trung Phẩm Yêu Đan",
+    "pill_3": "Thượng Phẩm Yêu Đan",
+    "pill_4": "Tối Thượng Yêu Đan",
+    "pill_5": "Tôn Thần Yêu Đan",
+}

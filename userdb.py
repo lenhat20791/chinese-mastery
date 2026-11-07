@@ -128,6 +128,18 @@ SCHEMA = [
         value INTEGER NOT NULL DEFAULT 0,
         PRIMARY KEY (user_id, key)
     )""",
+    # Phiên 4: Luyện đan
+    """CREATE TABLE IF NOT EXISTS game_pills (
+        user_id INTEGER NOT NULL,
+        pill_code TEXT NOT NULL,
+        qty INTEGER NOT NULL DEFAULT 0,
+        PRIMARY KEY (user_id, pill_code)
+    )""",
+    """CREATE TABLE IF NOT EXISTS game_pill_recipes (
+        user_id INTEGER NOT NULL,
+        recipe_code TEXT NOT NULL,
+        PRIMARY KEY (user_id, recipe_code)
+    )""",
     """CREATE TABLE IF NOT EXISTS game_log (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,

@@ -44,6 +44,9 @@ BACKUP_TABLES = {
     "game_achievements": ["user_id", "code", "unlocked_at"],
     "game_counters": ["user_id", "key", "value"],
     "game_log": ["id", "user_id", "ts", "kind", "text"],
+    # Phiên 4: Luyện đan
+    "game_pills": ["user_id", "pill_code", "qty"],
+    "game_pill_recipes": ["user_id", "recipe_code"],
 }
 CORE_TABLES = ["users", "user_progress", "word_mastery", "exam_history", "session_state"]
 
