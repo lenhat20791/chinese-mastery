@@ -557,6 +557,7 @@ TALISMAN_RECIPES = [
         "code": "talisman_6",
         "name": "Trời Địa Phù",
         "min_realm": 14,
+        "min_idx": 14,
         "correct_hits_needed": 35,
         "description": "Phù tối thượng, kết hợp tất cả hiệu ứng",
         "effects": {

@@ -1,5 +1,6 @@
 """Ba trò chơi ôn tập theo lượt: Quẻ Bói, Ghép Bài, Sắp Xếp Câu."""
 import random
+from pathlib import Path
 
 import streamlit as st
 
@@ -242,7 +243,6 @@ def render_alchemy(ctx):
     st.caption("Chỉnh sửa công thức và gõ đúng Hán tự để luyện viên thuốc.")
     
     # Hiển thị ảnh minh họa
-    from pathlib import Path
     lo_dan_path = Path(__file__).parent / "assets" / "hinh tu luyen" / "lo_dan.png"
     if lo_dan_path.exists():
         col1, col2 = st.columns([2, 1])
@@ -366,7 +366,6 @@ def render_talisman(ctx):
     st.caption("Chỉnh sửa công thức và gõ đúng Hán tự để vẽ phù bảo hộ.")
     
     # Hiển thị ảnh minh họa
-    from pathlib import Path
     phu_luc_path = Path(__file__).parent / "assets" / "hinh tu luyen" / "phu_luc.png"
     if phu_luc_path.exists():
         col1, col2 = st.columns([2, 1])
