@@ -344,6 +344,9 @@ def _render_badges(state, ctx):
 
 @st.fragment
 def _body(user, learned_day):
+    # Đảm bảo user_id được lưu trong session state cho các component cần dùng
+    st.session_state.user_id = user.get("id")
+    
     state = core.get_state()
     pool = gq.load_pool(learned_day)
     words = len(pool)

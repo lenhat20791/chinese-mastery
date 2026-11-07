@@ -102,6 +102,11 @@ def diminishing(points, cap, k):
     return cap * points / (points + k)
 
 
+def play_multiplier(plays):
+    """Hệ số phần thưởng. Luôn trả về 100% (không giới hạn lượt chơi)."""
+    return 1.0
+
+
 def cultivation_boost(idx):
     """Boost chỉ số cơ bản theo tu vi: +5% ATK và +5% HP mỗi cấp. Trả về (atk_pct, hp_pct)."""
     atk_pct = (cfg.CULTIVATION_BOOST_ATK_PCT / 100.0) * idx

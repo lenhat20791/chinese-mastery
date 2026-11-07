@@ -46,6 +46,7 @@ MATCH_PERFECT_BONUS = 2
 HUNT_NORMAL_REWARD = 8
 HUNT_BOSS_REWARD = 80
 HUNT_EVENT_REWARD = 3
+PLAYS_DIMINISHING_K = 8    # hệ số phần thưởng giảm dần: mult = plays / (plays + K)
 
 # ---------------------------------------------------------------------------
 # Mở khóa: (cảnh giới tối thiểu, số từ đã học tối thiểu)
