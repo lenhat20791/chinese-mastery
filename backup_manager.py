@@ -47,6 +47,12 @@ BACKUP_TABLES = {
     # Phiên 4: Luyện đan
     "game_pills": ["user_id", "pill_code", "qty"],
     "game_pill_recipes": ["user_id", "recipe_code"],
+    # Phiên 6: Vẽ phù
+    "game_talismans": ["user_id", "talisman_code", "qty"],
+    "game_talisman_recipes": ["user_id", "recipe_code"],
+    # Phiên 8-9: Công pháp & đan điền
+    "game_techniques": ["id", "user_id", "technique_code", "dantian_row", "dantian_col", "is_equipped", "acquired_at"],
+    "game_techniques_equipped": ["user_id", "technique_slot_1", "technique_slot_2"],
 }
 CORE_TABLES = ["users", "user_progress", "word_mastery", "exam_history", "session_state"]
 

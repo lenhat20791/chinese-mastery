@@ -292,122 +292,182 @@ def _render_market(state, ctx):
                             st.button(f"🗑️ Vứt", key=f"discard_{code}", on_click=_cb_discard, args=(code,), use_container_width=True)
 
 def _render_techniques(state, ctx):
+    """Phiên 9: Đan Điền và trang bị công pháp."""
+    user_id = core.current_user_id()
     st.markdown("### 📜 Công Pháp Các & Đan Điền")
-    st.caption("Sắp xếp các mảnh công pháp vào lưới Đan Điền (5x5) theo đúng kích thước hình học.")
+    st.caption("Sắp xếp các công pháp vào lưới Đan Điền theo vị trí, sau đó trang bị để tăng chỉ số chiến đấu.")
 
-    if "tech_farmed" not in st.session_state:
-        st.session_state.tech_farmed = [
-            {"id": "t1", "name": "Vô Thượng Kiếm Khí (1x1)", "w": 1, "h": 1, "desc": "Tăng +15 sát thương kiếm."},
-            {"id": "t2", "name": "Hỏa Long Đan Thuật (2x1)", "w": 2, "h": 1, "desc": "Cộng hưởng hỏa tính, sinh linh khí."},
-            {"id": "t3", "name": "Bát Quái Trận Đồ (2x2)", "w": 2, "h": 2, "desc": "Trận pháp phòng thủ toàn diện."},
-            {"id": "t4", "name": "Thanh Tâm Tẩy Hồn Kinh (3x1)", "w": 3, "h": 1, "desc": "Trấn áp tâm ma, tăng ngộ tính."},
-            {"id": "t5", "name": "Hỗn Độn Quy Nguyên Công (2x2)", "w": 2, "h": 2, "desc": "Hấp thu thiên địa linh khí tự động."},
-            {"id": "t6", "name": "Lôi Thần Phá Giáp (1x2)", "w": 1, "h": 2, "desc": "Đòn chí mạng xuyên thấu giáp quái."},
-            {"id": "t7", "name": "Thái Cực Đồ (2x2)", "w": 2, "h": 2, "desc": "Cân bằng âm dương, hồi phục HP."},
-        ]
-    if "tech_equipped" not in st.session_state:
-        st.session_state.tech_equipped = []
-
-    col_list, col_grid = st.columns([1.2, 1.8])
-
-    with col_list:
-        st.markdown("#### 📦 Công Pháp Các (Kho chứa)")
-        st.caption("Danh sách công pháp thu thập được (Duyệt tối đa 7 tên/lần):")
-        
-        farmed = st.session_state.tech_farmed
-        if not farmed:
-            st.info("Kho công pháp trống. Hãy đi săn yêu thú để thu thập thêm.")
+    # Lấy danh sách công pháp
+    techniques_inventory = core.get_techniques_inventory(user_id)
+    equipped = core.get_equipped_techniques(user_id)
+    
+    # Hiển thị ảnh minh họa
+    lo_dan_path = Path(__file__).parent / "assets" / "hinh tu luyen" / "lo_dan.png"
+    if lo_dan_path.exists():
+        col1, col2 = st.columns([1, 2])
+        with col1:
+            st.image(str(lo_dan_path), use_container_width=True, caption="Luyện Đan")
+    
+    tab_inventory, tab_dantian, tab_equipped = st.tabs(["📦 Kho Công Pháp", "🌌 Đan Điền", "⚔️ Trang Bị"])
+    
+    with tab_inventory:
+        st.markdown("#### Công Pháp Sở Hữu")
+        if not techniques_inventory:
+            st.info("Kho công pháp trống. Hãy đi săn boss để thu thập công pháp!")
         else:
-            with st.container(height=320):
-                for tech in farmed:
-                    c_info, c_btn = st.columns([2.2, 1])
-                    c_info.markdown(f"**{tech['name']}**  \n<span style='font-size:0.8rem; color:#b3a6c0;'>{tech['desc']}</span>", unsafe_allow_html=True)
-                    if c_btn.button("Sử dụng ➡️", key=f"use_tech_{tech['id']}", use_container_width=True):
-                        grid_size = 5
-                        placed = False
-                        occupied = set()
-                        for eq in st.session_state.tech_equipped:
-                            er = eq.get('r', 0)
-                            ec = eq.get('c', 0)
-                            for dr in range(eq['h']):
-                                for dc in range(eq['w']):
-                                    occupied.add((er + dr, ec + dc))
-
-                        for r in range(grid_size):
-                            for c in range(grid_size):
-                                can_fit = True
-                                if r + tech['h'] > grid_size or c + tech['w'] > grid_size:
-                                    can_fit = False
-                                else:
-                                    for dr in range(tech['h']):
-                                        for dc in range(tech['w']):
-                                            if (r + dr, c + dc) in occupied:
-                                                can_fit = False
-                                                break
-                                        if not can_fit:
-                                            break
-                                if can_fit:
-                                    tech['r'] = r
-                                    tech['c'] = c
-                                    st.session_state.tech_farmed.remove(tech)
-                                    st.session_state.tech_equipped.append(tech)
-                                    placed = True
-                                    break
-                            if placed:
-                                break
-                        if not placed:
-                            st.error("Đan Điền 5x5 không đủ chỗ trống cho mảnh công pháp này!")
-                        else:
-                            st.rerun()
-
-    with col_grid:
-        st.markdown("#### 🌌 Đan Điền (Túi Trữ Vật 5x5)")
-        st.caption("Công pháp đang kích hoạt trong Đan Điền:")
+            cols_per_row = 4
+            for i in range(0, len(techniques_inventory), cols_per_row):
+                cols = st.columns(cols_per_row)
+                for j in range(cols_per_row):
+                    idx_tech = i + j
+                    if idx_tech < len(techniques_inventory):
+                        tech = techniques_inventory[idx_tech]
+                        with cols[j]:
+                            tech_color = game_ui.technique_color(tech["grade"])
+                            card_html = f"""
+                            <div style="
+                                background: linear-gradient(135deg, {tech_color}20, {tech_color}05);
+                                border: 2px solid {tech_color};
+                                border-radius: 8px;
+                                padding: 8px;
+                                text-align: center;
+                                color: {tech_color};
+                                font-weight: bold;
+                                cursor: pointer;
+                            ">
+                                <div style="font-size: 24px;">{tech["emoji"]}</div>
+                                <div style="font-size: 10px; line-height: 1.2;">{tech["name"]}</div>
+                                <div style="font-size: 9px; color: #999; margin-top: 2px;">
+                                    {cfg.TECHNIQUE_GRADES[tech["grade"]]}
+                                </div>
+                                <div style="font-size: 8px; margin-top: 2px; color: {tech_color};">
+                                    {'🛡️ +' + str(int(tech["hp_mult"] * 100)) + '% HP' if tech["hp_mult"] > 0 else '⚔️ +' + str(int(tech["atk_mult"] * 100)) + '% ATK'}
+                                </div>
+                            </div>
+                            """
+                            st.markdown(card_html, unsafe_allow_html=True)
+                            
+                            if not tech["is_equipped"]:
+                                if st.button(f"Đặt ↓", key=f"place_tech_{tech['id']}", use_container_width=True):
+                                    st.session_state[f"placing_technique"] = tech["id"]
+    
+    with tab_dantian:
+        st.markdown("#### Đan Điền (Lưới 6x5)")
         
-        equipped = st.session_state.tech_equipped
-        if not equipped:
-            st.info("Đan Điền trống. Hãy dùng công pháp từ Công Pháp Các để lắp vào.")
-        else:
-            for tech in equipped:
-                r_pos = tech.get('r', 0) + 1
-                c_pos = tech.get('c', 0) + 1
-                c_name, c_btn = st.columns([3, 1])
-                c_name.markdown(f"✨ **{tech['name']}** (hàng {r_pos}, cột {c_pos}) — *{tech['desc']}*")
-                if c_btn.button("Thu hồi ⬅️", key=f"recall_tech_{tech['id']}", use_container_width=True):
-                    st.session_state.tech_equipped.remove(tech)
-                    st.session_state.tech_farmed.append(tech)
-                    st.rerun()
-
-        st.markdown("---")
-        st.markdown("##### 🗺️ Bản Đồ Lưới Đan Điền (5x5 Grid)")
+        # Hiển thị grid đan điền
+        grid = [[None for _ in range(cfg.DANTIAN_COLS)] for _ in range(cfg.DANTIAN_ROWS)]
+        for tech in techniques_inventory:
+            if tech["dantian_row"] != -1:
+                grid[tech["dantian_row"]][tech["dantian_col"]] = tech
         
-        grid_size = 5
-        grid_matrix = [[None for _ in range(grid_size)] for _ in range(grid_size)]
-        for tech in equipped:
-            tr = tech.get('r', 0)
-            tc = tech.get('c', 0)
-            for dr in range(tech['h']):
-                for dc in range(tech['w']):
-                    if tr + dr < grid_size and tc + dc < grid_size:
-                        grid_matrix[tr + dr][tc + dc] = {
-                            "name": tech['name'],
-                            "is_head": (dr == 0 and dc == 0)
-                        }
-
-        grid_html = "<div style='display:grid; grid-template-columns: repeat(5, 1fr); gap: 4px; max-width: 360px; margin: 0 auto; background: #1b1424; padding: 10px; border-radius: 12px; border: 2px solid #3a2d48;'>"
-        for r in range(grid_size):
-            for c in range(grid_size):
-                cell = grid_matrix[r][c]
-                if cell:
-                    bg = "#5a1860" if cell["is_head"] else "#4a0850"
-                    border = "2px solid #f0b95b" if cell["is_head"] else "1px solid #c9a24b"
-                    text = "⚡" if cell["is_head"] else "·"
-                    title = f"title='{cell['name']}'"
-                    grid_html += f"<div {title} style='background:{bg}; border:{border}; aspect-ratio:1; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:#f0b95b;'>{text}</div>"
+        # Tạo grid HTML
+        grid_html = f'<div style="display: grid; grid-template-columns: ' + ' '.join(['60px'] * cfg.DANTIAN_COLS) + '; gap: 4px; padding: 8px; background: #1b1424; border-radius: 8px;">'
+        
+        for row in range(cfg.DANTIAN_ROWS):
+            for col in range(cfg.DANTIAN_COLS):
+                tech = grid[row][col]
+                if tech:
+                    tech_color = game_ui.technique_color(tech["grade"])
+                    cell_html = f'<div style="background:{tech_color}; color:white; width:60px; height:60px; display:flex; align-items:center; justify-content:center; border-radius:4px; font-size:28px; font-weight:bold; cursor:pointer; box-shadow:0 0 8px {tech_color}80;" title="{tech["name"]}" data-tech-id="{tech["id"]}" data-row="{row}" data-col="{col}">{tech["emoji"]}</div>'
                 else:
-                    grid_html += f"<div style='background:#241a30; border:1px dashed #3a2d48; aspect-ratio:1; border-radius:6px;'></div>"
-        grid_html += "</div>"
+                    cell_html = f'<div style="background:#2a2030; width:60px; height:60px; border:2px dashed #3a2d48; border-radius:4px; cursor:pointer;" data-row="{row}" data-col="{col}"></div>'
+                grid_html += cell_html
+        
+        grid_html += '</div>'
         st.markdown(grid_html, unsafe_allow_html=True)
+        
+        st.caption(f"📊 Sử dụng: {sum(1 for t in techniques_inventory if t['dantian_row'] != -1)} / {cfg.DANTIAN_TOTAL} ô")
+        
+        # Form đặt công pháp
+        st.markdown("---")
+        st.markdown("##### Đặt công pháp vào vị trí")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            tech_id = st.selectbox("Công pháp", 
+                [t["id"] for t in techniques_inventory if t["dantian_row"] == -1],
+                format_func=lambda tid: next((t["name"] for t in techniques_inventory if t["id"] == tid), "---"))
+        with col2:
+            row = st.number_input("Hàng", 0, cfg.DANTIAN_ROWS - 1, 0)
+        with col3:
+            col = st.number_input("Cột", 0, cfg.DANTIAN_COLS - 1, 0)
+        
+        if st.button("✅ Đặt công pháp", type="primary"):
+            if tech_id:
+                success, msg = core.place_technique_in_dantian(user_id, tech_id, int(row), int(col))
+                if success:
+                    st.success(msg)
+                    st.rerun()
+                else:
+                    st.error(msg)
+        
+        # Tháo công pháp
+        st.markdown("---")
+        st.markdown("##### Tháo công pháp khỏi Đan Điền")
+        placed_techs = [t for t in techniques_inventory if t["dantian_row"] != -1]
+        if placed_techs:
+            tech_to_remove = st.selectbox("Chọn công pháp để tháo",
+                [t["id"] for t in placed_techs],
+                format_func=lambda tid: next((f"{t['name']} ({t['dantian_row']}, {t['dantian_col']})" for t in placed_techs if t["id"] == tid), "---"))
+            if st.button("🗑️ Tháo công pháp"):
+                success, msg = core.remove_technique_from_dantian(user_id, tech_to_remove)
+                st.success(msg)
+                st.rerun()
+    
+    with tab_equipped:
+        st.markdown("#### Trang Bị Công Pháp (Slot)")
+        
+        phu_luc_path = Path(__file__).parent / "assets" / "hinh tu luyen" / "phu_luc.png"
+        if phu_luc_path.exists():
+            st.image(str(phu_luc_path), use_container_width=True, caption="Vẽ Phù")
+        
+        st.markdown("Trang bị công pháp để tăng chỉ số chiến đấu:")
+        
+        # Tính bonus hiện tại
+        bonus = core.calc_technique_bonus(user_id)
+        st.metric("💪 Bonus HP từ Tâm Pháp", f"+{int(bonus['hp_mult'] * 100)}%")
+        st.metric("⚡ Bonus ATK từ Bí Pháp", f"+{int(bonus['atk_mult'] * 100)}%")
+        
+        st.markdown("---")
+        
+        # Slot 1
+        st.markdown("##### Slot 1 (Tâm Pháp - Tăng HP)")
+        heart_techniques = [t for t in techniques_inventory if t["kind"] == "heart" and not t["is_equipped"]]
+        if equipped["slot_1"]:
+            st.success(f"✅ Đang trang bị: **{equipped['slot_1']['name']}** (+{int(equipped['slot_1']['hp_mult'] * 100)}% HP)")
+            if st.button("🗑️ Tháo Slot 1"):
+                core.unequip_technique(user_id, 1)
+                st.rerun()
+        else:
+            if heart_techniques:
+                tech_id = st.selectbox("Chọn Tâm Pháp", 
+                    [t["id"] for t in heart_techniques],
+                    format_func=lambda tid: next((f"{t['name']} (+{int(t['hp_mult']*100)}% HP)" for t in heart_techniques if t["id"] == tid), "---"))
+                if st.button("⚔️ Trang bị Slot 1", type="primary"):
+                    core.equip_technique(user_id, tech_id, 1)
+                    st.rerun()
+            else:
+                st.info("Không có Tâm Pháp nào để trang bị. Hãy đi săn boss!")
+        
+        st.markdown("---")
+        
+        # Slot 2
+        st.markdown("##### Slot 2 (Bí Pháp - Tăng ATK)")
+        secret_techniques = [t for t in techniques_inventory if t["kind"] == "secret" and not t["is_equipped"]]
+        if equipped["slot_2"]:
+            st.success(f"✅ Đang trang bị: **{equipped['slot_2']['name']}** (+{int(equipped['slot_2']['atk_mult'] * 100)}% ATK)")
+            if st.button("🗑️ Tháo Slot 2"):
+                core.unequip_technique(user_id, 2)
+                st.rerun()
+        else:
+            if secret_techniques:
+                tech_id = st.selectbox("Chọn Bí Pháp",
+                    [t["id"] for t in secret_techniques],
+                    format_func=lambda tid: next((f"{t['name']} (+{int(t['atk_mult']*100)}% ATK)" for t in secret_techniques if t["id"] == tid), "---"))
+                if st.button("⚔️ Trang bị Slot 2", type="primary"):
+                    core.equip_technique(user_id, tech_id, 2)
+                    st.rerun()
+            else:
+                st.info("Không có Bí Pháp nào để trang bị. Hãy đi săn boss!")
 
 
 def _render_badges(state, ctx):

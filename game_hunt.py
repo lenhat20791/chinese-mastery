@@ -261,6 +261,22 @@ def _settle_battle(b, ctx):
             incr[f"elite_r{area['realm']}"] = 1
         if kind == "boss" and b["taken"] == 0:
             incr["flawless_boss"] = 1
+        
+        # Phiên 8: Boss rơi công pháp
+        if kind == "boss":
+            technique_code, grade = core.roll_technique(area["realm"])
+            if technique_code:
+                technique_id = core.add_technique(core.current_user_id(), technique_code)
+                if technique_id > 0:
+                    technique = cfg.TECHNIQUE_BY_CODE[technique_code]
+                    b["technique_drop"] = {
+                        "code": technique_code,
+                        "name": technique["name"],
+                        "grade": grade,
+                        "emoji": technique["emoji"],
+                    }
+                    b["log"].append(f"✨ **{technique['name']}** rơi! (Cấp: {cfg.TECHNIQUE_GRADES[grade]})")
+        
         if kind != "boss" and run:
             run["wins"] += 1
             if run["wins"] % cfg.DEPTH_EVERY == 0:
@@ -327,6 +343,21 @@ def render_battle(ctx):
         (st.success if b["over"] == "win" else st.warning)(
             f"{verdict} · +{s['ls']} 💎 Linh Thạch"
             + (f" (hệ số {int(s['mult'] * 100)}%)" if s["mult"] < 1 else "") + f" · Vật phẩm: {loot_text(s['items'])}")
+        
+        # Phiên 8: Hiển thị công pháp rơi
+        if b.get("technique_drop"):
+            tech_drop = b["technique_drop"]
+            tech_color = game_ui.technique_color(tech_drop["grade"])
+            st.markdown(f"""
+            <div style="background:linear-gradient(135deg, {tech_color}25, {tech_color}05); 
+                        border:2px solid {tech_color}; border-radius:8px; padding:12px; 
+                        margin:8px 0; text-align:center; color:{tech_color}; font-weight:bold;">
+                <div style="font-size:40px;">{tech_drop["emoji"]}</div>
+                <div style="font-size:16px;">{tech_drop["name"]}</div>
+                <div style="font-size:12px;">Cấp: {cfg.TECHNIQUE_GRADES[tech_drop["grade"]]}</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
         for name in s["badges"]:
             st.toast(f"🏅 Danh hiệu mới: {name}")
         c1, c2 = st.columns(2)

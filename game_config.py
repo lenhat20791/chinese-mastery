@@ -81,11 +81,11 @@ FORTUNE_BUFFS = {
 POWER_PER_REALM = 1.25
 PLAYER_BASE_HP = 100
 PLAYER_BASE_ATK = 12
-MONSTER_HITS = 7            # số đòn gốc để hạ một yêu thú thường
+MONSTER_HITS = 10           # số đòn gốc để hạ một yêu thú thường (phiên 10: +3 từ 7)
 MONSTER_MIN_HITS = 4        # dù pháp bảo mạnh cũng cần ít nhất ngần này câu đúng
-BOSS_HITS = 15              # boss cần đủ 15 câu đúng
-MONSTER_ATK_RATIO = 0.11    # sát thương yêu thú trên HP gốc người chơi
-BOSS_ATK_RATIO = 0.14
+BOSS_HITS = 18              # boss cần đủ 18 câu đúng (phiên 10: +3 từ 15)
+MONSTER_ATK_RATIO = 0.14    # sát thương yêu thú trên HP gốc người chơi (phiên 10: +0.03 từ 0.11)
+BOSS_ATK_RATIO = 0.17       # (phiên 10: +0.03 từ 0.14)
 COMBO_STEP = 0.10
 COMBO_MAX = 5
 SPECIAL_EVENTS = 3          # số cơ quan phải vượt qua trước khi gặp boss
@@ -468,3 +468,214 @@ ITEM_NAMES = {
     "pill_4": "Tối Thượng Yêu Đan",
     "pill_5": "Tôn Thần Yêu Đan",
 }
+
+# ---------------------------------------------------------------------------
+# Phiên 6: Công thức vẽ phù (Talisman System)
+# ---------------------------------------------------------------------------
+TALISMAN_RECIPES = [
+    {
+        "code": "talisman_1",
+        "name": "Bảo Hộ Phù",
+        "min_realm": 1,
+        "correct_hits_needed": 10,
+        "description": "Phù bảo hộ toàn thân, giảm sát thương nhận",
+        "effects": {
+            "damage_reduction": 0.15,  # Giảm 15% sát thương
+            "duration": 2,  # Hiệu lực 2 trận
+        }
+    },
+    {
+        "code": "talisman_2",
+        "name": "Tăng Công Phù",
+        "min_realm": 3,
+        "correct_hits_needed": 15,
+        "description": "Phù tăng sát thương, cộng thêm công kích",
+        "effects": {
+            "atk_bonus_pct": 20.0,  # Tăng 20% sát thương
+            "duration": 2,
+        }
+    },
+    {
+        "code": "talisman_3",
+        "name": "Hồi Phục Phù",
+        "min_realm": 5,
+        "correct_hits_needed": 20,
+        "description": "Phù hồi phục sức khỏe trong trận đấu",
+        "effects": {
+            "hp_restore_pct": 30.0,  # Hồi 30% HP
+            "duration": 1,
+        }
+    },
+    {
+        "code": "talisman_4",
+        "name": "Phản Công Phù",
+        "min_realm": 8,
+        "correct_hits_needed": 25,
+        "description": "Phù phản công, bất kỳ khi nào bị đánh sẽ phản lại",
+        "effects": {
+            "reflect_damage_pct": 25.0,  # Phản lại 25% sát thương
+            "duration": 2,
+        }
+    },
+    {
+        "code": "talisman_5",
+        "name": "Trúc Chi Phù",
+        "min_realm": 11,
+        "correct_hits_needed": 30,
+        "description": "Phù chính xác, tăng tỉ lệ chí mạng",
+        "effects": {
+            "crit_chance_bonus": 15.0,  # Tăng 15% tỉ lệ chí mạng
+            "duration": 2,
+        }
+    },
+    {
+        "code": "talisman_6",
+        "name": "Trời Địa Phù",
+        "min_realm": 14,
+        "correct_hits_needed": 35,
+        "description": "Phù tối thượng, kết hợp tất cả hiệu ứng",
+        "effects": {
+            "damage_reduction": 10.0,  # -10% sát thương
+            "atk_bonus_pct": 15.0,  # +15% sát thương
+            "hp_restore_pct": 20.0,  # Hồi 20% HP
+            "reflect_damage_pct": 15.0,  # Phản lại 15% sát thương
+            "crit_chance_bonus": 10.0,  # +10% chí mạng
+            "duration": 3,
+        }
+    },
+]
+
+# Bảng giá mua công thức phù (Linh Thạch)
+TALISMAN_RECIPE_PRICES = {
+    "talisman_1": 100,
+    "talisman_2": 300,
+    "talisman_3": 600,
+    "talisman_4": 1200,
+    "talisman_5": 2000,
+    "talisman_6": 3500,
+}
+
+# Mapping nhanh
+TALISMAN_RECIPES_BY_CODE = {t["code"]: t for t in TALISMAN_RECIPES}
+
+# Tên phù
+TALISMAN_NAMES = {
+    "talisman_1": "Bảo Hộ Phù",
+    "talisman_2": "Tăng Công Phù",
+    "talisman_3": "Hồi Phục Phù",
+    "talisman_4": "Phản Công Phù",
+    "talisman_5": "Trúc Chi Phù",
+    "talisman_6": "Trời Địa Phù",
+}
+
+# ---------------------------------------------------------------------------
+# Phiên 8: Công Pháp (Tâm Pháp & Bí Pháp) - Rơi từ Boss
+# ---------------------------------------------------------------------------
+# 5 cấp công pháp x 2 loại (tâm pháp +HP, bí pháp +ATK)
+# Rơi khi đánh boss thắng; tỉ lệ rơi phụ thuộc cấp độ
+TECHNIQUE_GRADES = ("Xâm Cơ", "Dị Nhân", "Thiên Tài", "Thánh Tích", "Thần Tích")  # 5 cấp
+TECHNIQUE_COLORS = ("#808080", "#4CAF50", "#2196F3", "#FF9800", "#F44336")  # Xám, Xanh lá, Xanh dương, Cam, Đỏ
+TECHNIQUE_LINES_MAP = (2, 3, 4, 5, 6)  # Số dòng chỉ số cho mỗi cấp
+
+TECHNIQUES = [
+    {"code": "qingfeng_jian", "name": "Thanh Phong Kiếm", "kind": "secret", "grade": 0, "emoji": "🌪️", "size": (3, 3), "hp_mult": 0.0000, "atk_mult": 0.1800},
+    {"code": "danjian_fa", "name": "Đơn Kiếm Pháp", "kind": "secret", "grade": 0, "emoji": "🌟", "size": (2, 2), "hp_mult": 0.0000, "atk_mult": 0.0800},
+    {"code": "shuangjian_fa", "name": "Song Kiếm Pháp", "kind": "secret", "grade": 0, "emoji": "🏵️", "size": (2, 2), "hp_mult": 0.0000, "atk_mult": 0.0800},
+    {"code": "kuangjian_fa", "name": "Cuồng Kiếm Pháp", "kind": "secret", "grade": 0, "emoji": "🎆", "size": (2, 3), "hp_mult": 0.0000, "atk_mult": 0.1200},
+    {"code": "lingfa_jian", "name": "Linh Pháp Kiếm", "kind": "secret", "grade": 0, "emoji": "🗡️", "size": (1, 1), "hp_mult": 0.0000, "atk_mult": 0.0200},
+    {"code": "liantai_gong", "name": "Luyện Tai Công", "kind": "secret", "grade": 0, "emoji": "⚔️", "size": (1, 1), "hp_mult": 0.0000, "atk_mult": 0.0200},
+    {"code": "lianjue_gong", "name": "Luyện Quyết Công", "kind": "secret", "grade": 0, "emoji": "🔱", "size": (1, 2), "hp_mult": 0.0000, "atk_mult": 0.0400},
+    {"code": "jianqi_gong", "name": "Kiếm Khí Công", "kind": "secret", "grade": 0, "emoji": "⚡", "size": (1, 2), "hp_mult": 0.0000, "atk_mult": 0.0400},
+    {"code": "qilin_gong", "name": "Kỳ Lân Công", "kind": "secret", "grade": 0, "emoji": "🔥", "size": (1, 1), "hp_mult": 0.0000, "atk_mult": 0.0200},
+    {"code": "fengwu_gong", "name": "Phong Vũ Công", "kind": "secret", "grade": 0, "emoji": "💨", "size": (1, 2), "hp_mult": 0.0000, "atk_mult": 0.0400},
+    {"code": "dantian_gong", "name": "Đan Điền Công", "kind": "heart", "grade": 0, "emoji": "🌺", "size": (3, 3), "hp_mult": 0.1800, "atk_mult": 0.0000},
+    {"code": "taiji_gong", "name": "Thái Cực Công", "kind": "heart", "grade": 0, "emoji": "💓", "size": (2, 2), "hp_mult": 0.0800, "atk_mult": 0.0000},
+    {"code": "wuwei_gong", "name": "Vô Vị Công", "kind": "heart", "grade": 0, "emoji": "❤️", "size": (2, 2), "hp_mult": 0.0800, "atk_mult": 0.0000},
+    {"code": "hunyuan_gong", "name": "Hỗn Nguyên Công", "kind": "heart", "grade": 0, "emoji": "🔴", "size": (2, 3), "hp_mult": 0.1200, "atk_mult": 0.0000},
+    {"code": "taichi_basic", "name": "Thái Cực Công Cơ Bản", "kind": "heart", "grade": 0, "emoji": "💝", "size": (1, 1), "hp_mult": 0.0200, "atk_mult": 0.0000},
+    {"code": "duyinyang", "name": "Độc Âm Dương", "kind": "heart", "grade": 0, "emoji": "💗", "size": (1, 1), "hp_mult": 0.0200, "atk_mult": 0.0000},
+    {"code": "qihai_gong", "name": "Khí Hải Công", "kind": "heart", "grade": 0, "emoji": "💕", "size": (1, 2), "hp_mult": 0.0400, "atk_mult": 0.0000},
+    {"code": "jiuyang_gong", "name": "Cửu Dương Công", "kind": "heart", "grade": 0, "emoji": "💖", "size": (1, 2), "hp_mult": 0.0400, "atk_mult": 0.0000},
+    {"code": "qingxu_gong", "name": "Thanh Hư Công", "kind": "heart", "grade": 0, "emoji": "🎀", "size": (1, 1), "hp_mult": 0.0200, "atk_mult": 0.0000},
+    {"code": "yinyang_jue", "name": "Âm Dương Quyết", "kind": "heart", "grade": 0, "emoji": "🌀", "size": (1, 2), "hp_mult": 0.0400, "atk_mult": 0.0000},
+    {"code": "yuanli_jian", "name": "Viễn Lý Kiếm", "kind": "secret", "grade": 1, "emoji": "🌪️", "size": (3, 3), "hp_mult": 0.0000, "atk_mult": 0.2200},
+    {"code": "tianya_jian", "name": "Thiên Ngoại Kiếm", "kind": "secret", "grade": 1, "emoji": "🌟", "size": (2, 2), "hp_mult": 0.0000, "atk_mult": 0.1000},
+    {"code": "yuanrong_gong", "name": "Viên Dung Công", "kind": "secret", "grade": 1, "emoji": "🏵️", "size": (2, 2), "hp_mult": 0.0000, "atk_mult": 0.1000},
+    {"code": "shenhuo_jue", "name": "Thần Hỏa Quyết", "kind": "secret", "grade": 1, "emoji": "🎆", "size": (2, 3), "hp_mult": 0.0000, "atk_mult": 0.1500},
+    {"code": "chixiao_jian", "name": "Chích Tiếu Kiếm", "kind": "secret", "grade": 1, "emoji": "🗡️", "size": (1, 1), "hp_mult": 0.0000, "atk_mult": 0.0250},
+    {"code": "tianyin_gong", "name": "Thiên Âm Công", "kind": "secret", "grade": 1, "emoji": "⚔️", "size": (1, 1), "hp_mult": 0.0000, "atk_mult": 0.0250},
+    {"code": "xuanwu_jue", "name": "Huyền Vũ Quyết", "kind": "secret", "grade": 1, "emoji": "🔱", "size": (1, 2), "hp_mult": 0.0000, "atk_mult": 0.0500},
+    {"code": "fengpao_gong", "name": "Phong Pao Công", "kind": "secret", "grade": 1, "emoji": "⚡", "size": (1, 2), "hp_mult": 0.0000, "atk_mult": 0.0500},
+    {"code": "phoenix_gong", "name": "Phượng Hoàng Công", "kind": "secret", "grade": 1, "emoji": "🔥", "size": (1, 1), "hp_mult": 0.0000, "atk_mult": 0.0250},
+    {"code": "dragon_gong", "name": "Long Công", "kind": "secret", "grade": 1, "emoji": "💨", "size": (1, 2), "hp_mult": 0.0000, "atk_mult": 0.0500},
+    {"code": "tianxin_gong", "name": "Thiên Tâm Công", "kind": "heart", "grade": 1, "emoji": "🌺", "size": (3, 3), "hp_mult": 0.2200, "atk_mult": 0.0000},
+    {"code": "bagua_zhang", "name": "Bát Quái Chưởng", "kind": "heart", "grade": 1, "emoji": "💗", "size": (2, 2), "hp_mult": 0.1000, "atk_mult": 0.0000},
+    {"code": "shaolin_gong", "name": "Thiếu Lâm Công", "kind": "heart", "grade": 1, "emoji": "💓", "size": (2, 2), "hp_mult": 0.1000, "atk_mult": 0.0000},
+    {"code": "wudang_jue", "name": "Võ Đương Quyết", "kind": "heart", "grade": 1, "emoji": "❤️", "size": (2, 3), "hp_mult": 0.1500, "atk_mult": 0.0000},
+    {"code": "emei_gong", "name": "Émeimei Công", "kind": "heart", "grade": 1, "emoji": "🔴", "size": (2, 2), "hp_mult": 0.1000, "atk_mult": 0.0000},
+    {"code": "jiemai_gong", "name": "Nhất Mạch Công", "kind": "heart", "grade": 1, "emoji": "💝", "size": (1, 1), "hp_mult": 0.0250, "atk_mult": 0.0000},
+    {"code": "liuhe_jue", "name": "Lục Hợp Quyết", "kind": "heart", "grade": 1, "emoji": "💕", "size": (1, 2), "hp_mult": 0.0500, "atk_mult": 0.0000},
+    {"code": "xingyi_quan", "name": "Hình Ý Quyền", "kind": "heart", "grade": 1, "emoji": "💖", "size": (1, 2), "hp_mult": 0.0500, "atk_mult": 0.0000},
+    {"code": "daxuan_gong", "name": "Đại Tuyên Công", "kind": "heart", "grade": 1, "emoji": "🎀", "size": (1, 1), "hp_mult": 0.0250, "atk_mult": 0.0000},
+    {"code": "fuxue_gong", "name": "Phúc Học Công", "kind": "heart", "grade": 1, "emoji": "🌀", "size": (1, 2), "hp_mult": 0.0500, "atk_mult": 0.0000},
+    {"code": "shenmo_jian", "name": "Thần Mộ Kiếm", "kind": "secret", "grade": 2, "emoji": "🌪️", "size": (3, 3), "hp_mult": 0.0000, "atk_mult": 0.2700},
+    {"code": "jingxin_gong", "name": "Kinh Tâm Công", "kind": "secret", "grade": 2, "emoji": "🌟", "size": (2, 2), "hp_mult": 0.0000, "atk_mult": 0.1200},
+    {"code": "lingxiao_jue", "name": "Linh Tiêu Quyết", "kind": "secret", "grade": 2, "emoji": "🏵️", "size": (2, 2), "hp_mult": 0.0000, "atk_mult": 0.1200},
+    {"code": "konghai_gong", "name": "Không Hải Công", "kind": "secret", "grade": 2, "emoji": "🎆", "size": (2, 3), "hp_mult": 0.0000, "atk_mult": 0.1800},
+    {"code": "shenmo_gong", "name": "Thần Mộ Công", "kind": "secret", "grade": 2, "emoji": "🗡️", "size": (1, 1), "hp_mult": 0.0000, "atk_mult": 0.0300},
+    {"code": "youming_jue", "name": "Yêu Minh Quyết", "kind": "secret", "grade": 2, "emoji": "⚔️", "size": (1, 1), "hp_mult": 0.0000, "atk_mult": 0.0300},
+    {"code": "tengshe_gong", "name": "Đằng Xà Công", "kind": "secret", "grade": 2, "emoji": "🔱", "size": (1, 2), "hp_mult": 0.0000, "atk_mult": 0.0600},
+    {"code": "yuanjue_gong", "name": "Viên Giác Công", "kind": "secret", "grade": 2, "emoji": "⚡", "size": (1, 2), "hp_mult": 0.0000, "atk_mult": 0.0600},
+    {"code": "jingyao_gong", "name": "Kinh Yêu Công", "kind": "secret", "grade": 2, "emoji": "🔥", "size": (1, 1), "hp_mult": 0.0000, "atk_mult": 0.0300},
+    {"code": "chaoyang_gong", "name": "Triều Dương Công", "kind": "secret", "grade": 2, "emoji": "💨", "size": (1, 2), "hp_mult": 0.0000, "atk_mult": 0.0600},
+    {"code": "kongming_gong", "name": "Không Minh Công", "kind": "heart", "grade": 2, "emoji": "🌺", "size": (3, 3), "hp_mult": 0.2700, "atk_mult": 0.0000},
+    {"code": "lingxi_gong", "name": "Linh Tích Công", "kind": "heart", "grade": 2, "emoji": "💗", "size": (2, 2), "hp_mult": 0.1200, "atk_mult": 0.0000},
+    {"code": "huiyuan_gong", "name": "Hồi Nguyên Công", "kind": "heart", "grade": 2, "emoji": "💓", "size": (2, 2), "hp_mult": 0.1200, "atk_mult": 0.0000},
+    {"code": "xianyu_jue", "name": "Tiên Vũ Quyết", "kind": "heart", "grade": 2, "emoji": "❤️", "size": (2, 3), "hp_mult": 0.1800, "atk_mult": 0.0000},
+    {"code": "zixiao_gong", "name": "Tử Tiêu Công", "kind": "heart", "grade": 2, "emoji": "🔴", "size": (2, 2), "hp_mult": 0.1200, "atk_mult": 0.0000},
+    {"code": "kuafu_gong", "name": "Khôi Phù Công", "kind": "heart", "grade": 2, "emoji": "💝", "size": (1, 1), "hp_mult": 0.0300, "atk_mult": 0.0000},
+    {"code": "beiming_jue", "name": "Bắc Minh Quyết", "kind": "heart", "grade": 2, "emoji": "💕", "size": (1, 2), "hp_mult": 0.0600, "atk_mult": 0.0000},
+    {"code": "longxiang_gong", "name": "Long Tường Công", "kind": "heart", "grade": 2, "emoji": "💖", "size": (1, 2), "hp_mult": 0.0600, "atk_mult": 0.0000},
+    {"code": "chaofeng_gong", "name": "Triều Phong Công", "kind": "heart", "grade": 2, "emoji": "🎀", "size": (1, 1), "hp_mult": 0.0300, "atk_mult": 0.0000},
+    {"code": "yuanyang_gong", "name": "Viên Dương Công", "kind": "heart", "grade": 2, "emoji": "🌀", "size": (1, 2), "hp_mult": 0.0600, "atk_mult": 0.0000},
+]
+
+# Tỉ lệ rơi công pháp khi đánh boss thắng (phụ thuộc cấp độ) - 60 kỹ năng cấp 0-2
+TECHNIQUE_DROP_RATES = {
+    0: {"rate": 0.15, "grades": [0]},              # Cảnh giới 0-1: 15% rơi, cấp 0
+    1: {"rate": 0.15, "grades": [0]},
+    2: {"rate": 0.20, "grades": [0, 1]},           # Cảnh giới 2-5: 20% rơi, cấp 0-1
+    3: {"rate": 0.20, "grades": [0, 1]},
+    4: {"rate": 0.25, "grades": [0, 1]},
+    5: {"rate": 0.25, "grades": [0, 1]},
+    6: {"rate": 0.30, "grades": [1, 2]},           # Cảnh giới 6-11: 30% rơi, cấp 1-2
+    7: {"rate": 0.30, "grades": [1, 2]},
+    8: {"rate": 0.35, "grades": [1, 2]},
+    9: {"rate": 0.35, "grades": [1, 2]},
+    10: {"rate": 0.40, "grades": [2]},             # Cảnh giới 10-15: 40%+ rơi, cấp 2
+    11: {"rate": 0.40, "grades": [2]},
+    12: {"rate": 0.40, "grades": [2]},
+    13: {"rate": 0.45, "grades": [2]},
+    14: {"rate": 0.45, "grades": [2]},
+    15: {"rate": 0.50, "grades": [2]},             # Cảnh giới 15 (tối cao): 50% rơi, cấp 2
+}
+
+
+# Size multiplier: công pháp lớn = bonus cao
+TECHNIQUE_SIZE_MULT = {
+    (1, 1): 0.5,    # Rất nhỏ
+    (1, 2): 1.0,    # Nhỏ
+    (2, 2): 2.0,    # Trung bình
+    (2, 3): 3.0,    # Lớn
+    (3, 3): 4.5,    # Rất lớn (1/3 dantian)
+}
+
+TECHNIQUE_BY_CODE = {t["code"]: t for t in TECHNIQUES}
+TECHNIQUE_NAMES = {t["code"]: t["name"] for t in TECHNIQUES}
+TECHNIQUE_EMOJI = {t["code"]: t["emoji"] for t in TECHNIQUES}
+
+# Đan điền: không gian xếp công pháp (số lượng ô, kích cỡ)
+DANTIAN_ROWS = 4
+DANTIAN_COLS = 5
+DANTIAN_TOTAL = DANTIAN_ROWS * DANTIAN_COLS  # 20 ô (giảm từ 30)
+DANTIAN_SLOT_SIZE = 60  # pixel

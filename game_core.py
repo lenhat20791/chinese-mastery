@@ -826,6 +826,334 @@ def get_words_learned_count(user_id):
         (user_id,)
     ).fetchone()
     return row[0] if row else 0
+
+# ---------------------------------------------------------------------------
+# Phiên 6: Vẽ Phù (Talisman System)
+# ---------------------------------------------------------------------------
+
+def buy_talisman_recipe(user_id, recipe_code):
+    """Mua công thức phù (một lần duy nhất)."""
+    if recipe_code not in cfg.TALISMAN_RECIPES_BY_CODE:
+        return False, "Công thức phù không tồn tại!", 0
+    
+    recipe = cfg.TALISMAN_RECIPES_BY_CODE[recipe_code]
+    price = cfg.TALISMAN_RECIPE_PRICES.get(recipe_code, 0)
+    
+    db = get_user_db()
+    
+    # Kiểm tra đã sở hữu công thức chưa
+    existing = db.execute(
+        "SELECT recipe_code FROM game_talisman_recipes WHERE user_id = ? AND recipe_code = ?",
+        (user_id, recipe_code)
+    ).fetchone()
+    
+    if existing:
+        return False, f"Bạn đã mua công thức {recipe['name']} rồi!", 0
+    
+    # Lấy Linh Thạch hiện tại
+    profile = db.execute(
+        "SELECT linh_thach FROM game_profile WHERE user_id = ?",
+        (user_id,)
+    ).fetchone()
+    linh_thach = profile[0] if profile else 0
+    
+    if linh_thach < price:
+        return False, f"Không đủ Linh Thạch! Cần {price}, có {linh_thach}.", linh_thach
+    
+    # Trừ tiền và lưu công thức
+    db.execute(
+        "UPDATE game_profile SET linh_thach = linh_thach - ? WHERE user_id = ?",
+        (price, user_id)
+    )
+    db.execute(
+        "INSERT INTO game_talisman_recipes (user_id, recipe_code) VALUES (?, ?)",
+        (user_id, recipe_code)
+    )
+    db.commit()
+    
+    linh_thach_after = linh_thach - price
+    return True, f"✅ Mua công thức {recipe['name']} thành công!", linh_thach_after
+
+
+def get_talisman_recipes_owned(user_id):
+    """Lấy danh sách công thức phù đã mua."""
+    db = get_user_db()
+    rows = db.execute(
+        "SELECT recipe_code FROM game_talisman_recipes WHERE user_id = ? ORDER BY recipe_code",
+        (user_id,)
+    ).fetchall()
+    result = []
+    for (code,) in rows:
+        if code in cfg.TALISMAN_RECIPES_BY_CODE:
+            result.append(cfg.TALISMAN_RECIPES_BY_CODE[code])
+    return result
+
+
+def get_talismans_inventory(user_id):
+    """Lấy kho phù."""
+    db = get_user_db()
+    rows = db.execute(
+        "SELECT talisman_code, qty FROM game_talismans WHERE user_id = ? AND qty > 0 ORDER BY talisman_code",
+        (user_id,)
+    ).fetchall()
+    result = []
+    for code, qty in rows:
+        if code in cfg.TALISMAN_RECIPES_BY_CODE:
+            talisman = cfg.TALISMAN_RECIPES_BY_CODE[code]
+            result.append({**talisman, "qty": qty})
+    return result
+
+
+def craft_talisman(user_id, recipe_code):
+    """Xây dựng phù (sau khi hoàn thành mini-game)."""
+    if recipe_code not in cfg.TALISMAN_RECIPES_BY_CODE:
+        return {"success": False, "error": "INVALID_RECIPE", "message": "Công thức phù không tồn tại!"}
+    
+    recipe = cfg.TALISMAN_RECIPES_BY_CODE[recipe_code]
+    db = get_user_db()
+    
+    # Kiểm tra sở hữu công thức
+    owned = db.execute(
+        "SELECT recipe_code FROM game_talisman_recipes WHERE user_id = ? AND recipe_code = ?",
+        (user_id, recipe_code)
+    ).fetchone()
+    
+    if not owned:
+        return {"success": False, "error": "RECIPE_NOT_OWNED", "message": "Bạn chưa mua công thức này!"}
+    
+    # Kiểm tra tu vi
+    words_learned = get_words_learned_count(user_id)
+    realm = realm_info(words_learned)
+    
+    if realm["idx"] < recipe["min_realm"]:
+        return {
+            "success": False, 
+            "error": "REALM_TOO_LOW",
+            "message": f"Cần tu vi cảnh giới {recipe['min_realm']} trở lên!"
+        }
+    
+    # Lưu phù vào kho
+    db.execute(
+        "INSERT INTO game_talismans (user_id, talisman_code, qty) VALUES (?, ?, 1) "
+        "ON CONFLICT(user_id, talisman_code) DO UPDATE SET qty = qty + 1",
+        (user_id, recipe_code)
+    )
+    
+    # Cập nhật counter số lần gõ đúng
+    db.execute(
+        "INSERT INTO game_counters (user_id, key, value) VALUES (?, ?, ?) "
+        "ON CONFLICT(user_id, key) DO UPDATE SET value = value + ?",
+        (user_id, f"talisman_{recipe_code}_hits", recipe["correct_hits_needed"], recipe["correct_hits_needed"])
+    )
+    
+    db.commit()
+    
+    return {
+        "success": True,
+        "talisman_code": recipe_code,
+        "talisman_name": recipe["name"],
+        "message": f"✅ Xây dựng phù {recipe['name']} thành công!"
+    }
+
+
+def get_talisman_inventory_qty(user_id, talisman_code):
+    """Lấy số lượng phù trong kho."""
+    db = get_user_db()
+    row = db.execute(
+        "SELECT qty FROM game_talismans WHERE user_id = ? AND talisman_code = ?",
+        (user_id, talisman_code)
+    ).fetchone()
+    return row[0] if row else 0
+
+
+def consume_talisman(user_id, talisman_code, qty=1):
+    """Tiêu hao phù (khi sử dụng trong trận)."""
+    db = get_user_db()
+    current = get_talisman_inventory_qty(user_id, talisman_code)
+    
+    if current < qty:
+        return False
+    
+    new_qty = current - qty
+    if new_qty == 0:
+        db.execute(
+            "DELETE FROM game_talismans WHERE user_id = ? AND talisman_code = ?",
+            (user_id, talisman_code)
+        )
+    else:
+        db.execute(
+            "UPDATE game_talismans SET qty = ? WHERE user_id = ? AND talisman_code = ?",
+            (new_qty, user_id, talisman_code)
+        )
+    db.commit()
+    return True
+
+
+# ---------------------------------------------------------------------------
+# Phiên 7: Sử dụng vật phẩm trong trận đấu
+# ---------------------------------------------------------------------------
+
+def get_usable_pills(user_id):
+    """Lấy danh sách đan dược có thể sử dụng."""
+    pills = get_pills_inventory(user_id)
+    usable = []
+    for pill in pills:
+        if pill["code"] in cfg.PILL_RECIPES_BY_CODE:
+            recipe = cfg.PILL_RECIPES_BY_CODE[pill["code"]]
+            usable.append({
+                "code": pill["code"],
+                "name": recipe["name"],
+                "qty": pill["qty"],
+                "description": f"Tăng {recipe['bonus_atk_pct']:.0f}% sát thương",
+                "effects": {
+                    "atk_bonus_pct": recipe["bonus_atk_pct"]
+                }
+            })
+    return usable
+
+
+def get_usable_talismans(user_id):
+    """Lấy danh sách phù có thể sử dụng."""
+    talismans = get_talismans_inventory(user_id)
+    usable = []
+    for talisman in talismans:
+        if talisman["code"] in cfg.TALISMAN_RECIPES_BY_CODE:
+            recipe = cfg.TALISMAN_RECIPES_BY_CODE[talisman["code"]]
+            usable.append({
+                "code": talisman["code"],
+                "name": recipe["name"],
+                "qty": talisman["qty"],
+                "description": recipe["description"],
+                "effects": recipe["effects"],
+                "duration": recipe["effects"]["duration"]
+            })
+    return usable
+
+
+def use_pill_in_battle(battle_state, pill_code):
+    """Sử dụng đan dược trong trận đấu."""
+    if pill_code not in cfg.PILL_RECIPES_BY_CODE:
+        return False, "Đan dược không tồn tại!"
+    
+    # Kiểm tra xem đã sử dụng trong lượt này rồi không
+    used_pills = battle_state.get("used_pills", [])
+    if pill_code in used_pills:
+        return False, "Đã sử dụng đan dược này trong lượt này rồi!"
+    
+    recipe = cfg.PILL_RECIPES_BY_CODE[pill_code]
+    
+    # Cộng vào ATK boost
+    if "active_items" not in battle_state:
+        battle_state["active_items"] = {}
+    
+    if "pills" not in battle_state["active_items"]:
+        battle_state["active_items"]["pills"] = []
+    
+    battle_state["active_items"]["pills"].append({
+        "code": pill_code,
+        "name": recipe["name"],
+        "effects": recipe.get("bonus_atk_pct", 0)
+    })
+    
+    # Ghi lại đã sử dụng
+    if "used_pills" not in battle_state:
+        battle_state["used_pills"] = []
+    battle_state["used_pills"].append(pill_code)
+    
+    return True, f"✅ Sử dụng {recipe['name']}!"
+
+
+def use_talisman_in_battle(battle_state, talisman_code):
+    """Sử dụng phù trong trận đấu."""
+    if talisman_code not in cfg.TALISMAN_RECIPES_BY_CODE:
+        return False, "Phù không tồn tại!"
+    
+    # Kiểm tra xem đã sử dụng trong lượt này rồi không
+    used_talismans = battle_state.get("used_talismans", [])
+    if talisman_code in used_talismans:
+        return False, "Đã sử dụng phù này trong lượt này rồi!"
+    
+    recipe = cfg.TALISMAN_RECIPES_BY_CODE[talisman_code]
+    
+    # Cộng vào hiệu ứng
+    if "active_items" not in battle_state:
+        battle_state["active_items"] = {}
+    
+    if "talismans" not in battle_state["active_items"]:
+        battle_state["active_items"]["talismans"] = []
+    
+    battle_state["active_items"]["talismans"].append({
+        "code": talisman_code,
+        "name": recipe["name"],
+        "effects": recipe.get("effects", {}),
+        "duration": recipe["effects"].get("duration", 1)
+    })
+    
+    # Ghi lại đã sử dụng
+    if "used_talismans" not in battle_state:
+        battle_state["used_talismans"] = []
+    battle_state["used_talismans"].append(talisman_code)
+    
+    return True, f"✅ Sử dụng {recipe['name']}!"
+
+
+def get_active_item_effects(battle_state):
+    """Lấy tất cả hiệu ứng từ vật phẩm hiện tại đang hoạt động."""
+    effects = {
+        "atk_bonus_pct": 0.0,
+        "damage_reduction": 0.0,
+        "hp_restore": 0.0,
+        "reflect_damage": 0.0,
+        "crit_bonus": 0.0,
+    }
+    
+    active = battle_state.get("active_items", {})
+    
+    # Tính hiệu ứng đan
+    for pill in active.get("pills", []):
+        effects["atk_bonus_pct"] += pill.get("effects", 0)
+    
+    # Tính hiệu ứng phù
+    for talisman in active.get("talismans", []):
+        tali_effects = talisman.get("effects", {})
+        effects["atk_bonus_pct"] += tali_effects.get("atk_bonus_pct", 0) / 100.0
+        effects["damage_reduction"] += tali_effects.get("damage_reduction", 0) / 100.0
+        effects["hp_restore"] += tali_effects.get("hp_restore_pct", 0) / 100.0
+        effects["reflect_damage"] += tali_effects.get("reflect_damage_pct", 0) / 100.0
+        effects["crit_bonus"] += tali_effects.get("crit_chance_bonus", 0) / 100.0
+    
+    return effects
+
+
+# ---------------------------------------------------------------------------
+# Phiên 7: Cửu chuyển hoàn hồn đan (Revival Pill)
+# ---------------------------------------------------------------------------
+
+def has_revival_pill(user_id):
+    """Kiểm tra người chơi có Cửu chuyển hoàn hồn đan không."""
+    qty = get_inventory_qty(user_id, "pham_dan")
+    return qty > 0
+
+
+def use_revival_pill(user_id, battle_state):
+    """Sử dụng Cửu chuyển hoàn hồn đan để hồi sinh."""
+    if not has_revival_pill(user_id):
+        return False, "Không có Cửu chuyển hoàn hồn đan!"
+    
+    # Tiêu hao 1 viên đan
+    if not consume_inventory(user_id, "pham_dan", 1):
+        return False, "Không thể sử dụng đan!"
+    
+    # Hồi sinh: hồi 50% HP và tiếp tục trận
+    max_hp = battle_state.get("pmax", 100)
+    restore_hp = max_hp * 0.5
+    battle_state["php"] = restore_hp
+    
+    # Ghi chép hồi sinh
+    battle_state["log"].append(f"✨ Cửu chuyển hoàn hồn đan kích hoạt! Hồi sinh với {restore_hp:.0f} HP!")
+    
+    return True, "Hồi sinh thành công!"
+
 # ---------------------------------------------------------------------------
 # Phiên 5: Mini-game Luyện Đan
 # ---------------------------------------------------------------------------
@@ -963,3 +1291,292 @@ def reset_alchemist_game(user_id):
     state = get_state()
     state["alchemist"] = None
     set_state(state)
+
+
+# ---------------------------------------------------------------------------
+# Phiên 8: Công Pháp (Tâm Pháp & Bí Pháp) - Rơi từ Boss
+# ---------------------------------------------------------------------------
+
+def roll_technique(realm_idx, rng=random):
+    """Quay công pháp rơi từ boss theo cảnh giới.
+    
+    Trả về: (technique_code, technique_grade) hoặc (None, None) nếu không rơi.
+    """
+    # Lấy config rơi theo cảnh giới
+    drop_config = cfg.TECHNIQUE_DROP_RATES.get(realm_idx, cfg.TECHNIQUE_DROP_RATES.get(15))
+    drop_rate = drop_config["rate"]
+    available_grades = drop_config["grades"]
+    
+    # Kiểm tra rơi
+    if rng.random() > drop_rate:
+        return None, None
+    
+    # Chọn cấp độ công pháp
+    grade = rng.choice(available_grades)
+    
+    # Chọn loại công pháp (50% tâm pháp, 50% bí pháp)
+    kind = rng.choice(["heart", "secret"])
+    
+    # Lấy danh sách công pháp theo loại + cấp
+    techniques = [t for t in cfg.TECHNIQUES if t["kind"] == kind and t["grade"] == grade]
+    if not techniques:
+        return None, None
+    
+    technique = rng.choice(techniques)
+    return technique["code"], grade
+
+
+def add_technique(user_id, technique_code):
+    """Thêm công pháp vào kho người chơi.
+    
+    Trả về: technique_id hoặc -1 nếu lỗi.
+    """
+    if technique_code not in cfg.TECHNIQUE_BY_CODE:
+        return -1
+    
+    db = get_user_db()
+    cursor = db.execute(
+        "INSERT INTO game_techniques (user_id, technique_code) VALUES (?, ?)",
+        (user_id, technique_code)
+    )
+    db.commit()
+    return cursor.lastrowid
+
+
+def get_techniques_inventory(user_id):
+    """Lấy danh sách công pháp sở hữu (bao gồm vị trí đan điền nếu có)."""
+    db = get_user_db()
+    rows = db.execute(
+        "SELECT id, technique_code, dantian_row, dantian_col, is_equipped FROM game_techniques WHERE user_id = ? ORDER BY acquired_at DESC",
+        (user_id,)
+    ).fetchall()
+    
+    techniques = []
+    for row_id, code, row, col, equipped in rows:
+        technique = cfg.TECHNIQUE_BY_CODE[code]
+        techniques.append({
+            "id": row_id,
+            "code": code,
+            "name": technique["name"],
+            "kind": technique["kind"],
+            "grade": technique["grade"],
+            "emoji": technique["emoji"],
+            "dantian_row": row,
+            "dantian_col": col,
+            "is_equipped": equipped,
+            "hp_mult": technique["hp_mult"],
+            "atk_mult": technique["atk_mult"],
+        })
+    return techniques
+
+
+def place_technique_in_dantian(user_id, technique_id, dantian_row, dantian_col):
+    """Đặt công pháp vào vị trí trong đan điền (grid-based inventory).
+    
+    Trả về: (success, message)
+    """
+    # Kiểm tra bounds
+    if not (0 <= dantian_row < cfg.DANTIAN_ROWS and 0 <= dantian_col < cfg.DANTIAN_COLS):
+        return False, "Vị trí không hợp lệ"
+    
+    # Kiểm tra sở hữu
+    db = get_user_db()
+    tech = db.execute(
+        "SELECT technique_code FROM game_techniques WHERE id = ? AND user_id = ?",
+        (technique_id, user_id)
+    ).fetchone()
+    if not tech:
+        return False, "Công pháp không tồn tại"
+    
+    # Kiểm tra vị trí đã có công pháp chưa
+    existing = db.execute(
+        "SELECT id FROM game_techniques WHERE user_id = ? AND dantian_row = ? AND dantian_col = ? AND id != ?",
+        (user_id, dantian_row, dantian_col, technique_id)
+    ).fetchone()
+    if existing:
+        return False, "Ô này đã có công pháp khác"
+    
+    # Đặt công pháp
+    db.execute(
+        "UPDATE game_techniques SET dantian_row = ?, dantian_col = ? WHERE id = ? AND user_id = ?",
+        (dantian_row, dantian_col, technique_id, user_id)
+    )
+    db.commit()
+    
+    return True, "Đặt công pháp thành công"
+
+
+def remove_technique_from_dantian(user_id, technique_id):
+    """Tháo công pháp khỏi đan điền."""
+    db = get_user_db()
+    db.execute(
+        "UPDATE game_techniques SET dantian_row = -1, dantian_col = -1 WHERE id = ? AND user_id = ?",
+        (technique_id, user_id)
+    )
+    db.commit()
+    return True, "Tháo công pháp thành công"
+
+
+def equip_technique(user_id, technique_id, slot):
+    """Trang bị công pháp vào slot (1 hoặc 2).
+    
+    Trả về: (success, message)
+    """
+    if slot not in (1, 2):
+        return False, "Slot không hợp lệ (1 hoặc 2)"
+    
+    # Kiểm tra sở hữu
+    db = get_user_db()
+    tech = db.execute(
+        "SELECT technique_code FROM game_techniques WHERE id = ? AND user_id = ?",
+        (technique_id, user_id)
+    ).fetchone()
+    if not tech:
+        return False, "Công pháp không tồn tại"
+    
+    # Trang bị
+    slot_key = f"technique_slot_{slot}"
+    db.execute(
+        "INSERT OR REPLACE INTO game_techniques_equipped (user_id, {}) VALUES (?, ?)".format(slot_key),
+        (user_id, technique_id)
+    )
+    db.execute(
+        "UPDATE game_techniques SET is_equipped = 1 WHERE id = ? AND user_id = ?",
+        (technique_id, user_id)
+    )
+    db.commit()
+    
+    return True, f"Trang bị công pháp vào slot {slot}"
+
+
+def unequip_technique(user_id, slot):
+    """Tháo công pháp khỏi slot."""
+    if slot not in (1, 2):
+        return False, "Slot không hợp lệ"
+    
+    db = get_user_db()
+    
+    # Lấy technique_id hiện tại
+    slot_key = f"technique_slot_{slot}"
+    current = db.execute(
+        "SELECT {} FROM game_techniques_equipped WHERE user_id = ?".format(slot_key),
+        (user_id,)
+    ).fetchone()
+    
+    if current and current[0]:
+        tech_id = current[0]
+        db.execute(
+            "UPDATE game_techniques SET is_equipped = 0 WHERE id = ?",
+            (tech_id,)
+        )
+    
+    # Xóa trang bị
+    db.execute(
+        "UPDATE game_techniques_equipped SET {} = NULL WHERE user_id = ?".format(slot_key),
+        (user_id,)
+    )
+    db.commit()
+    
+    return True, f"Tháo công pháp khỏi slot {slot}"
+
+
+def get_equipped_techniques(user_id):
+    """Lấy danh sách công pháp đang trang bị."""
+    db = get_user_db()
+    row = db.execute(
+        "SELECT technique_slot_1, technique_slot_2 FROM game_techniques_equipped WHERE user_id = ?",
+        (user_id,)
+    ).fetchone()
+    
+    equipped = {"slot_1": None, "slot_2": None}
+    if row:
+        for slot_idx, tech_id in enumerate([row[0], row[1]], 1):
+            if tech_id:
+                tech = db.execute(
+                    "SELECT technique_code FROM game_techniques WHERE id = ?",
+                    (tech_id,)
+                ).fetchone()
+                if tech:
+                    technique = cfg.TECHNIQUE_BY_CODE[tech[0]]
+                    equipped[f"slot_{slot_idx}"] = {
+                        "id": tech_id,
+                        "code": tech[0],
+                        "name": technique["name"],
+                        "hp_mult": technique["hp_mult"],
+                        "atk_mult": technique["atk_mult"],
+                    }
+    
+    return equipped
+
+
+
+def bin_pack_techniques(user_id):
+    """Tự động sắp xếp công pháp gọn gàng vào đan điền."""
+    from userdb import get_user_db
+    db = get_user_db()
+    
+    # Lấy công pháp chưa đặt
+    unplaced = db.execute("""
+        SELECT id, technique_code FROM game_techniques 
+        WHERE user_id = ? AND dantian_row = -1
+        ORDER BY id
+    """, (user_id,)).fetchall()
+    
+    if not unplaced:
+        return True, "Không có công pháp chưa đặt"
+    
+    # Khởi tạo grid
+    grid = [[-1 for _ in range(cfg.DANTIAN_COLS)] for _ in range(cfg.DANTIAN_ROWS)]
+    
+    # Đặt công pháp đã có
+    placed = db.execute("""
+        SELECT id, technique_code, dantian_row, dantian_col FROM game_techniques
+        WHERE user_id = ? AND dantian_row >= 0
+    """, (user_id,)).fetchall()
+    
+    for tech_id, tech_code, row, col in placed:
+        size = cfg.TECHNIQUE_BY_CODE[tech_code]["size"]
+        for r in range(row, row + size[0]):
+            for c in range(col, col + size[1]):
+                if 0 <= r < cfg.DANTIAN_ROWS and 0 <= c < cfg.DANTIAN_COLS:
+                    grid[r][c] = tech_id
+    
+    # Xếp công pháp chưa đặt
+    updated = 0
+    for tech_id, tech_code in unplaced:
+        size = cfg.TECHNIQUE_BY_CODE[tech_code]["size"]
+        for row in range(cfg.DANTIAN_ROWS):
+            for col in range(cfg.DANTIAN_COLS):
+                if row + size[0] <= cfg.DANTIAN_ROWS and col + size[1] <= cfg.DANTIAN_COLS:
+                    ok = all(grid[r][c] == -1 for r in range(row, row + size[0]) for c in range(col, col + size[1]))
+                    if ok:
+                        for r in range(row, row + size[0]):
+                            for c in range(col, col + size[1]):
+                                grid[r][c] = tech_id
+                        db.execute("UPDATE game_techniques SET dantian_row = ?, dantian_col = ? WHERE id = ?", (row, col, tech_id))
+                        db.commit()
+                        updated += 1
+                        break
+            else:
+                continue
+            break
+    
+    return True, f"✅ Sắp xếp {updated} công pháp"
+
+
+
+def calc_technique_bonus(user_id):
+    """Tính tổng bonus từ công pháp trang bị (có tính kích thước)."""
+    equipped = get_equipped_techniques(user_id)
+    bonus = {"hp_mult": 0.0, "atk_mult": 0.0}
+    
+    for slot in ["slot_1", "slot_2"]:
+        tech = equipped[slot]
+        if tech:
+            size = tech.get("size", (1, 1))
+            size_mult = cfg.TECHNIQUE_SIZE_MULT.get(size, 1.0)
+            bonus["hp_mult"] += tech["hp_mult"] * size_mult
+            bonus["atk_mult"] += tech["atk_mult"] * size_mult
+    
+    return bonus
+

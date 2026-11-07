@@ -133,3 +133,86 @@ def color_buttons_css(key_states, key_base_colors=None):
                          f".st-key-{key} button p {{ color:{fg} !important; }}")
     
     return f"<style>{''.join(rules)}</style>" if rules else ""
+
+
+# ---------------------------------------------------------------------------
+# Phiên 8: Hiển thị Công Pháp
+# ---------------------------------------------------------------------------
+
+def show_technique_card(technique):
+    """Hiển thị 1 công pháp dưới dạng card với màu sắc theo cấp độ.
+    
+    technique: {"code": str, "name": str, "grade": int, "emoji": str, "hp_mult": float, "atk_mult": float}
+    """
+    import game_config as cfg
+    
+    grade = technique["grade"]
+    grade_name = cfg.TECHNIQUE_GRADES[grade]
+    color = cfg.TECHNIQUE_COLORS[grade]
+    emoji = technique["emoji"]
+    name = technique["name"]
+    
+    # Tính chỉ số
+    hp_bonus = technique["hp_mult"] * 100
+    atk_bonus = technique["atk_mult"] * 100
+    bonus_text = f"+{hp_bonus:.0f}% HP" if hp_bonus > 0 else f"+{atk_bonus:.0f}% ATK"
+    
+    # Card CSS
+    card_html = f"""
+    <div style="
+        background: linear-gradient(135deg, {color}15, {color}05);
+        border: 2px solid {color};
+        border-radius: 8px;
+        padding: 8px;
+        margin: 4px;
+        text-align: center;
+        color: {color};
+        font-weight: bold;
+    ">
+        <div style="font-size: 24px;">{emoji}</div>
+        <div style="font-size: 11px;">{name}</div>
+        <div style="font-size: 9px; color: #999;">Cấp: {grade_name}</div>
+        <div style="font-size: 10px; color: {color};">{bonus_text}</div>
+    </div>
+    """
+    st.markdown(card_html, unsafe_allow_html=True)
+
+
+def technique_color(grade):
+    """Lấy màu theo cấp độ công pháp."""
+    import game_config as cfg
+    return cfg.TECHNIQUE_COLORS[min(grade, len(cfg.TECHNIQUE_COLORS) - 1)]
+
+
+def show_dantian_grid(techniques_inventory, on_select_callback=None):
+    """Hiển thị đan điền dưới dạng grid với công pháp được xếp vào.
+    
+    techniques_inventory: danh sách công pháp của người chơi
+    on_select_callback: hàm callback khi click vào ô (technique_id, row, col)
+    """
+    import game_config as cfg
+    
+    # Tạo grid empty
+    grid = [[None for _ in range(cfg.DANTIAN_COLS)] for _ in range(cfg.DANTIAN_ROWS)]
+    
+    # Đặt công pháp vào grid
+    for tech in techniques_inventory:
+        if tech["dantian_row"] != -1 and tech["dantian_col"] != -1:
+            grid[tech["dantian_row"]][tech["dantian_col"]] = tech
+    
+    # Hiển thị grid
+    grid_html = '<div style="display: grid; grid-template-columns: ' + ' '.join(['60px'] * cfg.DANTIAN_COLS) + '; gap: 4px; padding: 8px;">'
+    
+    for row in range(cfg.DANTIAN_ROWS):
+        for col in range(cfg.DANTIAN_COLS):
+            tech = grid[row][col]
+            if tech:
+                color = technique_color(tech["grade"])
+                cell_html = f'<div style="background:{color}; color:white; width:60px; height:60px; display:flex; align-items:center; justify-content:center; border-radius:4px; font-size:28px; cursor:pointer;" title="{tech["name"]}">{tech["emoji"]}</div>'
+            else:
+                cell_html = f'<div style="background:#eee; width:60px; height:60px; border:1px dashed #bbb; border-radius:4px; cursor:pointer;"></div>'
+            grid_html += cell_html
+    
+    grid_html += '</div>'
+    st.markdown(grid_html, unsafe_allow_html=True)
+

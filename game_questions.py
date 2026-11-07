@@ -118,6 +118,26 @@ def _strip_tones(text):
     return re.sub(r"[^a-z]", "", base)
 
 
+def normalize_hanzi(text):
+    """Chuẩn hóa Hán tự: loại bỏ dấu cách, lấy canonical form (NFD), so sánh chính xác."""
+    if not text:
+        return ""
+    # Loại bỏ khoảng trắng
+    text = text.strip()
+    # Chuẩn hóa Unicode thành NFD (decomposed form)
+    decomposed = unicodedata.normalize("NFD", text)
+    # Loại bỏ dấu tone (combining characters)
+    base = "".join(c for c in decomposed if unicodedata.category(c) != "Mn")
+    return base
+
+
+def check_hanzi_match(answer, correct_hanzi):
+    """Chấp nhận nhập Hán tự với dấu hoặc không dấu; đối chiếu chuẩn hóa."""
+    if not answer or not correct_hanzi:
+        return False
+    return normalize_hanzi(answer) == normalize_hanzi(correct_hanzi)
+
+
 def check_pinyin(answer, word):
     """Chấp nhận pinyin có dấu, số thanh hoặc không dấu; đối chiếu không dấu."""
     given = _strip_tones(answer or "")
