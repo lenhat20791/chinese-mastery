@@ -45,14 +45,6 @@ def scale(idx):
     return cfg.ECON_SCALE ** idx
 
 
-def play_multiplier(plays_before):
-    if plays_before < cfg.DAILY_FULL_PLAYS:
-        return 1.0
-    if plays_before < cfg.DAILY_MID_PLAYS:
-        return cfg.MULT_MID
-    return cfg.MULT_LOW
-
-
 def stochastic_round(value, rng=random):
     base = math.floor(value)
     return base + (1 if rng.random() < value - base else 0)
@@ -110,15 +102,22 @@ def diminishing(points, cap, k):
     return cap * points / (points + k)
 
 
-def stat_bonuses(words=0, answers=0, streak=0):
-    """Hiệu ứng của Căn cơ (từ đã học), Ngộ tính (đáp đúng), Đạo tâm (chuỗi ngày)."""
+def stat_bonuses(words=0, answers=0, streak=0, honor_code=None):
+    """Hiệu ứng của Căn cơ (từ đã học), Ngộ tính (đáp đúng), Đạo tâm (chuỗi ngày), và Danh hào."""
     can_co = words / (words + cfg.CAN_CO_K) if words > 0 else 0.0
-    return {
+    bonuses = {
         "crit": diminishing(answers, cfg.CRIT_MAX, cfg.CRIT_K),
         "hp": cfg.CAN_CO_HP_MAX * can_co,
         "atk": cfg.CAN_CO_ATK_MAX * can_co,
         "dao_tam": diminishing(streak, cfg.DAO_TAM_MAX, cfg.DAO_TAM_K),
     }
+    # Cộng hiệu ứng danh hào nếu có
+    if honor_code and honor_code in cfg.HONOR_TITLE_BY_CODE:
+        honor = cfg.HONOR_TITLE_BY_CODE[honor_code]
+        bonuses["atk"] += honor["atk_pct"] / 100.0
+        bonuses["hp"] += honor["hp_pct"] / 100.0
+    return bonuses
+
 
 
 def player_stats(idx, artifacts=None, bonuses=None):
@@ -166,7 +165,15 @@ def all_titles():
             titles[achievement_code(line["base"], tier)] = name
     for hidden in cfg.HIDDEN_BADGES:
         titles[hidden["code"]] = hidden["name"]
+    # Thêm các danh hào
+    for honor in cfg.HONOR_TITLES:
+        titles[honor["code"]] = honor["name"]
     return titles
+
+
+def available_honors(idx):
+    """Trả về danh sách mã danh hào có thể đạt ở cảnh giới hiện tại."""
+    return [h["code"] for h in cfg.HONOR_TITLES if h["realm_idx"] <= idx]
 
 
 # ---------------------------------------------------------------------------
@@ -505,17 +512,39 @@ def upgrade(artifact_id, rng=random):
     return False, "Thất bại, nguyên liệu bị tiêu hao (Linh Thạch được hoàn lại)."
 
 
-def current_multiplier():
-    return play_multiplier(get_state()["plays"])
+def upgrade(artifact_id, rng=random):
+    state = get_state()
+    art = next((a for a in state["artifacts"] if a["id"] == artifact_id), None)
+    if art is None:
+        return False, "Không tìm thấy pháp bảo."
+    if art["upgrade"] >= cfg.UPGRADE_MAX:
+        return False, "Đã đạt cấp nâng tối đa."
+    recipe = cfg.RECIPE_BY_CODE[art["recipe_code"]]
+    ls, mats = upgrade_cost(recipe, art["upgrade"])
+    if state["ls"] < ls or missing_materials(state, mats):
+        return False, "Không đủ Linh Thạch hoặc nguyên liệu."
+    success = rng.random() < upgrade_chance(art["upgrade"])
+    uid = state["uid"]
+    items = {c: -q for c, q in mats}
+    name = recipe["name"]
+    if success:
+        apply_changes(
+            ls=-ls, items=items, incr={"upgrades": 1},
+            log=("craft", f"Tinh luyện {name} lên +{art['upgrade'] + 1}."),
+            extra=[("UPDATE game_artifacts SET upgrade = upgrade + 1 WHERE id = ? AND user_id = ?",
+                    (artifact_id, uid))])
+        return True, f"Thành công! {name} lên +{art['upgrade'] + 1}."
+    apply_changes(items=items, log=("craft", f"Tinh luyện {name} thất bại, nguyên liệu tan biến."))
+    return False, "Thất bại, nguyên liệu bị tiêu hao (Linh Thạch được hoàn lại)."
 
 
 def settle(base_ls, idx_scale, words_learned, results=(), incr=None, maxes=None, items=None, log=None,
            count_play=True, record=True):
-    """Chốt một lượt chơi: tính Linh Thạch theo lượt trong ngày, ghi kết quả ôn, huy hiệu. Trả về (ls, mult, huy hiệu mới)."""
+    """Chốt một lượt chơi: tính Linh Thạch, ghi kết quả ôn, huy hiệu. Trả về (ls, mult, huy hiệu mới)."""
     from database import record_review_batch
 
     state = get_state()
-    mult = play_multiplier(state["plays"])
+    mult = 1.0  # Always 100% multiplier
     ls = reward_ls(base_ls, mult, state, idx_scale) if base_ls > 0 else 0
     if record and results:
         record_review_batch(list(results))
@@ -523,12 +552,20 @@ def settle(base_ls, idx_scale, words_learned, results=(), incr=None, maxes=None,
     hour = local_hour()
     if hour >= cfg.NIGHT_HOUR or hour < 4:
         incr["night_plays"] = 1
-    apply_changes(ls=ls, items=items, incr=incr, maxes=maxes, log=log, plays=1 if count_play else 0)
+    apply_changes(ls=ls, items=items, incr=incr, maxes=maxes, log=log, plays=0)
     return ls, mult, check_achievements(words_learned)
 
 
 def equip_title(code):
     state = get_state()
+    realm = realm_info(state["counters"].get("words_learned", 0))
+    idx = realm["idx"]
+    available = available_honors(idx)
+    
+    # Chỉ cho phép trang bị danh hào có sẵn (hoặc None để tháo)
+    if code is not None and code not in available:
+        return
+    
     apply_changes(extra=[("UPDATE game_profile SET equipped_title = ? WHERE user_id = ?", (code, state["uid"]))])
 
 

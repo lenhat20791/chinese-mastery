@@ -37,19 +37,11 @@ SUB_THRESHOLDS = _build_thresholds()
 # ---------------------------------------------------------------------------
 ECON_SCALE = 1.25          # mỗi đại cảnh giới, thu nhập và giá cả nhân thêm 1.25
 BASE_DAY_INCOME = 100      # Linh Thạch của một ngày cày nhẹ ở cảnh giới đầu
-DAILY_FULL_PLAYS = 10      # 10 trận đầu mỗi ngày nhận 100%
-DAILY_MID_PLAYS = 30       # trận 11-30 nhận MULT_MID, từ trận 31 nhận MULT_LOW
-MULT_MID = 0.4
-MULT_LOW = 0.1
 
-MATCH_MAX_PAIRS = 4
-MATCH_MIN_PAIRS = 3
+MATCH_MAX_PAIRS = 6
+MATCH_MIN_PAIRS = 6
 MATCH_PAIR_REWARD = 3
 MATCH_PERFECT_BONUS = 2
-
-SENTENCE_ROUNDS = 5
-SENTENCE_REWARD = 3
-SENTENCE_PERFECT_BONUS = 4
 
 HUNT_NORMAL_REWARD = 8
 HUNT_BOSS_REWARD = 80
@@ -62,7 +54,6 @@ GAME_UNLOCKS = {
     "fortune": {"realm_idx": 0, "words": 4},
     "match": {"realm_idx": 0, "words": 4},
     "hunt": {"realm_idx": 0, "words": 4},
-    "sentence": {"realm_idx": 1, "words": 30},
     "grammar_battle": {"realm_idx": 1, "words": 30},  # câu điền từ trong trận đánh
 }
 
@@ -318,6 +309,22 @@ UPGRADE_LS_RATIO = 0.12    # trên giá chế tạo, nhân (1 + 0.4 * cấp hi�
 UPGRADE_BASE_MATERIALS = 2
 
 # ---------------------------------------------------------------------------
+# Danh hào (10 bậc, tương ứng với Tiên Định Cảnh Giới)
+# ---------------------------------------------------------------------------
+HONOR_TITLES = [
+    {"code": "so_nhap_tien_lo", "name": "Sơ nhập tiên lộ", "realm_idx": 0, "atk_pct": 3, "hp_pct": 0},
+    {"code": "chan_nhan", "name": "Chân nhân", "realm_idx": 2, "atk_pct": 5, "hp_pct": 5},
+    {"code": "lao_to", "name": "Lão tổ", "realm_idx": 3, "atk_pct": 7, "hp_pct": 7},
+    {"code": "ton_gia", "name": "Tôn giả", "realm_idx": 6, "atk_pct": 9, "hp_pct": 9},
+    {"code": "nua_buoc_chi_ton", "name": "Nửa bước chí tôn", "realm_idx": 7, "atk_pct": 12, "hp_pct": 12},
+    {"code": "chi_ton_nhan_gian", "name": "Chí tôn nhân gian", "realm_idx": 8, "atk_pct": 15, "hp_pct": 15},
+    {"code": "phi_thang_tien_gioi", "name": "Phi thăng tiên giới", "realm_idx": 9, "atk_pct": 17, "hp_pct": 17},
+    {"code": "tung_hoang_tien_gioi", "name": "Tung hoành tiên giới", "realm_idx": 10, "atk_pct": 19, "hp_pct": 19},
+    {"code": "chi_ton_tien_gioi", "name": "Chí tôn tiên giới", "realm_idx": 14, "atk_pct": 22, "hp_pct": 22},
+    {"code": "vinh_hang_tien_de", "name": "Vĩnh hằng Tiên Đế", "realm_idx": 15, "atk_pct": 25, "hp_pct": 25},
+]
+HONOR_TITLE_BY_CODE = {t["code"]: t for t in HONOR_TITLES}
+
 # Huy hiệu (3 bậc Đồng / Bạc / Vàng) và huy hiệu ẩn
 # ---------------------------------------------------------------------------
 BADGE_TIER_ICONS = ("🥉", "🥈", "🥇")

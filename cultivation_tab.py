@@ -14,10 +14,10 @@ import game_ui
 from database import _demon_rows
 
 NAV = {
-    "home": "🏯 Động Phủ", "fortune": "🔮 Quẻ Bói", "match": "🃏 Lật Bài", "sentence": "📜 Đối Câu",
-    "hunt": "🗺️ Săn Yêu Thú", "market": "🏪 Phường Thị", "badges": "🏅 Huy Hiệu",
+    "home": "🏯 Động Phủ", "fortune": "🔮 Quẻ Bói", "match": "🃏 Lật Bài",
+    "hunt": "🗺️ Săn Yêu Thú", "market": "🏪 Phường Thị", "techniques": "📜 Công Pháp Các", "badges": "🏅 Huy Hiệu",
 }
-UNLOCK_KEY = {"fortune": "fortune", "match": "match", "sentence": "sentence", "hunt": "hunt"}
+UNLOCK_KEY = {"fortune": "fortune", "match": "match", "hunt": "hunt", "techniques": "hunt"}
 
 
 def avatar_svg(idx):
@@ -164,11 +164,34 @@ def _render_market(state, ctx):
     st.markdown(f"### 🏪 Phường Thị — 💎 {state['ls']:,} Linh Thạch")
     t_recipes, t_craft, t_art, t_inv = st.tabs(["📜 Bí phương", "🔨 Chế tạo", "🗡️ Pháp bảo", "🎒 Kho đồ"])
     with t_recipes:
-        for recipe in cfg.RECIPES:
+        recipes_list = cfg.RECIPES
+        page_size = 3
+        total_recipes = len(recipes_list)
+        total_pages = max(1, (total_recipes + page_size - 1) // page_size)
+        
+        if "market_recipe_page" not in st.session_state:
+            st.session_state.market_recipe_page = 0
+        if st.session_state.market_recipe_page >= total_pages:
+            st.session_state.market_recipe_page = 0
+
+        c_prev, c_lbl, c_next = st.columns([1, 2, 1])
+        if c_prev.button("◀ Trang trước", key="m_recipe_prev", disabled=st.session_state.market_recipe_page <= 0):
+            st.session_state.market_recipe_page -= 1
+            st.rerun()
+        c_lbl.markdown(f"<div style='text-align:center; font-weight:600; padding-top:4px;'>Trang {st.session_state.market_recipe_page + 1} / {total_pages}</div>", unsafe_allow_html=True)
+        if c_next.button("Trang sau ▶", key="m_recipe_next", disabled=st.session_state.market_recipe_page >= total_pages - 1):
+            st.session_state.market_recipe_page += 1
+            st.rerun()
+
+        start_idx = st.session_state.market_recipe_page * page_size
+        end_idx = start_idx + page_size
+        current_recipes = recipes_list[start_idx:end_idx]
+
+        for recipe in current_recipes:
             tier = cfg.ARTIFACT_TIERS[recipe["tier"]]
             c1, c2, c3 = st.columns([1, 4, 2])
             with c1:
-                game_ui.show_image_or_emoji("artifacts", recipe["code"], tier["emoji"], 70)
+                game_ui.show_image_or_emoji("artifacts", recipe["code"], tier["emoji"], 60)
             c2.markdown(f"**{recipe['name']}** · {tier['name']} · {cfg.KIND_LABEL[recipe['kind']]}  \n"
                         f"Cần {cfg.MAJOR_REALMS[recipe['min_idx']]} · bộ nguyên liệu {cfg.ITEM_SETS[recipe['region']]['name']}  \n"
                         f"{_farm_text(recipe)}")
@@ -252,12 +275,10 @@ def _render_market(state, ctx):
                         code, qty = items_list[idx_item]
                         item = cfg.ITEMS[code]
                         with cols[j]:
-                            import base64
-                            from pathlib import Path
                             img_path = game_ui.find_image(item["folder"], item["img_code"])
                             if img_path:
-                                img_b64 = base64.b64encode(Path(img_path).read_bytes()).decode()
-                                img_html = f'<img src="data:image/png;base64,{img_b64}" width="42" title="{item["name"]} (×{qty})" style="display:block; margin:0 auto; object-fit:contain;" />'
+                                img_b64 = game_ui.get_cached_image_b64(img_path)
+                                img_html = f'<img src="data:image/jpeg;base64,{img_b64}" width="42" title="{item["name"]} (×{qty})" style="display:block; margin:0 auto; object-fit:contain;" />'
                             else:
                                 img_html = f'<div title="{item["name"]} (×{qty})" style="font-size:32px; text-align:center;">{item["emoji"]}</div>'
 
@@ -270,16 +291,147 @@ def _render_market(state, ctx):
                             st.markdown(f"<div style='font-size:0.75rem; font-weight:600; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px;' title='{item['name']}'>{item['name']}</div>", unsafe_allow_html=True)
                             st.button(f"🗑️ Vứt", key=f"discard_{code}", on_click=_cb_discard, args=(code,), use_container_width=True)
 
+def _render_techniques(state, ctx):
+    st.markdown("### 📜 Công Pháp Các & Đan Điền")
+    st.caption("Sắp xếp các mảnh công pháp vào lưới Đan Điền (5x5) theo đúng kích thước hình học.")
+
+    if "tech_farmed" not in st.session_state:
+        st.session_state.tech_farmed = [
+            {"id": "t1", "name": "Vô Thượng Kiếm Khí (1x1)", "w": 1, "h": 1, "desc": "Tăng +15 sát thương kiếm."},
+            {"id": "t2", "name": "Hỏa Long Đan Thuật (2x1)", "w": 2, "h": 1, "desc": "Cộng hưởng hỏa tính, sinh linh khí."},
+            {"id": "t3", "name": "Bát Quái Trận Đồ (2x2)", "w": 2, "h": 2, "desc": "Trận pháp phòng thủ toàn diện."},
+            {"id": "t4", "name": "Thanh Tâm Tẩy Hồn Kinh (3x1)", "w": 3, "h": 1, "desc": "Trấn áp tâm ma, tăng ngộ tính."},
+            {"id": "t5", "name": "Hỗn Độn Quy Nguyên Công (2x2)", "w": 2, "h": 2, "desc": "Hấp thu thiên địa linh khí tự động."},
+            {"id": "t6", "name": "Lôi Thần Phá Giáp (1x2)", "w": 1, "h": 2, "desc": "Đòn chí mạng xuyên thấu giáp quái."},
+            {"id": "t7", "name": "Thái Cực Đồ (2x2)", "w": 2, "h": 2, "desc": "Cân bằng âm dương, hồi phục HP."},
+        ]
+    if "tech_equipped" not in st.session_state:
+        st.session_state.tech_equipped = []
+
+    col_list, col_grid = st.columns([1.2, 1.8])
+
+    with col_list:
+        st.markdown("#### 📦 Công Pháp Các (Kho chứa)")
+        st.caption("Danh sách công pháp thu thập được (Duyệt tối đa 7 tên/lần):")
+        
+        farmed = st.session_state.tech_farmed
+        if not farmed:
+            st.info("Kho công pháp trống. Hãy đi săn yêu thú để thu thập thêm.")
+        else:
+            with st.container(height=320):
+                for tech in farmed:
+                    c_info, c_btn = st.columns([2.2, 1])
+                    c_info.markdown(f"**{tech['name']}**  \n<span style='font-size:0.8rem; color:#b3a6c0;'>{tech['desc']}</span>", unsafe_allow_html=True)
+                    if c_btn.button("Sử dụng ➡️", key=f"use_tech_{tech['id']}", use_container_width=True):
+                        grid_size = 5
+                        placed = False
+                        occupied = set()
+                        for eq in st.session_state.tech_equipped:
+                            er = eq.get('r', 0)
+                            ec = eq.get('c', 0)
+                            for dr in range(eq['h']):
+                                for dc in range(eq['w']):
+                                    occupied.add((er + dr, ec + dc))
+
+                        for r in range(grid_size):
+                            for c in range(grid_size):
+                                can_fit = True
+                                if r + tech['h'] > grid_size or c + tech['w'] > grid_size:
+                                    can_fit = False
+                                else:
+                                    for dr in range(tech['h']):
+                                        for dc in range(tech['w']):
+                                            if (r + dr, c + dc) in occupied:
+                                                can_fit = False
+                                                break
+                                        if not can_fit:
+                                            break
+                                if can_fit:
+                                    tech['r'] = r
+                                    tech['c'] = c
+                                    st.session_state.tech_farmed.remove(tech)
+                                    st.session_state.tech_equipped.append(tech)
+                                    placed = True
+                                    break
+                            if placed:
+                                break
+                        if not placed:
+                            st.error("Đan Điền 5x5 không đủ chỗ trống cho mảnh công pháp này!")
+                        else:
+                            st.rerun()
+
+    with col_grid:
+        st.markdown("#### 🌌 Đan Điền (Túi Trữ Vật 5x5)")
+        st.caption("Công pháp đang kích hoạt trong Đan Điền:")
+        
+        equipped = st.session_state.tech_equipped
+        if not equipped:
+            st.info("Đan Điền trống. Hãy dùng công pháp từ Công Pháp Các để lắp vào.")
+        else:
+            for tech in equipped:
+                r_pos = tech.get('r', 0) + 1
+                c_pos = tech.get('c', 0) + 1
+                c_name, c_btn = st.columns([3, 1])
+                c_name.markdown(f"✨ **{tech['name']}** (hàng {r_pos}, cột {c_pos}) — *{tech['desc']}*")
+                if c_btn.button("Thu hồi ⬅️", key=f"recall_tech_{tech['id']}", use_container_width=True):
+                    st.session_state.tech_equipped.remove(tech)
+                    st.session_state.tech_farmed.append(tech)
+                    st.rerun()
+
+        st.markdown("---")
+        st.markdown("##### 🗺️ Bản Đồ Lưới Đan Điền (5x5 Grid)")
+        
+        grid_size = 5
+        grid_matrix = [[None for _ in range(grid_size)] for _ in range(grid_size)]
+        for tech in equipped:
+            tr = tech.get('r', 0)
+            tc = tech.get('c', 0)
+            for dr in range(tech['h']):
+                for dc in range(tech['w']):
+                    if tr + dr < grid_size and tc + dc < grid_size:
+                        grid_matrix[tr + dr][tc + dc] = {
+                            "name": tech['name'],
+                            "is_head": (dr == 0 and dc == 0)
+                        }
+
+        grid_html = "<div style='display:grid; grid-template-columns: repeat(5, 1fr); gap: 4px; max-width: 360px; margin: 0 auto; background: #1b1424; padding: 10px; border-radius: 12px; border: 2px solid #3a2d48;'>"
+        for r in range(grid_size):
+            for c in range(grid_size):
+                cell = grid_matrix[r][c]
+                if cell:
+                    bg = "#5a1860" if cell["is_head"] else "#4a0850"
+                    border = "2px solid #f0b95b" if cell["is_head"] else "1px solid #c9a24b"
+                    text = "⚡" if cell["is_head"] else "·"
+                    title = f"title='{cell['name']}'"
+                    grid_html += f"<div {title} style='background:{bg}; border:{border}; aspect-ratio:1; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:#f0b95b;'>{text}</div>"
+                else:
+                    grid_html += f"<div style='background:#241a30; border:1px dashed #3a2d48; aspect-ratio:1; border-radius:6px;'></div>"
+        grid_html += "</div>"
+        st.markdown(grid_html, unsafe_allow_html=True)
+
 
 def _render_badges(state, ctx):
-    st.markdown("### 🏅 Huy Hiệu & Danh Hiệu")
-    titles = core.all_titles()
-    unlocked = [c for c in titles if c in state["achievements"]]
-    if unlocked:
-        current = state["title"] if state["title"] in unlocked else None
-        choice = st.selectbox("Danh hiệu đang đeo", [None] + unlocked, index=([None] + unlocked).index(current),
-                              format_func=lambda c: "— không đeo —" if c is None else titles[c], key="title_pick",
+    st.markdown("### 🏅 Danh Hào & Huy Hiệu")
+    
+    # Danh hào có thể trang bị
+    available = core.available_honors(ctx["idx"])
+    if available:
+        st.markdown("**Danh Hào**")
+        current = state["title"] if state["title"] in available else None
+        choice = st.selectbox("Danh hào đang đeo", [None] + available, 
+                              index=([None] + available).index(current),
+                              format_func=lambda c: "— không đeo —" if c is None else cfg.HONOR_TITLE_BY_CODE[c]["name"], 
+                              key="title_pick",
                               on_change=lambda: core.equip_title(st.session_state.title_pick))
+        for honor in cfg.HONOR_TITLES:
+            if honor["code"] in available:
+                effects = f"+{honor['atk_pct']}% công, +{honor['hp_pct']}% HP" if honor["atk_pct"] or honor["hp_pct"] else "Không có hiệu ứng"
+                st.caption(f"📜 **{honor['name']}** — {effects}")
+    else:
+        st.info("Hãy đạt Linh Khí Kỳ tầng 2 để mở khóa danh hào đầu tiên.")
+    
+    # Huy hiệu truyền thống
+    st.markdown("**Huy Hiệu Thành Tích**")
     for line in cfg.BADGE_LINES:
         value = core.counter_value(state, line["counter"], ctx["words"])
         reached = sum(1 for need in line["tiers"] if value >= need)
@@ -290,12 +442,14 @@ def _render_badges(state, ctx):
         st.markdown(f"**{icons} {name}** — {value} {line['label']}" + (f" (mốc tiếp theo: {nxt})" if nxt else " ✔ tối đa"))
         if nxt:
             st.progress(min(1.0, value / nxt))
-    st.markdown("**Huy hiệu ẩn**")
+    
+    st.markdown("**Huy Hiệu Ẩn**")
     for hidden in cfg.HIDDEN_BADGES:
         if hidden["code"] in state["achievements"]:
             st.markdown(f"🌟 **{hidden['name']}** — {hidden['desc']}")
         else:
             st.markdown("🔒 ??? — bí ẩn")
+
 
 
 @st.fragment
@@ -307,13 +461,13 @@ def _body(user, learned_day):
     ctx = {"pool": pool, "words": words, "realm": realm, "idx": realm["idx"], "mastery": {},
            "grammar": _unlocked("grammar_battle", realm["idx"], words),
            "bonuses": core.stat_bonuses(words, state["counters"].get("answers_correct", 0),
-                                        user.get("consecutive_streak", 0))}
+                                        user.get("consecutive_streak", 0), state.get("title"))}
     page = st.radio("Điều hướng", list(NAV), format_func=lambda k: NAV[k], horizontal=True, key="game_nav",
                     label_visibility="collapsed")
     if page in UNLOCK_KEY and not _unlocked(UNLOCK_KEY[page], realm["idx"], words):
         st.info(f"🔒 {_unlock_text(UNLOCK_KEY[page])} Hiện có {words} từ.")
         return
-    if page in ("fortune", "match", "sentence", "hunt"):
+    if page in ("fortune", "match", "hunt"):
         ctx["mastery"] = _mastery()
     if page == "home":
         _render_home(state, ctx, user)
@@ -321,12 +475,12 @@ def _body(user, learned_day):
         game_minigames.render_fortune(ctx)
     elif page == "match":
         game_minigames.render_match(ctx)
-    elif page == "sentence":
-        game_minigames.render_sentence(ctx)
     elif page == "hunt":
         game_hunt.render_hunt(ctx)
     elif page == "market":
         _render_market(state, ctx)
+    elif page == "techniques":
+        _render_techniques(state, ctx)
     else:
         _render_badges(state, ctx)
 

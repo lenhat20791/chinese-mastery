@@ -1,13 +1,32 @@
 """Tiện ích giao diện chung của trò chơi: ảnh, âm thanh, CSS tô màu nút."""
+import base64
 import json
+import io
 from pathlib import Path
 
 import streamlit as st
 import streamlit.components.v1 as components
+from PIL import Image
 
 from course_config import get_config
 ASSETS = Path(__file__).parent / "assets"
 IMAGE_EXTS = (".png", ".webp", ".jpg", ".jpeg")
+
+
+@st.cache_data(show_spinner=False)
+def get_cached_image_b64(path_str):
+    path = Path(path_str)
+    if not path.exists():
+        return ""
+    try:
+        img = Image.open(path)
+        if img.width > 200 or img.height > 200:
+            img.thumbnail((200, 200))
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG", quality=80)
+        return base64.b64encode(buf.getvalue()).decode()
+    except Exception:
+        return base64.b64encode(path.read_bytes()).decode()
 
 
 def find_image(folder, code):
@@ -22,12 +41,12 @@ def show_image_or_emoji(folder, code, emoji, width=150, tooltip=""):
     path = find_image(folder, code)
     title_attr = f'title="{tooltip}"' if tooltip else ""
     if path:
-        import base64
-        b64 = base64.b64encode(Path(path).read_bytes()).decode()
-        st.markdown(f'<div style="text-align:center;"><img src="data:image/png;base64,{b64}" width="{width}" {title_attr} style="display:inline-block;max-width:100%;object-fit:contain;"/></div>', unsafe_allow_html=True)
+        b64 = get_cached_image_b64(path)
+        st.markdown(f'<div style="text-align:center;"><img src="data:image/jpeg;base64,{b64}" width="{width}" {title_attr} style="display:inline-block;max-width:100%;object-fit:contain;"/></div>', unsafe_allow_html=True)
     else:
         st.markdown(f"<div {title_attr} style='font-size:{int(width * 0.6)}px;line-height:1.1;text-align:center;cursor:pointer;'>{emoji}</div>",
                     unsafe_allow_html=True)
+
 
 
 
@@ -91,13 +110,26 @@ STATE_COLORS = {
 }
 
 
-def color_buttons_css(key_states):
-    """key_states: {khóa nút: 'sel'|'done'|'bad'} -> thẻ <style> tô màu từng nút theo khóa."""
+def color_buttons_css(key_states, key_base_colors=None):
+    """key_states: {khóa nút: 'sel'|'done'|'bad'} -> thẻ <style> tô màu từng nút theo khóa.
+    
+    key_base_colors: {khóa nút: (bg, fg)} -> màu nền cơ bản cho nút khi ở trạng thái 'idle'.
+    """
     rules = []
+    
+    # Áp dụng màu nền cơ bản cho các nút idle (nếu có)
+    if key_base_colors:
+        for key, (bg, fg) in key_base_colors.items():
+            rules.append(f".st-key-{key} button {{ background:{bg} !important; color:{fg} !important;"
+                         f" border-color:{bg} !important; }}"
+                         f".st-key-{key} button p {{ color:{fg} !important; }}")
+    
+    # Ghi đè màu nền cơ bản với màu trạng thái (sel/done/bad)
     for key, state in key_states.items():
         if state in STATE_COLORS:
             bg, fg = STATE_COLORS[state]
             rules.append(f".st-key-{key} button {{ background:{bg} !important; color:{fg} !important;"
                          f" border-color:{bg} !important; opacity:1 !important; }}"
                          f".st-key-{key} button p {{ color:{fg} !important; }}")
+    
     return f"<style>{''.join(rules)}</style>" if rules else ""

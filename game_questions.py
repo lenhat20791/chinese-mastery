@@ -81,6 +81,31 @@ def pick_words(pool, mastery, count, rng=random, exclude=()):
     return chosen
 
 
+def pick_words_with_rotation(pool, mastery, count, session_state_key="word_rotation", rng=random, exclude=()):
+    """Pick words without early repeats by cycling through pool via session state."""
+    if session_state_key not in st.session_state:
+        st.session_state[session_state_key] = {"used_ids": set(), "position": 0}
+    
+    rotation = st.session_state[session_state_key]
+    candidates = [w for w in pool if w["id"] not in set(exclude) and w["id"] not in rotation["used_ids"]]
+    
+    # If we've used all candidates, reset and start new rotation
+    if not candidates:
+        rotation["used_ids"] = set()
+        rotation["position"] = 0
+        candidates = [w for w in pool if w["id"] not in set(exclude)]
+    
+    chosen = []
+    while candidates and len(chosen) < count:
+        weights = [word_weight(w["id"], mastery) for w in candidates]
+        word = rng.choices(candidates, weights=weights, k=1)[0]
+        chosen.append(word)
+        candidates.remove(word)
+        rotation["used_ids"].add(word["id"])
+    
+    return chosen
+
+
 def short_meaning(word, limit=70):
     meaning = (word.get("meaning_vi") or "").strip()
     return meaning if len(meaning) <= limit else meaning[:limit - 1].rstrip() + "…"

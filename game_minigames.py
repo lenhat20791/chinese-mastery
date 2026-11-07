@@ -17,11 +17,7 @@ def _toast_new(badges):
 
 
 def _remaining_plays_note(state):
-    plays = state["plays"]
-    mult = core.play_multiplier(plays)
-    if mult >= 1:
-        return f"Hôm nay đã chơi {plays} lượt · còn {cfg.DAILY_FULL_PLAYS - plays} lượt nhận đủ Linh Thạch."
-    return f"Hôm nay đã chơi {plays} lượt · Linh Thạch hiện nhận {int(mult * 100)}%."
+    return "Nhận 100% Linh Thạch cho mỗi ván chơi."
 
 
 # ---------------------------------------------------------------------------
@@ -75,17 +71,17 @@ def render_fortune(ctx):
 # ---------------------------------------------------------------------------
 
 MATCH_MODES = {
-    "hm": "Hán ↔ nghĩa", "hp": "Hán ↔ pinyin", "ap": "Nghe ↔ pinyin", "ah": "Nghe ↔ Hán", "am": "Nghe ↔ nghĩa",
+    "hm": "Hán ↔ nghĩa", "hp": "Hán ↔ pinyin", "ah": "Nghe ↔ Hán", "am": "Nghe ↔ nghĩa",
 }
 
 
-AUDIO_MODES = ("ap", "ah", "am")
+AUDIO_MODES = ("ah", "am")
 
 
 def _right_face(word, mode):
     if mode in ("hm", "am"):
         return gq.short_meaning(word, 40)
-    if mode in ("hp", "ap"):
+    if mode == "hp":
         return word.get("pinyin") or ""
     return word["hanzi"]
 
@@ -99,12 +95,10 @@ def build_match_modes(words, rng=random):
         if not get_config()["has_pinyin"]:
             options = ["am"] if i in audio_slots else ["hm"]
         else:
-            options = ["ap", "ah"] if i in audio_slots else ["hm", "hp"]
+            options = ["ah"] if i in audio_slots else ["hm", "hp"]
         rng.shuffle(options)
         options.append("hm")
         for mode in options:
-            if mode == "ap" and not word.get("pinyin"):
-                continue
             face = _right_face(word, mode)
             if face and face not in used:
                 used.add(face)
@@ -191,10 +185,10 @@ def render_match(ctx):
     state = core.get_state()
     st.markdown("### 🃏 Lật Bài Linh Thạch")
     if get_config()["has_pinyin"]:
-        modes_note = "Hán ↔ nghĩa, Hán ↔ pinyin, 🔊 nghe ↔ pinyin/Hán"
+        modes_note = "Hán ↔ nghĩa, Hán ↔ pinyin, 🔊 nghe ↔ Hán/nghĩa"
     else:
         modes_note = "từ tiếng Anh ↔ nghĩa tiếng Việt, 🔊 phát âm ↔ nghĩa tiếng Việt"
-    st.caption(f"Mỗi ván 4 cặp, trộn nhiều thể thức: {modes_note} (tối đa 2 cặp nghe). "
+    st.caption(f"Mỗi ván 6 cặp, trộn nhiều thể thức: {modes_note}. "
                "Bấm nút 🔊 để nghe, rồi chọn mặt khớp ở cột phải. Ghép sai sẽ khóa cả hai nút. "
                + _remaining_plays_note(state))
     m = st.session_state.get("g_match")
@@ -202,10 +196,14 @@ def render_match(ctx):
         st.button("▶️ Bắt đầu ván mới", key="match_start", type="primary", on_click=start_match, args=(ctx,))
         return
     colors = {}
+    base_colors = {}
     for i in m["words"]:
         colors[f"ml_{i}"] = m["status"][f"L{i}"]
         colors[f"mr_{i}"] = m["status"][f"R{i}"]
-    st.markdown(game_ui.color_buttons_css(colors), unsafe_allow_html=True)
+        # Màu nền cơ bản: Left (Hán) xanh, Right (Nghĩa) hồng
+        base_colors[f"ml_{i}"] = ("#d1e7f7", "#003d99")  # xanh nhạt / xanh đậm
+        base_colors[f"mr_{i}"] = ("#f7d1e1", "#990033")  # hồng nhạt / hồng đậm
+    st.markdown(game_ui.color_buttons_css(colors, base_colors), unsafe_allow_html=True)
     col_left, col_right = st.columns(2)
     locked = m["done"] is not None
     for i in m["left"]:
@@ -227,126 +225,6 @@ def render_match(ctx):
             f"Kết thúc: đúng {m['correct']}/{len(m['words'])} cặp · +{d['ls']} 💎 Linh Thạch"
             + (" · Hoàn hảo!" if d["perfect"] else "") + (f" (hệ số {int(d['mult'] * 100)}%)" if d["mult"] < 1 else ""))
         st.button("🔁 Chơi ván khác", key="match_again", type="primary", on_click=start_match, args=(ctx,))
-
-
 # ---------------------------------------------------------------------------
 # Sắp xếp câu / điền chữ
 # ---------------------------------------------------------------------------
-
-def start_sentence(ctx):
-    pool = ctx["pool"]
-    with_examples = [w for w in pool if w.get("example_zh")]
-    chosen = gq.pick_words(with_examples, ctx["mastery"], cfg.SENTENCE_ROUNDS)
-    vocab_hanzi = gq.all_hanzi()
-    rounds = []
-    for word in chosen:
-        tokens = gq.tokenize_sentence(word["example_zh"], vocab_hanzi)
-        can_arrange = 4 <= len(tokens) <= 12
-        can_cloze = gq.has_cloze(word)
-        if can_arrange and (not can_cloze or random.random() < 0.6):
-            shuffled = tokens[:]
-            for _ in range(5):
-                random.shuffle(shuffled)
-                if shuffled != tokens:
-                    break
-            rounds.append({"type": "arrange", "word": word, "tokens": shuffled, "target": gq.join_tokens(tokens),
-                           "picked": [], "result": None})
-        elif can_cloze:
-            rounds.append({"type": "cloze", "question": gq.make_question(word, pool, "cloze"),
-                           "word": word, "result": None})
-    st.session_state.g_sent = {"rounds": rounds, "idx": 0, "done": None}
-
-
-def _sent_pick(i):
-    m = st.session_state.g_sent
-    rnd = m["rounds"][m["idx"]]
-    if rnd["result"] is None and i not in rnd["picked"]:
-        rnd["picked"].append(i)
-
-
-def _sent_undo():
-    rnd = st.session_state.g_sent["rounds"][st.session_state.g_sent["idx"]]
-    if rnd["result"] is None and rnd["picked"]:
-        rnd["picked"].pop()
-
-
-def _sent_check():
-    rnd = st.session_state.g_sent["rounds"][st.session_state.g_sent["idx"]]
-    rnd["result"] = gq.join_tokens([rnd["tokens"][i] for i in rnd["picked"]]) == rnd["target"]
-
-
-def _sent_cloze(choice):
-    rnd = st.session_state.g_sent["rounds"][st.session_state.g_sent["idx"]]
-    if rnd["result"] is None:
-        rnd["result"] = gq.evaluate(rnd["question"], choice)
-
-
-def _sent_next(ctx):
-    m = st.session_state.g_sent
-    if m["idx"] + 1 < len(m["rounds"]):
-        m["idx"] += 1
-        return
-    correct = sum(1 for r in m["rounds"] if r["result"])
-    total = len(m["rounds"])
-    perfect = correct == total
-    base = correct * cfg.SENTENCE_REWARD + (cfg.SENTENCE_PERFECT_BONUS if perfect else 0)
-    results = [(r["word"]["id"], bool(r["result"])) for r in m["rounds"]]
-    ls, mult, badges = core.settle(
-        base, core.scale(ctx["idx"]), ctx["words"], results=results,
-        incr={"sentences_ok": correct, "answers_correct": correct},
-        log=("sentence", f"Sắp xếp câu: đúng {correct}/{total} câu."))
-    m["done"] = {"ls": ls, "mult": mult, "correct": correct, "total": total}
-    _toast_new(badges)
-
-
-def render_sentence(ctx):
-    state = core.get_state()
-    st.markdown("### 📜 Đối Câu Luận Đạo")
-    st.caption("Ghép các cụm thành câu đúng hoặc điền chữ còn thiếu. " + _remaining_plays_note(state))
-    m = st.session_state.get("g_sent")
-    if m is None or (m["done"] is None and not m["rounds"]):
-        st.button("▶️ Bắt đầu", key="sent_start", type="primary", on_click=start_sentence, args=(ctx,))
-        if m is not None:
-            st.warning("Chưa có đủ câu ví dụ để chơi. Hãy học thêm từ mới.")
-        return
-    if m["done"]:
-        d = m["done"]
-        st.success(f"Hoàn thành: đúng {d['correct']}/{d['total']} câu · +{d['ls']} 💎 Linh Thạch"
-                   + (f" (hệ số {int(d['mult'] * 100)}%)" if d["mult"] < 1 else ""))
-        st.button("🔁 Chơi lượt khác", key="sent_again", type="primary", on_click=start_sentence, args=(ctx,))
-        return
-    rnd = m["rounds"][m["idx"]]
-    word = rnd["word"]
-    st.progress(m["idx"] / len(m["rounds"]), text=f"Câu {m['idx'] + 1}/{len(m['rounds'])}")
-    if rnd["type"] == "arrange":
-        st.write(f"Nghĩa: *{word.get('example_vi') or gq.short_meaning(word)}*")
-        picked = gq.join_tokens([rnd["tokens"][i] for i in rnd["picked"]]) or "…"
-        st.markdown(f"<div class='quiz-prompt' style='font-size:30px'>{picked}</div>", unsafe_allow_html=True)
-        for row_start in range(0, len(rnd["tokens"]), 6):
-            cols = st.columns(6)
-            for offset, token in enumerate(rnd["tokens"][row_start:row_start + 6]):
-                i = row_start + offset
-                cols[offset].button(token, key=f"sent_tok_{m['idx']}_{i}", use_container_width=True,
-                                    on_click=_sent_pick, args=(i,),
-                                    disabled=rnd["result"] is not None or i in rnd["picked"])
-        if rnd["result"] is None:
-            c1, c2 = st.columns(2)
-            c1.button("↩️ Xóa chữ cuối", key=f"sent_undo_{m['idx']}", on_click=_sent_undo, use_container_width=True)
-            c2.button("✔️ Kiểm tra", key=f"sent_check_{m['idx']}", on_click=_sent_check, type="primary",
-                      use_container_width=True, disabled=not rnd["picked"])
-        else:
-            (st.success if rnd["result"] else st.error)(
-                "Chính xác!" if rnd["result"] else f"Chưa đúng. Đáp án: {rnd['target']}")
-    else:
-        q = rnd["question"]
-        st.write(f"Nghĩa: *{word.get('example_vi') or gq.short_meaning(word)}*")
-        st.markdown(f"<div class='quiz-prompt' style='font-size:30px'>{q['prompt']}</div>", unsafe_allow_html=True)
-        for i, option in enumerate(q["options"]):
-            st.button(option["label"], key=f"sent_opt_{m['idx']}_{i}", use_container_width=True,
-                      on_click=_sent_cloze, args=(i,), disabled=rnd["result"] is not None)
-        if rnd["result"] is not None:
-            (st.success if rnd["result"] else st.error)(
-                "Chính xác!" if rnd["result"] else f"Chưa đúng. Đáp án: {gq.correct_label(q)}")
-    if rnd["result"] is not None:
-        st.button("Tiếp theo ➡️" if m["idx"] + 1 < len(m["rounds"]) else "Hoàn thành 🏁",
-                  key=f"sent_next_{m['idx']}", on_click=_sent_next, args=(ctx,), type="primary")
