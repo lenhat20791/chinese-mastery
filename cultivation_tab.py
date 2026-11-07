@@ -1,4 +1,4 @@
-"""Tab Động Phủ: trang chủ tu tiên, các trò chơi ôn tập, phường thị và huy hiệu."""
+"""Tab Động Phủ: trang chủ tu tiên, các trò chơi ôn tập, phường thị và danh hào."""
 import base64
 import time
 from pathlib import Path
@@ -12,12 +12,13 @@ import game_minigames
 import game_questions as gq
 import game_ui
 import techniques_ui
+import danh_hao_ui
 from database import _demon_rows
 
 NAV = {
     "home": "🏯 Động Phủ", "fortune": "🔮 Quẻ Bói", "match": "🃏 Lật Bài",
     "hunt": "🗺️ Săn Yêu Thú", "alchemy": "⚗️ Luyện Đan", "talisman": "🪬 Vẽ Phù", 
-    "market": "🏪 Phường Thị", "techniques": "📜 Công Pháp Các", "badges": "🏅 Huy Hiệu",
+    "market": "🏪 Phường Thị", "techniques": "📜 Công Pháp Các", "danh_hao": "🏅 Danh Hào",
 }
 UNLOCK_KEY = {"fortune": "fortune", "match": "match", "hunt": "hunt", "alchemy": "hunt", "talisman": "hunt"}
 
@@ -300,48 +301,6 @@ def _render_techniques(state, ctx):
     techniques_ui.render_techniques_tab()
 
 
-def _render_badges(state, ctx):
-    st.markdown("### 🏅 Danh Hào & Huy Hiệu")
-    
-    # Danh hào có thể trang bị
-    available = core.available_honors(ctx["idx"])
-    if available:
-        st.markdown("**Danh Hào**")
-        current = state["title"] if state["title"] in available else None
-        choice = st.selectbox("Danh hào đang đeo", [None] + available, 
-                              index=([None] + available).index(current),
-                              format_func=lambda c: "— không đeo —" if c is None else cfg.HONOR_TITLE_BY_CODE[c]["name"], 
-                              key="title_pick",
-                              on_change=lambda: core.equip_title(st.session_state.title_pick))
-        for honor in cfg.HONOR_TITLES:
-            if honor["code"] in available:
-                effects = f"+{honor['atk_pct']}% công, +{honor['hp_pct']}% HP" if honor["atk_pct"] or honor["hp_pct"] else "Không có hiệu ứng"
-                st.caption(f"📜 **{honor['name']}** — {effects}")
-    else:
-        st.info("Hãy đạt Linh Khí Kỳ tầng 2 để mở khóa danh hào đầu tiên.")
-    
-    # Huy hiệu truyền thống
-    st.markdown("**Huy Hiệu Thành Tích**")
-    for line in cfg.BADGE_LINES:
-        value = core.counter_value(state, line["counter"], ctx["words"])
-        reached = sum(1 for need in line["tiers"] if value >= need)
-        nxt = line["tiers"][reached] if reached < 3 else None
-        icons = "".join(cfg.BADGE_TIER_ICONS[t] if achievement in state["achievements"] else "⚪"
-                        for t, achievement in enumerate(core.achievement_code(line["base"], t) for t in range(3)))
-        name = line["names"][reached - 1] if reached else "Chưa đạt"
-        st.markdown(f"**{icons} {name}** — {value} {line['label']}" + (f" (mốc tiếp theo: {nxt})" if nxt else " ✔ tối đa"))
-        if nxt:
-            st.progress(min(1.0, value / nxt))
-    
-    st.markdown("**Huy Hiệu Ẩn**")
-    for hidden in cfg.HIDDEN_BADGES:
-        if hidden["code"] in state["achievements"]:
-            st.markdown(f"🌟 **{hidden['name']}** — {hidden['desc']}")
-        else:
-            st.markdown("🔒 ??? — bí ẩn")
-
-
-
 @st.fragment
 def _body(user, learned_day):
     # Đảm bảo user_id được lưu trong session state cho các component cần dùng
@@ -378,8 +337,8 @@ def _body(user, learned_day):
         _render_market(state, ctx)
     elif page == "techniques":
         _render_techniques(state, ctx)
-    else:
-        _render_badges(state, ctx)
+    elif page == "danh_hao":
+        danh_hao_ui.render_danh_hao_tab()
 
 
 def render_cultivation(user, learned_day):
