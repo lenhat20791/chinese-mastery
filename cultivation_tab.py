@@ -302,13 +302,6 @@ def _render_techniques(state, ctx):
     techniques_inventory = core.get_techniques_inventory(user_id)
     equipped = core.get_equipped_techniques(user_id)
     
-    # Hiển thị ảnh minh họa
-    lo_dan_path = Path(__file__).parent / "assets" / "hinh tu luyen" / "lo_dan.png"
-    if lo_dan_path.exists():
-        col1, col2 = st.columns([1, 2])
-        with col1:
-            st.image(str(lo_dan_path), use_container_width=True, caption="Luyện Đan")
-    
     tab_inventory, tab_dantian, tab_equipped = st.tabs(["📦 Kho Công Pháp", "🌌 Đan Điền", "⚔️ Trang Bị"])
     
     with tab_inventory:
@@ -416,10 +409,6 @@ def _render_techniques(state, ctx):
     
     with tab_equipped:
         st.markdown("#### Trang Bị Công Pháp (Slot)")
-        
-        phu_luc_path = Path(__file__).parent / "assets" / "hinh tu luyen" / "phu_luc.png"
-        if phu_luc_path.exists():
-            st.image(str(phu_luc_path), use_container_width=True, caption="Vẽ Phù")
         
         st.markdown("Trang bị công pháp để tăng chỉ số chiến đấu:")
         

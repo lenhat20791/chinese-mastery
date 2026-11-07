@@ -256,7 +256,6 @@ def render_alchemy(ctx):
         owned_recipes = core.get_pill_recipes_owned(user_id)
         
         for i, recipe in enumerate(cfg.PILL_RECIPES):
-            tier = cfg.ARTIFACT_TIERS[recipe.get("tier", "normal")]
             c1, c2, c3 = st.columns([1, 4, 1])
             with c1:
                 st.markdown(f"<div style='font-size:32px; text-align:center;'>{recipe.get('emoji', '🧪')}</div>", unsafe_allow_html=True)
