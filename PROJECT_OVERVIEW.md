@@ -151,7 +151,7 @@ Tiền: **Linh Thạch (LS)**. Hệ số thưởng mỗi ngày theo số lượt
 
 #### Vẽ phù
 - Mở khóa một lần khi đã học ít nhất 4 từ. Mỗi công thức mua một lần bằng Linh Thạch.
-- Gõ lại từ đang hiện; các từ đã học được xáo và lần lượt xuất hiện hết một vòng trước khi xáo vòng mới. Vòng từ được lưu qua các lần vẽ và đăng nhập lại. Gõ đúng đủ số lần thì luôn vẽ thành công.
+- Gõ lại Hán tự đang hiện, không có gợi ý pinyin; các từ đã học được xáo và lần lượt xuất hiện hết một vòng trước khi xáo vòng mới. Vòng từ được lưu qua các lần vẽ và đăng nhập lại. Gõ đúng đủ số lần thì luôn vẽ thành công.
 - Trong trận có thể dùng tối đa 2 phù bất kỳ. Mỗi phù gây ngay một đòn phụ theo phần trăm sát thương cơ bản theo cảnh giới, trước pháp bảo và các thưởng khác. Ba phù đầu chỉ dùng với boss; ba phù cuối còn chắn một đòn quái hoặc boss cho mỗi phù.
 - Liệt Diễm: 5 lần, 3%, Linh Khí, 50 LS; Lôi Thần: 7 lần, 5%, Kim Đan, 200 LS; Hàng Yêu Diệt Ma: 10 lần, 8%, Hóa Thần, 600 LS; Tru Hồn Trảm Phách: 14 lần, 10%, Độ Kiếp, 1.200 LS; Thiên Địa Tru Tiên: 18 lần, 12%, Hóa Thần, 2.000 LS; Hỗn Độn Tạo Hóa: 25 lần, 18%, Hóa Thần, 3.500 LS.
 - Công thức và phù cũ được xóa khi người chơi mở kho/công thức phù hoặc sử dụng kho phù trong trận; không hoàn tiền.
@@ -160,6 +160,8 @@ Tiền: **Linh Thạch (LS)**. Hệ số thưởng mỗi ngày theo số lượt
 - Bản đồ `assets/map/map_web.jpg` (1595×890 gốc), 32 khu = 16 cảnh giới × 2. Nút bấm đặt tuyệt đối bằng CSS (`st.container(key="hunt_map")` + `mapbtn_{i}`; tọa độ pixel trong `_AREA_DATA` của `game_config.py` → % qua `MAP_W/MAP_H`, `MAP_ICON_OFFSET_Y`). Tooltip = `help` của nút (có thể lệch, chỉnh `_AREA_DATA`). Chọn khu qua `hunt_pick` + selectbox dự phòng. "Thần Lăng Tiên Uyên" không có nhãn trên ảnh.
 - Mỗi cảnh giới: khu 1 = quái thường (rơi nguyên liệu thường); khu 2 = tinh anh + boss (hiếm/quý). Hạ `SPECIAL_MIN_KILLS`=3 tinh anh (counter `elite_r{realm}`) để mở thách đấu boss (qua `SPECIAL_EVENTS`=3 cơ quan, rồi đánh boss).
 - Trận đánh theo lượt: mỗi lượt = 1 câu hỏi ôn (`make_question`). Đúng → "Bạn sử dụng tuyệt kỹ +Hỏa Cầu Thuật tấn công X, gây N sát thương + combo K" (có thể thêm "💥 Chí mạng!"); sai → quái phản công, combo về 0. Hết HP → thua. Rút lui có bước xác nhận (`confirm_retreat`).
+- Câu nhập pinyin cũng chấp nhận Hán tự chính xác, hoặc pinyin có dấu, không dấu hay số thanh.
+- ATK/HP trong trận và tổng quan = chỉ số gốc theo cảnh giới × (1 + tổng % tu vi, căn cơ, danh hào, pháp bảo và công pháp đã đặt trong đan điền) + chỉ số cộng thẳng của pháp bảo. Sát thương đòn đánh = ATK × hệ số combo × ngẫu nhiên 0,9–1,1 × hệ số chí mạng nếu có; không giới hạn theo HP quái. Phù vẫn gây đòn phụ theo chỉ số cơ bản có cộng tu vi, trước các buff khác.
 - Độ sâu: `g_run={area,wins}`; mỗi trận thắng +`DEPTH_STEP` 5% HP/ATK quái (tối đa ×`DEPTH_MAX`), cứ `DEPTH_EVERY`=5 trận log "đi sâu vào khu vực". Rút lui/thua/sau boss → reset. Quái khởi đầu ngang cảnh giới của KHU.
 - Loot: `ITEM_SETS` 8 bộ × 6 vật phẩm (mã `r{bộ}_{0..5}`, bộ s dùng cho cảnh giới 2s và 2s+1: 3 thường `_0.._2`, 2 hiếm `_3,_4`, 1 quý `_5`). Bảng rơi `DROP_NORMAL/DROP_ELITE/DROP_BOSS/DROP_EVENT`. `scale_loot(loot, drop_factor)` giảm theo hệ số lượt chơi.
 - 11 quái (`MONSTERS`) + 10 boss (`BOSSES`), mã = tên ảnh; boss luân phiên cho 16 khu. Hỗn Độn, Cùng Kỳ, Tinh Hà Thần Châu chưa có ảnh → chưa đưa vào.
@@ -174,7 +176,7 @@ Tiền: **Linh Thạch (LS)**. Hệ số thưởng mỗi ngày theo số lượt
 - **Ngộ tính** = số câu đáp đúng (`counters["answers_correct"]`) → tỉ lệ chí mạng, trần 25%, K=3000, chí mạng ×1.5.
 - **Căn cơ** = số từ đã học → +HP và +ATK, mỗi bên trần 7.5%, K=1250.
 - **Đạo tâm** = chuỗi ngày học (`user["consecutive_streak"]`) → giảm sát thương Tâm Ma Kiếp, trần 25%, K=90.
-- `ctx["bonuses"]` truyền vào `core.player_stats(idx, artifacts, bonuses)` → `{atk, hp, crit}`.
+- `ctx["bonuses"]` và công pháp đã đặt được truyền vào `core.player_stats(idx, artifacts, bonuses, techniques)` → `{atk, hp, crit}`.
 
 ### 6.7 Huy hiệu / danh hiệu
 Theo `ACHIEVEMENT_LINES` (3 bậc mỗi dòng) dựa trên counter; `check_achievements(words)` gọi trong `settle`; chọn danh hiệu bằng `equip_title`.

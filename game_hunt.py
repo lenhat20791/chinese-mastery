@@ -1,6 +1,5 @@
 """Săn yêu thú: bản đồ có nút bấm, chiến đấu theo lượt (mỗi lượt một câu ôn từ vựng), rơi vật phẩm theo khu."""
 import base64
-import math
 import random
 from functools import lru_cache
 from pathlib import Path
@@ -41,7 +40,7 @@ def hit_damage(atk, combo, max_hp, min_hits, rng=random, crit=0.0):
     is_crit = rng.random() < crit
     if is_crit:
         raw *= cfg.CRIT_MULT
-    return min(raw, math.ceil(max_hp / min_hits)), is_crit
+    return raw, is_crit
 
 
 def roll_loot(item_set, kind, rng=random):
@@ -107,7 +106,8 @@ def start_battle(area_i, kind, ctx):
     area = cfg.AREAS[area_i]
     run = st.session_state.get("g_run")
     wins = run["wins"] if run and run["area"] == area_i else 0
-    stats = core.player_stats(ctx["idx"], core.equipped_artifacts(state), ctx.get("bonuses"))
+    stats = core.player_stats(ctx["idx"], core.equipped_artifacts(state), ctx.get("bonuses"),
+                              core.get_techniques_inventory(core.current_user_id()))
     b = {
         "kind": kind, "area": area_i, "wins": wins, "pmax": stats["hp"], "php": stats["hp"], "patk": stats["atk"],
         "base_atk": cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** ctx["idx"] * (1 + core.cultivation_boost(ctx["idx"])[0]),
@@ -172,7 +172,8 @@ def _answer(choice, ctx, pin_key=None):
     q = b["q"]
     word = q["word"]
     b["confirm_retreat"] = False
-    ok = gq.evaluate(q, choice)
+    ok = (gq.check_hanzi_or_pinyin(choice, word)
+          if q["type"] == "pinyin" and q["options"] is None else gq.evaluate(q, choice))
     b["total"] += 1
     b["results"].append((word["id"], ok))
     if ok:
@@ -476,13 +477,14 @@ def render_battle(ctx):
                 )
     st.markdown(f"<div class='quiz-prompt' style='text-align:center;font-size:40px'>{q['prompt']}</div>",
                 unsafe_allow_html=True)
-    st.caption(q["hint"])
+    st.caption("Nhập Hán tự hoặc pinyin (có dấu, không dấu hoặc số thanh)"
+               if q["type"] == "pinyin" else q["hint"])
     if q["type"] == "audio":
         game_ui.speak(q["audio"], autoplay=True)
     if q["options"] is None:
         key = f"pin_{b['turn']}"
         with st.form(f"pin_form_{b['turn']}", clear_on_submit=False):
-            st.text_input("Pinyin", key=key, placeholder="ví dụ: nihao hoặc nǐ hǎo")
+            st.text_input("Hán tự hoặc pinyin", key=key, placeholder="ví dụ: 你好, nihao hoặc nǐ hǎo")
             st.form_submit_button("⚔️ Tấn công", on_click=_answer, args=(None, ctx, key), type="primary")
     else:
         for i, option in enumerate(q["options"]):

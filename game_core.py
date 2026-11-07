@@ -133,31 +133,30 @@ def stat_bonuses(words=0, answers=0, streak=0, honor_code=None):
 
 
 
-def player_stats(idx, artifacts=None, bonuses=None):
-    # Chỉ số cơ bản theo tu vi
+def player_stats(idx, artifacts=None, bonuses=None, techniques=None):
+    """Cộng từng phần trăm trên chỉ số gốc, sau đó cộng chỉ số thẳng của pháp bảo."""
     base_atk = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** idx
     base_hp = cfg.PLAYER_BASE_HP * cfg.POWER_PER_REALM ** idx
-    
-    # Boost chỉ số cơ bản theo cultivation level (5% mỗi cấp tu vi)
     cult_atk_pct, cult_hp_pct = cultivation_boost(idx)
-    boosted_base_atk = base_atk * (1 + cult_atk_pct)
-    boosted_base_hp = base_hp * (1 + cult_hp_pct)
-    
-    atk, hp = boosted_base_atk, boosted_base_hp
-    
-    # Cộng pháp bảo (tính % trên chỉ số cơ bản đã được boost)
+    b = bonuses or {}
+    atk_pct = cult_atk_pct + b.get("atk", 0)
+    hp_pct = cult_hp_pct + b.get("hp", 0)
+    atk_flat = hp_flat = 0.0
+    for tech in techniques or []:
+        if tech["dantian_row"] >= 0 and tech["dantian_col"] >= 0:
+            atk_pct += tech["atk_mult"]
+            hp_pct += tech["hp_mult"]
     for art in artifacts or []:
         recipe = cfg.RECIPE_BY_CODE[art["recipe_code"]]
         flat, pct = artifact_bonus(recipe, art["quality"], art["upgrade"])
         if recipe["kind"] == "atk":
-            atk += flat + boosted_base_atk * pct
+            atk_flat += flat
+            atk_pct += pct
         else:
-            hp += flat + boosted_base_hp * pct
-    
-    # Cộng bonus từ các yếu tố khác (Căn cơ, Danh hào, Đạo tâm)
-    # KHÔNG cộng dồn cultivation boost lại
-    b = bonuses or {}
-    return {"atk": atk * (1 + b.get("atk", 0)), "hp": hp * (1 + b.get("hp", 0)), "crit": b.get("crit", 0.0)}
+            hp_flat += flat
+            hp_pct += pct
+    return {"atk": base_atk * (1 + atk_pct) + atk_flat,
+            "hp": base_hp * (1 + hp_pct) + hp_flat, "crit": b.get("crit", 0.0)}
 
 
 def upgrade_cost(recipe, level):

@@ -86,7 +86,7 @@ class PureLogicTests(unittest.TestCase):
         self.assertAlmostEqual(mid["dao_tam"], cfg.DAO_TAM_MAX / 2)
         base = core.player_stats(3)
         boosted = core.player_stats(3, bonuses=mid)
-        self.assertAlmostEqual(boosted["hp"], base["hp"] * (1 + mid["hp"]))
+        self.assertAlmostEqual(boosted["hp"], base["hp"] + cfg.PLAYER_BASE_HP * cfg.POWER_PER_REALM ** 3 * mid["hp"])
         self.assertAlmostEqual(boosted["crit"], mid["crit"])
 
     def test_cultivation_boost(self):
@@ -130,9 +130,8 @@ class PureLogicTests(unittest.TestCase):
         # Nếu có bonus từ Căn cơ, chỉ cộng thêm một lần
         bonus = core.stat_bonuses(words=1250)  # trả về bonus từ Căn cơ
         stats_1_with_bonus = core.player_stats(1, bonuses=bonus)
-        # Expected: base_atk_1 * (1 + cultivation_boost) * (1 + can_co_bonus)
-        base_atk_1_with_cult = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** 1 * (1 + cfg.CULTIVATION_BOOST_ATK_PCT / 100.0)
-        expected_atk_1_with_bonus = base_atk_1_with_cult * (1 + bonus["atk"])
+        expected_atk_1_with_bonus = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM * (
+            1 + cfg.CULTIVATION_BOOST_ATK_PCT / 100.0 + bonus["atk"])
         self.assertAlmostEqual(stats_1_with_bonus["atk"], expected_atk_1_with_bonus)
 
     def test_combat_math(self):
@@ -140,7 +139,7 @@ class PureLogicTests(unittest.TestCase):
         self.assertAlmostEqual(hp, cfg.PLAYER_BASE_ATK * cfg.MONSTER_HITS)
         dmg, crit = game_hunt.hit_damage(1000, 5, hp, cfg.MONSTER_MIN_HITS, random.Random(1), crit=1.0)
         self.assertTrue(crit)
-        self.assertLessEqual(dmg, hp / cfg.MONSTER_MIN_HITS + 1)
+        self.assertGreater(dmg, hp / cfg.MONSTER_MIN_HITS)
         loot = game_hunt.roll_loot(2, "boss", random.Random(3))
         self.assertTrue(all(code.startswith("r2_") for code in loot))
         normal = game_hunt.roll_loot(1, "normal", random.Random(3))
@@ -230,12 +229,8 @@ class PureLogicTests(unittest.TestCase):
         atk_pct, hp_pct = core.cultivation_boost(5)
         base_atk = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** 5
         base_hp = cfg.PLAYER_BASE_HP * cfg.POWER_PER_REALM ** 5
-        boosted_base_atk = base_atk * (1 + atk_pct)
-        boosted_base_hp = base_hp * (1 + hp_pct)
-        
-        # Chỉ số cuối = boosted_base * (1 + bonus)
-        expected_atk = boosted_base_atk * (1 + bonus["atk"])
-        expected_hp = boosted_base_hp * (1 + bonus["hp"])
+        expected_atk = base_atk * (1 + atk_pct + bonus["atk"])
+        expected_hp = base_hp * (1 + hp_pct + bonus["hp"])
         
         self.assertAlmostEqual(stats_with_bonus["atk"], expected_atk, places=5)
         self.assertAlmostEqual(stats_with_bonus["hp"], expected_hp, places=5)

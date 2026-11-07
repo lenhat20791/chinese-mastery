@@ -91,13 +91,14 @@ def _render_home(state, ctx, user):
         if buff:
             name, desc, _, _ = cfg.FORTUNE_BUFFS[buff[0]]
             st.caption(f"✨ {name}: {desc.format(v=buff[1])}")
-    stats = core.player_stats(ctx["idx"], core.equipped_artifacts(state), ctx["bonuses"])
+    stats = core.player_stats(ctx["idx"], core.equipped_artifacts(state), ctx["bonuses"],
+                              core.get_techniques_inventory(core.current_user_id()))
     demons = len(_demon_rows())
     bn = ctx["bonuses"]
     c = st.columns(4)
     c[0].metric("💎 Linh Thạch", f"{state['ls']:,}")
-    c[1].metric("⚔️ Công kích", f"{stats['atk']:.0f}", f"+{bn['atk'] * 100:.1f}% căn cơ")
-    c[2].metric("❤️ Sinh lực", f"{stats['hp']:.0f}", f"+{bn['hp'] * 100:.1f}% căn cơ")
+    c[1].metric("⚔️ Công kích", f"{stats['atk']:.0f}", f"+{bn['atk'] * 100:.1f}% căn cơ / danh hào")
+    c[2].metric("❤️ Sinh lực", f"{stats['hp']:.0f}", f"+{bn['hp'] * 100:.1f}% căn cơ / danh hào")
     c[3].metric("📖 Căn cơ (từ đã học)", ctx["words"])
     c = st.columns(4)
     answers = state["counters"].get("answers_correct", 0)

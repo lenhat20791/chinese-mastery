@@ -223,13 +223,14 @@ class TestComboCalculation:
     
     def test_hit_damage_increases_with_combo(self):
         """Sát thương phải tăng theo combo."""
+        import random
         atk = 100
         max_hp = 1000
         min_hits = 4
         
-        dmg_no_combo = hunt.hit_damage(atk, 0, max_hp, min_hits)[0]
-        dmg_combo_2 = hunt.hit_damage(atk, 2, max_hp, min_hits)[0]
-        dmg_combo_5 = hunt.hit_damage(atk, 5, max_hp, min_hits)[0]
+        dmg_no_combo = hunt.hit_damage(atk, 0, max_hp, min_hits, random.Random(42))[0]
+        dmg_combo_2 = hunt.hit_damage(atk, 2, max_hp, min_hits, random.Random(42))[0]
+        dmg_combo_5 = hunt.hit_damage(atk, 5, max_hp, min_hits, random.Random(42))[0]
         
         # Sát thương tăng với combo
         assert dmg_no_combo < dmg_combo_2
@@ -241,12 +242,10 @@ class TestComboCalculation:
         max_hp = 1000
         min_hits = 4
         
-        dmg_combo_5 = hunt.hit_damage(atk, 5, max_hp, min_hits)[0]
-        dmg_combo_10 = hunt.hit_damage(atk, 10, max_hp, min_hits)[0]
-        
-        # Sát thương không tăng nhiều sau combo 5 vì max = min(raw, ceil(max_hp/min_hits))
-        # Hay là do randomness, không cần bằng nhau
-        assert dmg_combo_5 <= dmg_combo_10
+        import random
+        dmg_combo_5 = hunt.hit_damage(atk, 5, max_hp, min_hits, random.Random(42))[0]
+        dmg_combo_10 = hunt.hit_damage(atk, 10, max_hp, min_hits, random.Random(42))[0]
+        assert dmg_combo_5 == dmg_combo_10
 
 
 class TestEliteMonsters:

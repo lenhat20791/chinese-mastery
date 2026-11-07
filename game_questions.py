@@ -144,6 +144,16 @@ def check_pinyin(answer, word):
     return bool(given) and given == _strip_tones(word.get("pinyin") or "")
 
 
+def check_hanzi_or_pinyin(answer, word):
+    """Chấp nhận Hán tự hoặc pinyin, không bỏ qua chữ lạ trong đáp án."""
+    if check_hanzi_match(answer, word.get("hanzi")):
+        return True
+    for char in answer or "":
+        if char.isalpha() and "LATIN" not in unicodedata.name(char, ""):
+            return False
+    return check_pinyin(answer, word)
+
+
 def meaning_options(word, pool, count=4, rng=random):
     """Đáp án nghĩa tiếng Việt: 1 đúng + các nghĩa khác từ kho đã học."""
     correct = short_meaning(word)

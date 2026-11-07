@@ -313,8 +313,6 @@ def render_talisman(ctx):
                 if current_word:
                     st.markdown(f"<div style='text-align:center; font-size:64px; padding:20px;'>{current_word['hanzi']}</div>",
                                unsafe_allow_html=True)
-                    st.markdown(f"<div style='text-align:center; font-size:14px; color:#999;'>{current_word.get('pinyin', '')}</div>",
-                               unsafe_allow_html=True)
                     game_ui.speak(current_word["hanzi"])
                     
                     with st.form(f"talisman_form_{recipe_code}", clear_on_submit=True):

@@ -9,8 +9,8 @@ from userdb import get_user_db
 
 
 def current_user_id():
-    """Lấy user_id từ session state."""
-    return st.session_state.get("user_id")
+    """Dùng cùng hồ sơ khóa học với trò chơi."""
+    return core.current_user_id()
 
 
 # =====================================================================
@@ -186,8 +186,7 @@ def _render_technique_list_panel(techniques):
             f"**{tech['name']}** ({tech['emoji']})\n"
             f"- Đẳng cấp: {grade_name}\n"
             f"- Kích thước: {size[0]}×{size[1]} ô\n"
-            f"- Tu vi: +{tech['hp_mult']*100:.1f}% HP / +{tech['atk_mult']*100:.1f}% ATK\n"
-            f"- Buff: HP ×{tech['hp_mult']:.3f}, ATK ×{tech['atk_mult']:.3f}\n"
+            f"- Buff: HP +{tech['hp_mult']*100:.1f}%, ATK +{tech['atk_mult']*100:.1f}%\n"
             f"- Loại: {'Tâm Pháp' if tech['kind'] == 'heart' else 'Bí Pháp'}\n"
             f"- Trạng thái: {'✅ Đang sử dụng' if is_in_grid else '❌ Không sử dụng'}"
         )
@@ -319,9 +318,9 @@ def _render_buff_summary(techniques_in_grid):
     
     col1, col2 = st.columns(2)
     with col1:
-        st.metric("❤️ Tổng HP Buff", f"×{total_hp_mult:.3f}", f"+{total_hp_mult * 100:.1f}%")
+        st.metric("❤️ Tổng HP Buff", f"+{total_hp_mult * 100:.1f}%")
     with col2:
-        st.metric("⚔️ Tổng ATK Buff", f"×{total_atk_mult:.3f}", f"+{total_atk_mult * 100:.1f}%")
+        st.metric("⚔️ Tổng ATK Buff", f"+{total_atk_mult * 100:.1f}%")
     
     # Danh sách công pháp chi tiết
     if techniques_in_grid:
