@@ -8,8 +8,8 @@ def test_pill_recipes_structure():
     for recipe in cfg.PILL_RECIPES:
         assert "code" in recipe, f"PILL_RECIPES missing 'code': {recipe}"
         assert "name" in recipe, f"PILL_RECIPES missing 'name': {recipe}"
-        assert "min_idx" in recipe, f"PILL_RECIPES missing 'min_idx': {recipe}"
-        assert "correct_hits_needed" in recipe, f"PILL_RECIPES missing 'correct_hits_needed': {recipe}"
+        assert "min_realm" in recipe, f"PILL_RECIPES missing 'min_realm': {recipe}"
+        assert "ingredients" in recipe, f"PILL_RECIPES missing 'ingredients': {recipe}"
         assert "description" in recipe, f"PILL_RECIPES missing 'description': {recipe}"
         assert "emoji" in recipe, f"PILL_RECIPES missing 'emoji': {recipe}"
     print(f"[OK] All {len(cfg.PILL_RECIPES)} PILL_RECIPES have required fields")
@@ -20,7 +20,7 @@ def test_talisman_recipes_structure():
     for recipe in cfg.TALISMAN_RECIPES:
         assert "code" in recipe, f"TALISMAN_RECIPES missing 'code': {recipe}"
         assert "name" in recipe, f"TALISMAN_RECIPES missing 'name': {recipe}"
-        assert "min_idx" in recipe, f"TALISMAN_RECIPES missing 'min_idx': {recipe}"
+        assert "min_realm" in recipe, f"TALISMAN_RECIPES missing 'min_realm': {recipe}"
         assert "correct_hits_needed" in recipe, f"TALISMAN_RECIPES missing 'correct_hits_needed': {recipe}"
         assert "description" in recipe, f"TALISMAN_RECIPES missing 'description': {recipe}"
     print(f"[OK] All {len(cfg.TALISMAN_RECIPES)} TALISMAN_RECIPES have required fields")
@@ -72,4 +72,3 @@ if __name__ == "__main__":
     test_nav_entries()
     test_unlock_keys()
     print("\n[SUCCESS] All tests passed! Phien 5-6 structure is correct.")
-

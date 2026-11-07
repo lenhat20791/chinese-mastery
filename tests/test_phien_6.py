@@ -7,6 +7,13 @@ import game_config as cfg
 import game_core as core
 
 
+class _TestConnection(sqlite3.Connection):
+    def batch(self, statements):
+        with self:
+            for sql, params in statements:
+                self.execute(sql, params)
+
+
 class TestTalismanSystem(unittest.TestCase):
     """Phiên 6: Vẽ Phù - test các hàm cơ bản"""
     
@@ -15,7 +22,7 @@ class TestTalismanSystem(unittest.TestCase):
         self.patcher = mock.patch('game_core.get_user_db')
         self.mock_db = self.patcher.start()
         
-        self.conn = sqlite3.connect(':memory:')
+        self.conn = sqlite3.connect(':memory:', factory=_TestConnection)
         self.conn.row_factory = sqlite3.Row
         
         # Tạo schema
@@ -70,33 +77,33 @@ class TestTalismanSystem(unittest.TestCase):
     
     def test_buy_talisman_recipe_success(self):
         """Test mua công thức phù thành công."""
-        ok, msg, ls = core.buy_talisman_recipe(self.user_id, "talisman_1")
+        ok, msg, ls = core.buy_talisman_recipe(self.user_id, "seal_1")
         self.assertTrue(ok)
         self.assertIn("thành công", msg)
-        self.assertEqual(ls, 5000 - 100)  # 100 là giá talisman_1
+        self.assertEqual(ls, 5000 - 50)
     
     def test_buy_talisman_recipe_not_enough_ls(self):
         """Test mua công thức phù không đủ Linh Thạch."""
         # Đặt Linh Thạch quá ít
         self.conn.execute(
-            "UPDATE game_profile SET linh_thach = 50 WHERE user_id = ?",
+            "UPDATE game_profile SET linh_thach = 49 WHERE user_id = ?",
             (self.user_id,)
         )
         self.conn.commit()
         
-        ok, msg, ls = core.buy_talisman_recipe(self.user_id, "talisman_1")
+        ok, msg, ls = core.buy_talisman_recipe(self.user_id, "seal_1")
         self.assertFalse(ok)
         self.assertIn("Linh Thạch", msg)
-        self.assertEqual(ls, 50)
+        self.assertEqual(ls, 49)
     
     def test_buy_talisman_recipe_already_owned(self):
         """Test mua công thức phù đã sở hữu rồi."""
         # Mua lần 1
-        ok, msg, ls = core.buy_talisman_recipe(self.user_id, "talisman_1")
+        ok, msg, ls = core.buy_talisman_recipe(self.user_id, "seal_1")
         self.assertTrue(ok)
         
         # Mua lần 2 → thất bại
-        ok, msg, ls = core.buy_talisman_recipe(self.user_id, "talisman_1")
+        ok, msg, ls = core.buy_talisman_recipe(self.user_id, "seal_1")
         self.assertFalse(ok)
         self.assertIn("đã mua", msg)
     
@@ -107,30 +114,30 @@ class TestTalismanSystem(unittest.TestCase):
         self.assertEqual(len(recipes), 0)
         
         # Mua 2 công thức
-        core.buy_talisman_recipe(self.user_id, "talisman_1")
-        core.buy_talisman_recipe(self.user_id, "talisman_3")
+        core.buy_talisman_recipe(self.user_id, "seal_1")
+        core.buy_talisman_recipe(self.user_id, "seal_3")
         
         recipes = core.get_talisman_recipes_owned(self.user_id)
         self.assertEqual(len(recipes), 2)
         codes = [r["code"] for r in recipes]
-        self.assertIn("talisman_1", codes)
-        self.assertIn("talisman_3", codes)
+        self.assertIn("seal_1", codes)
+        self.assertIn("seal_3", codes)
     
     def test_craft_talisman_success(self):
         """Test xây dựng phù thành công."""
         # Mua công thức trước
-        core.buy_talisman_recipe(self.user_id, "talisman_3")
+        core.buy_talisman_recipe(self.user_id, "seal_3")
         
         # Xây dựng phù
-        result = core.craft_talisman(self.user_id, "talisman_3")
+        result = core.craft_talisman(self.user_id, "seal_3")
         
         self.assertTrue(result["success"])
-        self.assertEqual(result["talisman_code"], "talisman_3")
+        self.assertEqual(result["talisman_code"], "seal_3")
         self.assertIn("thành công", result["message"])
     
     def test_craft_talisman_realm_too_low(self):
         """Test xây dựng phù khi cảnh giới quá thấp."""
-        # Mock realm_info để trả về realm 1 (quá thấp cho talisman_6)
+        # Mock realm_info để trả về realm 1 (quá thấp cho seal_6)
         self.mock_realm.return_value = {
             "stage": 2,
             "idx": 0,
@@ -142,17 +149,17 @@ class TestTalismanSystem(unittest.TestCase):
         }
         
         # Mua công thức
-        core.buy_talisman_recipe(self.user_id, "talisman_6")
+        core.buy_talisman_recipe(self.user_id, "seal_6")
         
         # Xây dựng phù → thất bại vì cảnh giới quá thấp
-        result = core.craft_talisman(self.user_id, "talisman_6")
+        result = core.craft_talisman(self.user_id, "seal_6")
         
         self.assertFalse(result["success"])
         self.assertEqual(result["error"], "REALM_TOO_LOW")
     
     def test_craft_talisman_no_recipe(self):
         """Test xây dựng phù mà chưa mua công thức."""
-        result = core.craft_talisman(self.user_id, "talisman_1")
+        result = core.craft_talisman(self.user_id, "seal_1")
         
         self.assertFalse(result["success"])
         self.assertEqual(result["error"], "RECIPE_NOT_OWNED")
@@ -164,56 +171,56 @@ class TestTalismanSystem(unittest.TestCase):
         self.assertEqual(len(inv), 0)
         
         # Xây dựng 2 phù
-        core.buy_talisman_recipe(self.user_id, "talisman_1")
-        core.craft_talisman(self.user_id, "talisman_1")
+        core.buy_talisman_recipe(self.user_id, "seal_1")
+        core.craft_talisman(self.user_id, "seal_1")
         
-        core.buy_talisman_recipe(self.user_id, "talisman_2")
-        core.craft_talisman(self.user_id, "talisman_2")
-        core.craft_talisman(self.user_id, "talisman_2")  # Xây 2 lần
+        core.buy_talisman_recipe(self.user_id, "seal_2")
+        core.craft_talisman(self.user_id, "seal_2")
+        core.craft_talisman(self.user_id, "seal_2")  # Xây 2 lần
         
         inv = core.get_talismans_inventory(self.user_id)
         self.assertEqual(len(inv), 2)
         
         # Kiểm tra số lượng
-        t1 = next(t for t in inv if t["code"] == "talisman_1")
-        t2 = next(t for t in inv if t["code"] == "talisman_2")
+        t1 = next(t for t in inv if t["code"] == "seal_1")
+        t2 = next(t for t in inv if t["code"] == "seal_2")
         self.assertEqual(t1["qty"], 1)
         self.assertEqual(t2["qty"], 2)
     
     def test_talisman_inventory_qty(self):
         """Test lấy số lượng phù."""
-        qty = core.get_talisman_inventory_qty(self.user_id, "talisman_1")
+        qty = core.get_talisman_inventory_qty(self.user_id, "seal_1")
         self.assertEqual(qty, 0)
         
         # Xây dựng phù
-        core.buy_talisman_recipe(self.user_id, "talisman_1")
-        core.craft_talisman(self.user_id, "talisman_1")
+        core.buy_talisman_recipe(self.user_id, "seal_1")
+        core.craft_talisman(self.user_id, "seal_1")
         
-        qty = core.get_talisman_inventory_qty(self.user_id, "talisman_1")
+        qty = core.get_talisman_inventory_qty(self.user_id, "seal_1")
         self.assertEqual(qty, 1)
     
     def test_consume_talisman(self):
         """Test tiêu hao phù."""
         # Xây dựng 3 phù
-        core.buy_talisman_recipe(self.user_id, "talisman_1")
-        core.craft_talisman(self.user_id, "talisman_1")
-        core.craft_talisman(self.user_id, "talisman_1")
-        core.craft_talisman(self.user_id, "talisman_1")
+        core.buy_talisman_recipe(self.user_id, "seal_1")
+        core.craft_talisman(self.user_id, "seal_1")
+        core.craft_talisman(self.user_id, "seal_1")
+        core.craft_talisman(self.user_id, "seal_1")
         
         # Tiêu hao 1
-        ok = core.consume_talisman(self.user_id, "talisman_1", 1)
+        ok = core.consume_talisman(self.user_id, "seal_1", 1)
         self.assertTrue(ok)
-        qty = core.get_talisman_inventory_qty(self.user_id, "talisman_1")
+        qty = core.get_talisman_inventory_qty(self.user_id, "seal_1")
         self.assertEqual(qty, 2)
         
         # Tiêu hao 2 lần nữa
-        ok = core.consume_talisman(self.user_id, "talisman_1", 2)
+        ok = core.consume_talisman(self.user_id, "seal_1", 2)
         self.assertTrue(ok)
-        qty = core.get_talisman_inventory_qty(self.user_id, "talisman_1")
+        qty = core.get_talisman_inventory_qty(self.user_id, "seal_1")
         self.assertEqual(qty, 0)
         
         # Tiêu hao khi không có → thất bại
-        ok = core.consume_talisman(self.user_id, "talisman_1", 1)
+        ok = core.consume_talisman(self.user_id, "seal_1", 1)
         self.assertFalse(ok)
 
 

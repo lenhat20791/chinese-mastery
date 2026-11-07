@@ -152,6 +152,12 @@ SCHEMA = [
         recipe_code TEXT NOT NULL,
         PRIMARY KEY (user_id, recipe_code)
     )""",
+    """CREATE TABLE IF NOT EXISTS game_talisman_words (
+        user_id INTEGER NOT NULL,
+        course TEXT NOT NULL,
+        data TEXT NOT NULL,
+        PRIMARY KEY (user_id, course)
+    )""",
     # Phiên 8: Công pháp (tâm pháp & bí pháp)
     """CREATE TABLE IF NOT EXISTS game_techniques (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -190,7 +196,8 @@ SCHEMA = [
 
 # Bảng theo user_id của trò chơi (xóa tài khoản, sao lưu)
 GAME_TABLES = ["game_profile", "game_daily", "game_inventory", "game_recipes", "game_artifacts",
-               "game_fortune", "game_achievements", "game_counters", "game_log", "game_techniques", "game_techniques_equipped"]
+               "game_fortune", "game_achievements", "game_counters", "game_log", "game_techniques", "game_techniques_equipped",
+               "game_pills", "game_pill_recipes", "game_talismans", "game_talisman_recipes", "game_talisman_words"]
 
 
 class Row:

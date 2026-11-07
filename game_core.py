@@ -1,6 +1,7 @@
 """Lõi trò chơi tu tiên: trạng thái người chơi (lưu DB, cache trong session), kinh tế, chế tạo, huy hiệu, quẻ bói."""
 import bisect
 import datetime
+import json
 import math
 import random
 
@@ -673,6 +674,7 @@ def consume_inventory(user_id, item_code, qty):
 
 def get_pills_inventory(user_id):
     """Lấy danh sách đan dược trong kho."""
+    remove_legacy_pills(user_id)
     db = get_user_db()
     rows = db.execute(
         "SELECT pill_code, qty FROM game_pills WHERE user_id = ? AND qty > 0 ORDER BY pill_code",
@@ -682,8 +684,30 @@ def get_pills_inventory(user_id):
     for code, qty in rows:
         if code in cfg.PILL_RECIPES_BY_CODE:
             recipe = cfg.PILL_RECIPES_BY_CODE[code]
-            result.append({"code": code, "name": recipe["name"], "qty": qty, "bonus": recipe["bonus_atk_pct"]})
+            result.append({**recipe, "qty": qty})
     return result
+
+
+def get_pill_inventory_qty(user_id, pill_code):
+    row = get_user_db().execute(
+        "SELECT qty FROM game_pills WHERE user_id = ? AND pill_code = ?", (user_id, pill_code)
+    ).fetchone()
+    return row[0] if row else 0
+
+
+def consume_pill(user_id, pill_code, qty):
+    if qty <= 0:
+        raise ValueError("Số lượng đan phải lớn hơn 0")
+    db = get_user_db()
+    updated = db.execute(
+        "UPDATE game_pills SET qty = qty - ? WHERE user_id = ? AND pill_code = ? AND qty >= ?",
+        (qty, user_id, pill_code, qty),
+    )
+    if updated.rowcount != 1:
+        return False
+    db.execute("DELETE FROM game_pills WHERE user_id = ? AND pill_code = ? AND qty = 0", (user_id, pill_code))
+    db.commit()
+    return True
 
 
 def can_craft_pill(recipe_code, user_id, realm_idx):
@@ -707,29 +731,14 @@ def can_craft_pill(recipe_code, user_id, realm_idx):
     
     # 2. Kiểm tra tu vi
     if realm_idx < recipe["min_realm"]:
-        need_words = cfg.SUB_THRESHOLDS[recipe["min_realm"] * 3] if recipe["min_realm"] * 3 < len(cfg.SUB_THRESHOLDS) else 2500
-        return False, f"Cần tu vi Realm {recipe['min_realm']} (≈ {need_words} từ)"
-    
-    # 3. Kiểm tra nguyên liệu
-    for mat_code, qty_need in recipe["materials"]:
-        qty_have = get_inventory_qty(user_id, mat_code)
-        if qty_have < qty_need:
-            mat_name = cfg.ITEM_NAMES.get(mat_code, mat_code)
-            return False, f"Thiếu {mat_name}: cần {qty_need}, có {qty_have}"
+        need_words = cfg.SUB_THRESHOLDS[recipe["min_realm"] * 3]
+        return False, f"Cần tu vi {cfg.MAJOR_REALMS[recipe['min_realm']]} (≈ {need_words} từ)"
     
     return True, None
 
 
-def craft_pill(recipe_code, user_id, realm_idx, rng=random):
-    """Luyện một viên đan.
-    
-    1. Kiểm tra điều kiện
-    2. Tiêu hao nguyên liệu
-    3. Tính xác suất thành công
-    4. Cập nhật kho
-    
-    Trả về (success, message)
-    """
+def craft_pill(recipe_code, user_id, realm_idx, ingredients, rng=random):
+    """Luyện một viên đan sau khi ghép đủ nguyên liệu."""
     # Kiểm tra điều kiện
     ok, reason = can_craft_pill(recipe_code, user_id, realm_idx)
     if not ok:
@@ -737,10 +746,8 @@ def craft_pill(recipe_code, user_id, realm_idx, rng=random):
     
     recipe = cfg.PILL_RECIPES_BY_CODE[recipe_code]
     
-    # Tiêu hao nguyên liệu
-    for mat_code, qty_need in recipe["materials"]:
-        if not consume_inventory(user_id, mat_code, qty_need):
-            return False, f"Lỗi: không thể tiêu hao {cfg.ITEM_NAMES.get(mat_code, mat_code)}"
+    if ingredients < recipe["ingredients"]:
+        return False, f"Cần {recipe['ingredients']} nguyên liệu."
     
     # Tính toán thành công
     roll = rng.random()
@@ -759,15 +766,10 @@ def craft_pill(recipe_code, user_id, realm_idx, rng=random):
 def add_pill(user_id, pill_code, qty):
     """Thêm đan dược vào kho."""
     db = get_user_db()
-    current = db.execute(
-        "SELECT qty FROM game_pills WHERE user_id = ? AND pill_code = ?",
-        (user_id, pill_code)
-    ).fetchone()
-    
-    new_qty = (current[0] if current else 0) + qty
     db.execute(
-        "INSERT OR REPLACE INTO game_pills (user_id, pill_code, qty) VALUES (?, ?, ?)",
-        (user_id, pill_code, new_qty)
+        "INSERT INTO game_pills (user_id, pill_code, qty) VALUES (?, ?, ?) "
+        "ON CONFLICT(user_id, pill_code) DO UPDATE SET qty = qty + excluded.qty",
+        (user_id, pill_code, qty)
     )
     db.commit()
 
@@ -781,6 +783,10 @@ def buy_pill_recipe(recipe_code, user_id, linh_thach):
         return False, "Công thức không tồn tại", linh_thach
     
     db = get_user_db()
+    profile = db.execute("SELECT linh_thach FROM game_profile WHERE user_id = ?", (user_id,)).fetchone()
+    if not profile:
+        return False, "Không tìm thấy tài khoản trò chơi", linh_thach
+    linh_thach = profile[0]
     
     # Kiểm tra đã mua chưa
     has_recipe = db.execute(
@@ -799,11 +805,15 @@ def buy_pill_recipe(recipe_code, user_id, linh_thach):
         return False, f"Thiếu Linh Thạch: cần {price}, có {linh_thach} (thiếu {missing})", linh_thach
     
     # Mua công thức
-    db.execute(
-        "INSERT INTO game_pill_recipes (user_id, recipe_code) VALUES (?, ?)",
-        (user_id, recipe_code)
-    )
-    db.commit()
+    db.batch([
+        ("UPDATE game_profile SET linh_thach = linh_thach - ? WHERE user_id = ? AND linh_thach >= ?",
+         (price, user_id, price)),
+        ("INSERT INTO game_pill_recipes (user_id, recipe_code) SELECT ?, ? WHERE changes() = 1",
+         (user_id, recipe_code)),
+    ])
+    if not db.execute("SELECT 1 FROM game_pill_recipes WHERE user_id = ? AND recipe_code = ?",
+                      (user_id, recipe_code)).fetchone():
+        return False, "Không đủ Linh Thạch để mua công thức", linh_thach
     
     linh_thach_after = linh_thach - price
     return True, f"✅ Mua công thức {recipe['name']} thành công!", linh_thach_after
@@ -811,6 +821,7 @@ def buy_pill_recipe(recipe_code, user_id, linh_thach):
 
 def get_pill_recipes_owned(user_id):
     """Lấy danh sách công thức mà người chơi đã mua."""
+    remove_legacy_pills(user_id)
     db = get_user_db()
     rows = db.execute(
         "SELECT recipe_code FROM game_pill_recipes WHERE user_id = ? ORDER BY recipe_code",
@@ -821,6 +832,15 @@ def get_pill_recipes_owned(user_id):
         if code in cfg.PILL_RECIPES_BY_CODE:
             result.append(cfg.PILL_RECIPES_BY_CODE[code])
     return result
+
+
+def remove_legacy_pills(user_id):
+    db = get_user_db()
+    codes = tuple(f"pill_{i}" for i in range(1, 6))
+    placeholders = ", ".join("?" for _ in codes)
+    for table, column in (("game_pill_recipes", "recipe_code"), ("game_pills", "pill_code")):
+        db.execute(f"DELETE FROM {table} WHERE user_id = ? AND {column} IN ({placeholders})", (user_id, *codes))
+    db.commit()
 
 
 def get_words_learned_count(user_id):
@@ -866,15 +886,15 @@ def buy_talisman_recipe(user_id, recipe_code):
         return False, f"Không đủ Linh Thạch! Cần {price}, có {linh_thach}.", linh_thach
     
     # Trừ tiền và lưu công thức
-    db.execute(
-        "UPDATE game_profile SET linh_thach = linh_thach - ? WHERE user_id = ?",
-        (price, user_id)
-    )
-    db.execute(
-        "INSERT INTO game_talisman_recipes (user_id, recipe_code) VALUES (?, ?)",
-        (user_id, recipe_code)
-    )
-    db.commit()
+    db.batch([
+        ("UPDATE game_profile SET linh_thach = linh_thach - ? WHERE user_id = ? AND linh_thach >= ?",
+         (price, user_id, price)),
+        ("INSERT INTO game_talisman_recipes (user_id, recipe_code) SELECT ?, ? WHERE changes() = 1",
+         (user_id, recipe_code)),
+    ])
+    if not db.execute("SELECT 1 FROM game_talisman_recipes WHERE user_id = ? AND recipe_code = ?",
+                      (user_id, recipe_code)).fetchone():
+        return False, "Không đủ Linh Thạch để mua công thức", linh_thach
     
     linh_thach_after = linh_thach - price
     return True, f"✅ Mua công thức {recipe['name']} thành công!", linh_thach_after
@@ -882,6 +902,7 @@ def buy_talisman_recipe(user_id, recipe_code):
 
 def get_talisman_recipes_owned(user_id):
     """Lấy danh sách công thức phù đã mua."""
+    remove_legacy_talismans(user_id)
     db = get_user_db()
     rows = db.execute(
         "SELECT recipe_code FROM game_talisman_recipes WHERE user_id = ? ORDER BY recipe_code",
@@ -896,6 +917,7 @@ def get_talisman_recipes_owned(user_id):
 
 def get_talismans_inventory(user_id):
     """Lấy kho phù."""
+    remove_legacy_talismans(user_id)
     db = get_user_db()
     rows = db.execute(
         "SELECT talisman_code, qty FROM game_talismans WHERE user_id = ? AND qty > 0 ORDER BY talisman_code",
@@ -909,7 +931,48 @@ def get_talismans_inventory(user_id):
     return result
 
 
-def craft_talisman(user_id, recipe_code):
+def remove_legacy_talismans(user_id):
+    """Xóa công thức và phù của hệ thống cũ, không ảnh hưởng mã phù mới."""
+    db = get_user_db()
+    codes = tuple(f"talisman_{i}" for i in range(1, 7))
+    placeholders = ", ".join("?" for _ in codes)
+    for table, column in (("game_talisman_recipes", "recipe_code"), ("game_talismans", "talisman_code")):
+        db.execute(f"DELETE FROM {table} WHERE user_id = ? AND {column} IN ({placeholders})", (user_id, *codes))
+    db.commit()
+
+
+def talisman_word(user_id, course, pool, advance=False, rng=random):
+    """Duy trì vòng từ đã học riêng cho người chơi và khóa học."""
+    if not pool:
+        raise ValueError("Kho từ đã học đang trống")
+    db = get_user_db()
+    row = db.execute("SELECT data FROM game_talisman_words WHERE user_id = ? AND course = ?",
+                     (user_id, course)).fetchone()
+    data = json.loads(row[0]) if row else {"remaining": [], "seen": []}
+    words = {word["id"]: word for word in pool}
+    remaining = [wid for wid in data["remaining"] if wid in words]
+    seen = [wid for wid in data["seen"] if wid in words]
+    if advance and remaining:
+        seen.append(remaining.pop(0))
+    known = set(remaining) | set(seen)
+    added = [wid for wid in words if wid not in known]
+    rng.shuffle(added)
+    remaining.extend(added)
+    if not remaining:
+        remaining = list(words)
+        rng.shuffle(remaining)
+        seen = []
+    data = {"remaining": remaining, "seen": seen}
+    db.execute(
+        "INSERT INTO game_talisman_words (user_id, course, data) VALUES (?, ?, ?) "
+        "ON CONFLICT(user_id, course) DO UPDATE SET data = excluded.data",
+        (user_id, course, json.dumps(data)),
+    )
+    db.commit()
+    return words[remaining[0]]
+
+
+def craft_talisman(user_id, recipe_code, words_learned=None):
     """Xây dựng phù (sau khi hoàn thành mini-game)."""
     if recipe_code not in cfg.TALISMAN_RECIPES_BY_CODE:
         return {"success": False, "error": "INVALID_RECIPE", "message": "Công thức phù không tồn tại!"}
@@ -927,14 +990,15 @@ def craft_talisman(user_id, recipe_code):
         return {"success": False, "error": "RECIPE_NOT_OWNED", "message": "Bạn chưa mua công thức này!"}
     
     # Kiểm tra tu vi
-    words_learned = get_words_learned_count(user_id)
+    if words_learned is None:
+        words_learned = get_words_learned_count(user_id)
     realm = realm_info(words_learned)
     
     if realm["idx"] < recipe["min_realm"]:
         return {
             "success": False, 
             "error": "REALM_TOO_LOW",
-            "message": f"Cần tu vi cảnh giới {recipe['min_realm']} trở lên!"
+            "message": f"Cần tu vi {cfg.MAJOR_REALMS[recipe['min_realm']]} trở lên!"
         }
     
     # Lưu phù vào kho
@@ -973,23 +1037,17 @@ def get_talisman_inventory_qty(user_id, talisman_code):
 
 def consume_talisman(user_id, talisman_code, qty=1):
     """Tiêu hao phù (khi sử dụng trong trận)."""
+    if qty <= 0:
+        raise ValueError("Số lượng phù phải lớn hơn 0")
     db = get_user_db()
-    current = get_talisman_inventory_qty(user_id, talisman_code)
-    
-    if current < qty:
+    updated = db.execute(
+        "UPDATE game_talismans SET qty = qty - ? WHERE user_id = ? AND talisman_code = ? AND qty >= ?",
+        (qty, user_id, talisman_code, qty),
+    )
+    if updated.rowcount != 1:
         return False
-    
-    new_qty = current - qty
-    if new_qty == 0:
-        db.execute(
-            "DELETE FROM game_talismans WHERE user_id = ? AND talisman_code = ?",
-            (user_id, talisman_code)
-        )
-    else:
-        db.execute(
-            "UPDATE game_talismans SET qty = ? WHERE user_id = ? AND talisman_code = ?",
-            (new_qty, user_id, talisman_code)
-        )
+    db.execute("DELETE FROM game_talismans WHERE user_id = ? AND talisman_code = ? AND qty = 0",
+               (user_id, talisman_code))
     db.commit()
     return True
 
@@ -1000,21 +1058,7 @@ def consume_talisman(user_id, talisman_code, qty=1):
 
 def get_usable_pills(user_id):
     """Lấy danh sách đan dược có thể sử dụng."""
-    pills = get_pills_inventory(user_id)
-    usable = []
-    for pill in pills:
-        if pill["code"] in cfg.PILL_RECIPES_BY_CODE:
-            recipe = cfg.PILL_RECIPES_BY_CODE[pill["code"]]
-            usable.append({
-                "code": pill["code"],
-                "name": recipe["name"],
-                "qty": pill["qty"],
-                "description": f"Tăng {recipe['bonus_atk_pct']:.0f}% sát thương",
-                "effects": {
-                    "atk_bonus_pct": recipe["bonus_atk_pct"]
-                }
-            })
-    return usable
+    return get_pills_inventory(user_id)
 
 
 def get_usable_talismans(user_id):
@@ -1030,76 +1074,58 @@ def get_usable_talismans(user_id):
                 "qty": talisman["qty"],
                 "description": recipe["description"],
                 "effects": recipe["effects"],
-                "duration": recipe["effects"]["duration"]
+                "duration": 1
             })
     return usable
 
 
-def use_pill_in_battle(battle_state, pill_code):
+def use_pill_in_battle(battle_state, pill_code, user_id, realm_idx):
     """Sử dụng đan dược trong trận đấu."""
-    if pill_code not in cfg.PILL_RECIPES_BY_CODE:
+    recipe = cfg.PILL_RECIPES_BY_CODE.get(pill_code)
+    if not recipe:
         return False, "Đan dược không tồn tại!"
-    
-    # Kiểm tra xem đã sử dụng trong lượt này rồi không
-    used_pills = battle_state.get("used_pills", [])
-    if pill_code in used_pills:
-        return False, "Đã sử dụng đan dược này trong lượt này rồi!"
-    
-    recipe = cfg.PILL_RECIPES_BY_CODE[pill_code]
-    
-    # Cộng vào ATK boost
-    if "active_items" not in battle_state:
-        battle_state["active_items"] = {}
-    
-    if "pills" not in battle_state["active_items"]:
-        battle_state["active_items"]["pills"] = []
-    
-    battle_state["active_items"]["pills"].append({
-        "code": pill_code,
-        "name": recipe["name"],
-        "effects": recipe.get("bonus_atk_pct", 0)
-    })
-    
-    # Ghi lại đã sử dụng
-    if "used_pills" not in battle_state:
-        battle_state["used_pills"] = []
-    battle_state["used_pills"].append(pill_code)
-    
-    return True, f"✅ Sử dụng {recipe['name']}!"
+    if battle_state.get("over") or battle_state.get("revive_pending") or battle_state["php"] <= 0:
+        return False, "Không thể dùng đan lúc này."
+    if realm_idx < recipe["min_realm"]:
+        return False, f"Cần đạt {cfg.MAJOR_REALMS[recipe['min_realm']]}."
+    if not recipe["heal"]:
+        return False, "Đan hồi sinh chỉ dùng khi bị đánh bại."
+    if battle_state["php"] >= battle_state["pmax"]:
+        return False, "HP đã đầy."
+    if not consume_pill(user_id, pill_code, 1):
+        return False, "Không còn đan này trong kho."
+    restored = min(recipe["heal"], battle_state["pmax"] - battle_state["php"])
+    battle_state["php"] += restored
+    return True, f"💊 {recipe['name']} hồi {restored:.0f} HP."
+
+
+def talisman_battle_error(battle_state, talisman_code):
+    recipe = cfg.TALISMAN_RECIPES_BY_CODE.get(talisman_code)
+    if not recipe:
+        return "Phù không tồn tại!"
+    if battle_state.get("over") or battle_state.get("stage") != "fight" or not battle_state.get("monster"):
+        return "Không thể sử dụng phù lúc này."
+    if battle_state.get("talismans_used", 0) >= 2:
+        return "Mỗi trận chỉ được dùng tối đa 2 phù."
+    if recipe["effects"]["boss_only"] and not battle_state["monster"]["boss"]:
+        return "Phù này chỉ dùng được với boss."
+    return None
 
 
 def use_talisman_in_battle(battle_state, talisman_code):
-    """Sử dụng phù trong trận đấu."""
-    if talisman_code not in cfg.TALISMAN_RECIPES_BY_CODE:
-        return False, "Phù không tồn tại!"
-    
-    # Kiểm tra xem đã sử dụng trong lượt này rồi không
-    used_talismans = battle_state.get("used_talismans", [])
-    if talisman_code in used_talismans:
-        return False, "Đã sử dụng phù này trong lượt này rồi!"
-    
+    """Gây một đòn phụ và thêm lượt chắn; việc tiêu hao được xử lý bởi người gọi."""
+    error = talisman_battle_error(battle_state, talisman_code)
+    if error:
+        return False, error
     recipe = cfg.TALISMAN_RECIPES_BY_CODE[talisman_code]
-    
-    # Cộng vào hiệu ứng
-    if "active_items" not in battle_state:
-        battle_state["active_items"] = {}
-    
-    if "talismans" not in battle_state["active_items"]:
-        battle_state["active_items"]["talismans"] = []
-    
-    battle_state["active_items"]["talismans"].append({
-        "code": talisman_code,
-        "name": recipe["name"],
-        "effects": recipe.get("effects", {}),
-        "duration": recipe["effects"].get("duration", 1)
-    })
-    
-    # Ghi lại đã sử dụng
-    if "used_talismans" not in battle_state:
-        battle_state["used_talismans"] = []
-    battle_state["used_talismans"].append(talisman_code)
-    
-    return True, f"✅ Sử dụng {recipe['name']}!"
+    effects = recipe["effects"]
+    battle_state["talismans_used"] = battle_state.get("talismans_used", 0) + 1
+    battle_state["talisman_shield"] = battle_state.get("talisman_shield", 0) + effects["shield"]
+    damage = battle_state["base_atk"] * effects["damage_pct"] / 100
+    monster = battle_state["monster"]
+    monster["hp"] = max(0.0, monster["hp"] - damage)
+    return True, (f"🪬 {recipe['name']} gây **{damage:.2f}** sát thương"
+                  + (" và chắn 1 đòn tiếp theo." if effects["shield"] else "."))
 
 
 def get_active_item_effects(battle_state):
@@ -1136,7 +1162,7 @@ def get_active_item_effects(battle_state):
 
 def has_revival_pill(user_id):
     """Kiểm tra người chơi có Cửu chuyển hoàn hồn đan không."""
-    qty = get_inventory_qty(user_id, "pham_dan")
+    qty = get_pill_inventory_qty(user_id, cfg.REVIVAL_PILL_CODE)
     return qty > 0
 
 
@@ -1146,13 +1172,16 @@ def use_revival_pill(user_id, battle_state):
         return False, "Không có Cửu chuyển hoàn hồn đan!"
     
     # Tiêu hao 1 viên đan
-    if not consume_inventory(user_id, "pham_dan", 1):
+    if not battle_state.get("revive_pending"):
+        return False, "Chỉ có thể hồi sinh sau khi bị đánh bại!"
+    if not consume_pill(user_id, cfg.REVIVAL_PILL_CODE, 1):
         return False, "Không thể sử dụng đan!"
     
     # Hồi sinh: hồi 50% HP và tiếp tục trận
     max_hp = battle_state.get("pmax", 100)
     restore_hp = max_hp * 0.5
     battle_state["php"] = restore_hp
+    battle_state["revive_pending"] = False
     
     # Ghi chép hồi sinh
     battle_state["log"].append(f"✨ Cửu chuyển hoàn hồn đan kích hoạt! Hồi sinh với {restore_hp:.0f} HP!")
@@ -1162,141 +1191,6 @@ def use_revival_pill(user_id, battle_state):
 # ---------------------------------------------------------------------------
 # Phiên 5: Mini-game Luyện Đan
 # ---------------------------------------------------------------------------
-
-def build_alchemist_pool(user_id, recipe_code):
-    """Tạo pool từ cho mini-game luyện đan.
-    
-    Ưu tiên từ đã học; nếu > 30 từ đã học, giữ tất cả; bổ sung từ chưa học.
-    
-    Trả về: [vocab_id, ...]
-    """
-    # Lấy số từ đã học
-    db = get_user_db()
-    learned = db.execute(
-        "SELECT vocab_id FROM word_mastery WHERE user_id = ? AND last_status IN ('MASTERED', 'REVIEW')",
-        (user_id,)
-    ).fetchall()
-    learned_ids = [row[0] for row in learned]
-    
-    # Lấy cần bao nhiêu từ từ công thức
-    recipe = cfg.PILL_RECIPES_BY_CODE[recipe_code]
-    pairs_needed = cfg.ALCHEMIST_PAIRS_PER_RECIPE.get(recipe_code, 3)
-    words_needed = pairs_needed
-    
-    # Tạo pool
-    pool = []
-    
-    if len(learned_ids) >= words_needed:
-        # Đủ từ đã học, lấy words_needed từ đầu tiên
-        pool = learned_ids[:words_needed]
-    else:
-        # Chưa đủ, lấy tất cả từ đã học + bổ sung từ chưa học
-        pool = learned_ids[:]
-        
-        # Lấy từ chưa học
-        unlearned = db.execute(
-            "SELECT vocab_id FROM word_mastery WHERE user_id = ? AND last_status NOT IN ('MASTERED', 'REVIEW')",
-            (user_id,)
-        ).fetchall()
-        unlearned_ids = [row[0] for row in unlearned]
-        
-        # Bổ sung
-        needed_more = words_needed - len(pool)
-        if needed_more > 0:
-            pool.extend(unlearned_ids[:needed_more])
-    
-    return pool[:words_needed]
-
-
-def start_alchemist_game(user_id, recipe_code):
-    """Bắt đầu mini-game luyện đan."""
-    if recipe_code not in cfg.PILL_RECIPES_BY_CODE:
-        return False, "Công thức không tồn tại"
-    
-    # Kiểm tra có công thức
-    db = get_user_db()
-    has_recipe = db.execute(
-        "SELECT 1 FROM game_pill_recipes WHERE user_id = ? AND recipe_code = ?",
-        (user_id, recipe_code)
-    ).fetchone()
-    if not has_recipe:
-        return False, "Không có công thức này"
-    
-    # Xây dựng pool từ
-    pool = build_alchemist_pool(user_id, recipe_code)
-    
-    if not pool:
-        return False, "Không đủ từ để chơi"
-    
-    # Lưu trạng thái game
-    state = get_state()
-    state["alchemist"] = {
-        "recipe": recipe_code,
-        "pool": pool,
-        "matched": [],
-    }
-    set_state(state)
-    
-    return True, "Bắt đầu mini-game"
-
-
-def match_alchemist_word(user_id, pair_index):
-    """Xử lý khi người chơi ghép một cặp từ.
-    
-    pair_index: chỉ số cặp từ đã ghép
-    """
-    state = get_state()
-    if state["alchemist"] is None:
-        return False, "Không có game đang chơi"
-    
-    alchemist = state["alchemist"]
-    recipe_code = alchemist["recipe"]
-    recipe = cfg.PILL_RECIPES_BY_CODE[recipe_code]
-    pairs_needed = cfg.ALCHEMIST_PAIRS_PER_RECIPE.get(recipe_code, 3)
-    
-    # Thêm vào matched
-    if pair_index not in alchemist["matched"]:
-        alchemist["matched"].append(pair_index)
-    
-    set_state(state)
-    
-    # Kiểm tra hoàn thành
-    if len(alchemist["matched"]) >= pairs_needed:
-        return True, f"✅ Ghép xong {pairs_needed} từ! Tiêu hao nguyên liệu và luyện đan..."
-    else:
-        remain = pairs_needed - len(alchemist["matched"])
-        return None, f"Còn cần {remain} cặp từ"
-
-
-def finish_alchemist_game(user_id, recipe_code):
-    """Kết thúc mini-game luyện đan.
-    
-    1. Tiêu hao nguyên liệu
-    2. Gọi craft_pill (Phiên 4)
-    3. Làm sạch state
-    """
-    recipe = cfg.PILL_RECIPES_BY_CODE[recipe_code]
-    words_learned = get_words_learned_count(user_id)
-    realm_info_data = realm_info(words_learned)
-    realm_idx = realm_info_data["idx"]
-    
-    # Luyện đan
-    success, message = craft_pill(recipe_code, user_id, realm_idx)
-    
-    # Làm sạch game state
-    state = get_state()
-    state["alchemist"] = None
-    set_state(state)
-    
-    return success, message
-
-
-def reset_alchemist_game(user_id):
-    """Reset mini-game (người chơi chọn công thức khác)."""
-    state = get_state()
-    state["alchemist"] = None
-    set_state(state)
-
 
 # ---------------------------------------------------------------------------
 # Phiên 8: Công Pháp (Tâm Pháp & Bí Pháp) - Rơi từ Boss
@@ -1584,4 +1478,3 @@ def calc_technique_bonus(user_id):
             bonus["atk_mult"] += tech["atk_mult"] * size_mult
     
     return bonus
-

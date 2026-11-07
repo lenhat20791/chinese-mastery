@@ -368,75 +368,26 @@ NIGHT_HOUR = 23
 # Phiên 4: Công thức luyện đan (Alchemy System)
 # ---------------------------------------------------------------------------
 PILL_RECIPES = [
-    {
-        "code": "pill_1",
-        "name": "Hạ Phẩm Yêu Đan",
-        "min_realm": 0,
-        "min_idx": 0,
-        "correct_hits_needed": 10,
-        "description": "Viên đan tăng sát thương cơ bản",
-        "emoji": "🧪",
-        "materials": [("r0_0", 2), ("r0_1", 1)],  # 2x Hắc Thiết, 1x Yêu Lang Bì
-        "bonus_atk_pct": 2.0,
-        "success_rate": 0.80,
-    },
-    {
-        "code": "pill_2",
-        "name": "Trung Phẩm Yêu Đan",
-        "min_realm": 3,
-        "min_idx": 3,
-        "correct_hits_needed": 15,
-        "description": "Viên đan tăng sát thương trung bình",
-        "emoji": "🧪",
-        "materials": [("r0_3", 2), ("pill_1", 1)],  # 2x Tinh Thiết, 1x Hạ Phẩm Yêu Đan
-        "bonus_atk_pct": 5.0,
-        "success_rate": 0.70,
-    },
-    {
-        "code": "pill_3",
-        "name": "Thượng Phẩm Yêu Đan",
-        "min_realm": 6,
-        "min_idx": 6,
-        "correct_hits_needed": 20,
-        "description": "Viên đan tăng sát thương cao",
-        "emoji": "🧪",
-        "materials": [("r1_2", 3), ("r1_4", 2)],  # 3x Huyền Thiết, 2x Xích Tinh Thạch
-        "bonus_atk_pct": 8.0,
-        "success_rate": 0.60,
-    },
-    {
-        "code": "pill_4",
-        "name": "Tối Thượng Yêu Đan",
-        "min_realm": 10,
-        "min_idx": 10,
-        "correct_hits_needed": 25,
-        "description": "Viên đan tăng sát thương rất cao",
-        "emoji": "🧪",
-        "materials": [("r2_0", 3), ("r2_4", 2), ("r2_5", 1)],  # 3x Hàn Thiết, 2x Thiên Lôi Mộc, 1x Hàn Ngọc
-        "bonus_atk_pct": 12.0,
-        "success_rate": 0.50,
-    },
-    {
-        "code": "pill_5",
-        "name": "Tôn Thần Yêu Đan",
-        "min_realm": 15,
-        "min_idx": 15,
-        "correct_hits_needed": 30,
-        "description": "Viên đan tăng sát thương tối đa",
-        "emoji": "🧪",
-        "materials": [("r3_2", 4), ("r3_4", 3), ("r3_5", 1)],  # 4x Linh Mộc Tâm, 3x Thiên Lôi Mộc, 1x Tiên Duyên
-        "bonus_atk_pct": 15.0,
-        "success_rate": 0.40,
-    },
+    {"code": "elixir_1", "name": "Đại Hoàn Đan", "min_realm": 0, "ingredients": 5,
+     "description": "Hồi 20 HP", "emoji": "💊", "heal": 20, "success_rate": 0.90},
+    {"code": "elixir_2", "name": "Hồi Xuân Đan", "min_realm": 2, "ingredients": 10,
+     "description": "Hồi 50 HP", "emoji": "🟢", "heal": 50, "success_rate": 0.85},
+    {"code": "elixir_3", "name": "Bồi Nguyên Đan", "min_realm": 6, "ingredients": 20,
+     "description": "Hồi 150 HP", "emoji": "🔵", "heal": 150, "success_rate": 0.75},
+    {"code": "elixir_4", "name": "Tục Mệnh Đan", "min_realm": 9, "ingredients": 30,
+     "description": "Hồi 250 HP", "emoji": "🟣", "heal": 250, "success_rate": 0.65},
+    {"code": "elixir_5", "name": "Cửu Chuyển Hoàn Hồn Đan", "min_realm": 3, "ingredients": 40,
+     "description": "Hồi sinh với 50% HP khi bị quái hoặc boss đánh bại", "emoji": "✨",
+     "heal": 0, "success_rate": 0.50},
 ]
 
 # Bảng giá mua công thức (Linh Thạch)
 PILL_RECIPE_PRICES = {
-    "pill_1": 50,
-    "pill_2": 200,
-    "pill_3": 500,
-    "pill_4": 1500,
-    "pill_5": 3000,
+    "elixir_1": 50,
+    "elixir_2": 200,
+    "elixir_3": 500,
+    "elixir_4": 1500,
+    "elixir_5": 3000,
 }
 
 # Mapping nhanh
@@ -444,14 +395,8 @@ PILL_RECIPES_BY_CODE = {p["code"]: p for p in PILL_RECIPES}
 
 # Phiên 5: Cấu hình mini-game Luyện Đan
 ALCHEMIST_MIN_WORDS = 4          # Mở khóa mini-game khi đã học ≥ 4 từ
-ALCHEMIST_MAX_LEARNED = 30       # Nếu > 30 từ đã học, bắt buộc giữ tất cả
-ALCHEMIST_PAIRS_PER_RECIPE = {
-    "pill_1": 3,   # Hạ Phẩm: 3 cặp từ
-    "pill_2": 4,   # Trung Phẩm: 4 cặp từ
-    "pill_3": 5,   # Thượng Phẩm: 5 cặp từ
-    "pill_4": 6,   # Tối Thượng: 6 cặp từ
-    "pill_5": 7,   # Tôn Thần: 7 cặp từ
-}
+ALCHEMIST_BOARD_WORDS = 10
+REVIVAL_PILL_CODE = "elixir_5"
 
 # Tên vật phẩm (cho Phase 4-5)
 ITEM_NAMES = {
@@ -495,105 +440,52 @@ ITEM_NAMES = {
 # ---------------------------------------------------------------------------
 TALISMAN_RECIPES = [
     {
-        "code": "talisman_1",
-        "name": "Bảo Hộ Phù",
-        "min_realm": 1,
-        "min_idx": 1,
-        "correct_hits_needed": 10,
-        "description": "Phù bảo hộ toàn thân, giảm sát thương nhận",
-        "effects": {
-            "damage_reduction": 0.15,  # Giảm 15% sát thương
-            "duration": 2,  # Hiệu lực 2 trận
-        }
+        "code": "seal_1", "name": "Liệt Diễm Phù", "min_realm": 0,
+        "correct_hits_needed": 5, "description": "Gây thêm 3% sát thương cơ bản lên boss.",
+        "effects": {"damage_pct": 3, "boss_only": True, "shield": 0},
     },
     {
-        "code": "talisman_2",
-        "name": "Tăng Công Phù",
-        "min_realm": 3,
-        "min_idx": 3,
-        "correct_hits_needed": 15,
-        "description": "Phù tăng sát thương, cộng thêm công kích",
-        "effects": {
-            "atk_bonus_pct": 20.0,  # Tăng 20% sát thương
-            "duration": 2,
-        }
+        "code": "seal_2", "name": "Lôi Thần Phù", "min_realm": 2,
+        "correct_hits_needed": 7, "description": "Gây thêm 5% sát thương cơ bản lên boss.",
+        "effects": {"damage_pct": 5, "boss_only": True, "shield": 0},
     },
     {
-        "code": "talisman_3",
-        "name": "Hồi Phục Phù",
-        "min_realm": 5,
-        "min_idx": 5,
-        "correct_hits_needed": 20,
-        "description": "Phù hồi phục sức khỏe trong trận đấu",
-        "effects": {
-            "hp_restore_pct": 30.0,  # Hồi 30% HP
-            "duration": 1,
-        }
+        "code": "seal_3", "name": "Hàng Yêu Diệt Ma Phù", "min_realm": 5,
+        "correct_hits_needed": 10, "description": "Gây thêm 8% sát thương cơ bản lên boss.",
+        "effects": {"damage_pct": 8, "boss_only": True, "shield": 0},
     },
     {
-        "code": "talisman_4",
-        "name": "Phản Công Phù",
-        "min_realm": 8,
-        "min_idx": 8,
-        "correct_hits_needed": 25,
-        "description": "Phù phản công, bất kỳ khi nào bị đánh sẽ phản lại",
-        "effects": {
-            "reflect_damage_pct": 25.0,  # Phản lại 25% sát thương
-            "duration": 2,
-        }
+        "code": "seal_4", "name": "Tru Hồn Trảm Phách Phù", "min_realm": 8,
+        "correct_hits_needed": 14, "description": "Gây thêm 10% sát thương cơ bản lên quái và boss; chắn 1 đòn.",
+        "effects": {"damage_pct": 10, "boss_only": False, "shield": 1},
     },
     {
-        "code": "talisman_5",
-        "name": "Trúc Chi Phù",
-        "min_realm": 11,
-        "min_idx": 11,
-        "correct_hits_needed": 30,
-        "description": "Phù chính xác, tăng tỉ lệ chí mạng",
-        "effects": {
-            "crit_chance_bonus": 15.0,  # Tăng 15% tỉ lệ chí mạng
-            "duration": 2,
-        }
+        "code": "seal_5", "name": "Thiên Địa Tru Tiên Phù", "min_realm": 5,
+        "correct_hits_needed": 18, "description": "Gây thêm 12% sát thương cơ bản lên quái và boss; chắn 1 đòn.",
+        "effects": {"damage_pct": 12, "boss_only": False, "shield": 1},
     },
     {
-        "code": "talisman_6",
-        "name": "Trời Địa Phù",
-        "min_realm": 14,
-        "min_idx": 14,
-        "correct_hits_needed": 35,
-        "description": "Phù tối thượng, kết hợp tất cả hiệu ứng",
-        "effects": {
-            "damage_reduction": 10.0,  # -10% sát thương
-            "atk_bonus_pct": 15.0,  # +15% sát thương
-            "hp_restore_pct": 20.0,  # Hồi 20% HP
-            "reflect_damage_pct": 15.0,  # Phản lại 15% sát thương
-            "crit_chance_bonus": 10.0,  # +10% chí mạng
-            "duration": 3,
-        }
+        "code": "seal_6", "name": "Hỗn Độn Tạo Hóa Phù", "min_realm": 5,
+        "correct_hits_needed": 25, "description": "Gây thêm 18% sát thương cơ bản lên quái và boss; chắn 1 đòn.",
+        "effects": {"damage_pct": 18, "boss_only": False, "shield": 1},
     },
 ]
 
 # Bảng giá mua công thức phù (Linh Thạch)
 TALISMAN_RECIPE_PRICES = {
-    "talisman_1": 100,
-    "talisman_2": 300,
-    "talisman_3": 600,
-    "talisman_4": 1200,
-    "talisman_5": 2000,
-    "talisman_6": 3500,
+    "seal_1": 50,
+    "seal_2": 200,
+    "seal_3": 600,
+    "seal_4": 1200,
+    "seal_5": 2000,
+    "seal_6": 3500,
 }
 
 # Mapping nhanh
 TALISMAN_RECIPES_BY_CODE = {t["code"]: t for t in TALISMAN_RECIPES}
 
 # Tên phù
-TALISMAN_NAMES = {
-    "talisman_1": "Bảo Hộ Phù",
-    "talisman_2": "Tăng Công Phù",
-    "talisman_3": "Hồi Phục Phù",
-    "talisman_4": "Phản Công Phù",
-    "talisman_5": "Trúc Chi Phù",
-    "talisman_6": "Trời Địa Phù",
-}
+TALISMAN_NAMES = {t["code"]: t["name"] for t in TALISMAN_RECIPES}
 
 # ---------------------------------------------------------------------------
 # Phiên 8: Công Pháp (Tâm Pháp & Bí Pháp) - Rơi từ Boss

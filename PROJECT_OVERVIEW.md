@@ -143,6 +143,19 @@ Tiền: **Linh Thạch (LS)**. Hệ số thưởng mỗi ngày theo số lượt
 - **Đối câu / sắp xếp câu**: mở từ Trúc Cơ + ≥ 30 từ (`GAME_UNLOCKS["sentence"]`).
 - Mở khóa (`GAME_UNLOCKS`): fortune/match/hunt cần ≥ 4 từ; sentence và `grammar_battle` (câu điền từ trong trận đánh) cần Trúc Cơ + 30 từ.
 
+#### Luyện đan
+- Mở khi có ít nhất 4 từ đã học trong khóa tiếng Trung. Mua công thức một lần; cảnh giới tối thiểu áp dụng cả khi luyện và dùng.
+- Mỗi bảng có tối đa 10 từ (30 mảnh Hán tự, pinyin, nghĩa). Chọn ngẫu nhiên từ đã học, bổ sung từ chưa học nếu cần. Ghép đúng ba mảnh được một nguyên liệu, sai khóa ba mảnh; khi không còn bộ ghép được thì mở bảng mới, giữ số nguyên liệu đã thu. Đủ số nguyên liệu mới có thể bấm luyện; kết quả hiện trong hộp thoại và nguyên liệu được dùng hết dù thành công hay thất bại.
+- Đại Hoàn: 20 HP, 5 nguyên liệu, Linh Khí, 90%, 50 LS; Hồi Xuân: 50 HP, 10 nguyên liệu, Kim Đan, 85%, 200 LS; Bồi Nguyên: 150 HP, 20 nguyên liệu, Luyện Hư, 75%, 500 LS; Tục Mệnh: 250 HP, 30 nguyên liệu, Tán Tiên, 65%, 1.500 LS; Cửu Chuyển Hoàn Hồn: hồi sinh 50% HP, 40 nguyên liệu, Nguyên Anh, 50%, 3.000 LS.
+- Đan hồi máu dùng trong trận; đan hồi sinh được chọn khi bị quái hoặc boss đánh bại, tiếp tục trận hiện tại. Công thức và đan của hệ thống cũ bị xóa khi mở kho/công thức đan, không hoàn tiền. Tụ Phẩm Đan là vật phẩm riêng dùng chế tạo pháp bảo, không phải đan hồi sinh.
+
+#### Vẽ phù
+- Mở khóa một lần khi đã học ít nhất 4 từ. Mỗi công thức mua một lần bằng Linh Thạch.
+- Gõ lại từ đang hiện; các từ đã học được xáo và lần lượt xuất hiện hết một vòng trước khi xáo vòng mới. Vòng từ được lưu qua các lần vẽ và đăng nhập lại. Gõ đúng đủ số lần thì luôn vẽ thành công.
+- Trong trận có thể dùng tối đa 2 phù bất kỳ. Mỗi phù gây ngay một đòn phụ theo phần trăm sát thương cơ bản theo cảnh giới, trước pháp bảo và các thưởng khác. Ba phù đầu chỉ dùng với boss; ba phù cuối còn chắn một đòn quái hoặc boss cho mỗi phù.
+- Liệt Diễm: 5 lần, 3%, Linh Khí, 50 LS; Lôi Thần: 7 lần, 5%, Kim Đan, 200 LS; Hàng Yêu Diệt Ma: 10 lần, 8%, Hóa Thần, 600 LS; Tru Hồn Trảm Phách: 14 lần, 10%, Độ Kiếp, 1.200 LS; Thiên Địa Tru Tiên: 18 lần, 12%, Hóa Thần, 2.000 LS; Hỗn Độn Tạo Hóa: 25 lần, 18%, Hóa Thần, 3.500 LS.
+- Công thức và phù cũ được xóa khi người chơi mở kho/công thức phù hoặc sử dụng kho phù trong trận; không hoàn tiền.
+
 ### 6.4 Săn yêu thú (`game_hunt.py`)
 - Bản đồ `assets/map/map_web.jpg` (1595×890 gốc), 32 khu = 16 cảnh giới × 2. Nút bấm đặt tuyệt đối bằng CSS (`st.container(key="hunt_map")` + `mapbtn_{i}`; tọa độ pixel trong `_AREA_DATA` của `game_config.py` → % qua `MAP_W/MAP_H`, `MAP_ICON_OFFSET_Y`). Tooltip = `help` của nút (có thể lệch, chỉnh `_AREA_DATA`). Chọn khu qua `hunt_pick` + selectbox dự phòng. "Thần Lăng Tiên Uyên" không có nhãn trên ảnh.
 - Mỗi cảnh giới: khu 1 = quái thường (rơi nguyên liệu thường); khu 2 = tinh anh + boss (hiếm/quý). Hạ `SPECIAL_MIN_KILLS`=3 tinh anh (counter `elite_r{realm}`) để mở thách đấu boss (qua `SPECIAL_EVENTS`=3 cơ quan, rồi đánh boss).

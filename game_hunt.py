@@ -110,6 +110,8 @@ def start_battle(area_i, kind, ctx):
     stats = core.player_stats(ctx["idx"], core.equipped_artifacts(state), ctx.get("bonuses"))
     b = {
         "kind": kind, "area": area_i, "wins": wins, "pmax": stats["hp"], "php": stats["hp"], "patk": stats["atk"],
+        "base_atk": cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** ctx["idx"] * (1 + core.cultivation_boost(ctx["idx"])[0]),
+        "talismans_used": 0, "talisman_shield": 0, "player_realm": ctx["idx"],
         "crit": stats["crit"],
         "combo": 0, "shield": core.buff_value(state, "shield"), "taken": 0, "correct": 0, "total": 0,
         "log": [], "results": [], "loot": {}, "ls_base": 0, "over": None, "settled": None, "turn": 0,
@@ -148,6 +150,10 @@ def _boss_appears(b):
 
 
 def _monster_strikes(b, dmg, source):
+    if b.get("talisman_shield", 0) > 0:
+        b["talisman_shield"] -= 1
+        b["log"].append(f"🪬 Phù lục chắn đòn của {source}.")
+        return
     if b["shield"] > 0:
         b["shield"] -= 1
         b["log"].append(f"🛡️ Hộ Thân Phù chắn đòn của {source}.")
@@ -159,7 +165,7 @@ def _monster_strikes(b, dmg, source):
 
 def _answer(choice, ctx, pin_key=None):
     b = st.session_state.get("g_battle")
-    if not b or b["over"]:
+    if not b or b["over"] or b.get("revive_pending"):
         return
     if pin_key is not None:
         choice = st.session_state.get(pin_key, "")
@@ -176,6 +182,8 @@ def _answer(choice, ctx, pin_key=None):
         _explore_turn(b, ok, answer_note)
     else:
         _fight_turn(b, ok, answer_note)
+    if b.get("revive_pending"):
+        return
     if not b["over"]:
         _next_question(b, ctx)
     else:
@@ -224,8 +232,73 @@ def _fight_turn(b, ok, note):
         b["log"].append(f"❌ Sai rồi! Đáp án: {note}")
         _monster_strikes(b, m["atk"] * random.uniform(0.9, 1.1), m["name"])
         if b["php"] <= 0:
-            b["over"] = "lose"
-            b["log"].append("☠️ Bạn trọng thương, buộc phải rút lui.")
+            if _revival_available(b):
+                b["revive_pending"] = True
+                b["log"].append("☠️ Bạn bị đánh bại. Có thể dùng Cửu Chuyển Hoàn Hồn Đan để hồi sinh.")
+            else:
+                b["over"] = "lose"
+                b["log"].append("☠️ Bạn trọng thương, buộc phải rút lui.")
+
+
+def _revival_available(b):
+    return b.get("player_realm", 0) >= cfg.PILL_RECIPES_BY_CODE[cfg.REVIVAL_PILL_CODE]["min_realm"] \
+        and core.has_revival_pill(core.current_user_id())
+
+
+def _revive(ctx):
+    b = st.session_state["g_battle"]
+    if not b.get("revive_pending"):
+        return
+    if not _revival_available(b):
+        st.toast("Không thể hồi sinh: thiếu đan hoặc chưa đủ cảnh giới.", icon="⚠️")
+        return
+    ok, message = core.use_revival_pill(core.current_user_id(), b)
+    if ok:
+        _next_question(b, ctx)
+    else:
+        st.toast(message, icon="⚠️")
+
+
+def _decline_revival(ctx):
+    b = st.session_state["g_battle"]
+    if not b.get("revive_pending"):
+        return
+    b["revive_pending"] = False
+    b["over"] = "lose"
+    b["log"].append("☠️ Bạn từ chối hồi sinh và rút lui.")
+    _settle_battle(b, ctx)
+
+
+def _use_pill(code, ctx):
+    b = st.session_state["g_battle"]
+    ok, message = core.use_pill_in_battle(b, code, core.current_user_id(), ctx["idx"])
+    if ok:
+        b["log"].append(message)
+    else:
+        st.toast(message, icon="⚠️")
+
+
+def _use_talisman(code, ctx):
+    b = st.session_state.get("g_battle")
+    if not b:
+        st.toast("Không thể sử dụng phù lúc này.", icon="⚠️")
+        return
+    error = core.talisman_battle_error(b, code)
+    if error:
+        st.toast(error, icon="⚠️")
+        return
+    if not core.consume_talisman(core.current_user_id(), code):
+        st.toast("Không còn phù này trong kho.", icon="⚠️")
+        return
+    if "base_atk" not in b:
+        b["base_atk"] = cfg.PLAYER_BASE_ATK * cfg.POWER_PER_REALM ** ctx["idx"] * (1 + core.cultivation_boost(ctx["idx"])[0])
+    _, message = core.use_talisman_in_battle(b, code)
+    b["log"].append(message)
+    monster = b["monster"]
+    if monster["hp"] <= 0:
+        b["over"] = "win"
+        b["log"].append(f"🏆 Hạ được **{monster['name']}**!")
+        _settle_battle(b, ctx)
 
 
 def _set_confirm(value):
@@ -334,6 +407,8 @@ def render_battle(ctx):
         _hp_bar("HP của bạn", b["php"], b["pmax"])
         if b["shield"]:
             st.caption(f"🛡️ Hộ Thân Phù còn {b['shield']} lần chắn")
+        if b.get("talisman_shield", 0):
+            st.caption(f"🪬 Phù lục còn {b['talisman_shield']} lần chắn")
     with right:
         with st.container(height=230, border=True):
             st.markdown("<br>".join(reversed(b["log"][-14:])), unsafe_allow_html=True)
@@ -366,9 +441,39 @@ def render_battle(ctx):
                       use_container_width=True)
         c2.button("🗺️ Về bản đồ", key="battle_close", on_click=_close_battle, use_container_width=True)
         return
+    if b.get("revive_pending"):
+        st.warning("Bạn đã bị đánh bại. Dùng Cửu Chuyển Hoàn Hồn Đan để hồi 50% HP và tiếp tục trận?")
+        c1, c2 = st.columns(2)
+        c1.button("✨ Hồi sinh", key="battle_revive", on_click=_revive, args=(ctx,), type="primary")
+        c2.button("☠️ Chịu thua", key="battle_decline_revive", on_click=_decline_revival, args=(ctx,))
+        return
+    with st.expander("💊 Đan dược"):
+        pills = core.get_usable_pills(core.current_user_id())
+        if not pills:
+            st.info("Kho đan trống.")
+        for pill in pills:
+            disabled = (ctx["idx"] < pill["min_realm"] or not pill["heal"] or b["php"] >= b["pmax"])
+            st.button(f"{pill['emoji']} {pill['name']} ×{pill['qty']} — {pill['description']}",
+                      key=f"battle_pill_{pill['code']}", disabled=disabled,
+                      on_click=_use_pill, args=(pill["code"], ctx), use_container_width=True)
     q = b["q"]
     if b["stage"] == "explore":
         st.info(f"**{b['trap'][0]}** — {b['trap'][1]}")
+    else:
+        used = b.get("talismans_used", 0)
+        with st.expander(f"🪬 Phù lục ({used}/2 đã dùng)"):
+            talismans = core.get_usable_talismans(core.current_user_id())
+            if not talismans:
+                st.info("Kho phù trống.")
+            for talisman in talismans:
+                boss_only = talisman["effects"]["boss_only"]
+                st.button(
+                    f"{talisman['name']} ×{talisman['qty']} — {talisman['description']}",
+                    key=f"battle_talisman_{talisman['code']}",
+                    disabled=used >= 2 or (boss_only and not m["boss"]),
+                    on_click=_use_talisman, args=(talisman["code"], ctx),
+                    use_container_width=True,
+                )
     st.markdown(f"<div class='quiz-prompt' style='text-align:center;font-size:40px'>{q['prompt']}</div>",
                 unsafe_allow_html=True)
     st.caption(q["hint"])

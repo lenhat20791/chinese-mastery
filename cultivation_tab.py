@@ -316,7 +316,11 @@ def _body(user, learned_day):
                                         user.get("consecutive_streak", 0), state.get("title"))}
     page = st.radio("Điều hướng", list(NAV), format_func=lambda k: NAV[k], horizontal=True, key="game_nav",
                     label_visibility="collapsed")
-    if page in UNLOCK_KEY and not _unlocked(UNLOCK_KEY[page], realm["idx"], words):
+    talisman_unlocked = bool(state["counters"].get("talisman_unlocked"))
+    if words >= 4 and not talisman_unlocked:
+        core.apply_changes(incr={"talisman_unlocked": 1})
+        talisman_unlocked = True
+    if page in UNLOCK_KEY and not (page == "talisman" and talisman_unlocked) and not _unlocked(UNLOCK_KEY[page], realm["idx"], words):
         st.info(f"🔒 {_unlock_text(UNLOCK_KEY[page])} Hiện có {words} từ.")
         return
     if page in ("fortune", "match", "hunt", "alchemy", "talisman"):

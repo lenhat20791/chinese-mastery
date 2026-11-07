@@ -9,7 +9,7 @@ import game_core as core
 import game_questions as gq
 import game_ui
 from course_config import get_config
-from database import get_vocab_by_ids, record_review_batch
+from database import active_variant, get_vocab_by_ids, record_review_batch
 
 
 def _toast_new(badges):
@@ -233,121 +233,8 @@ def render_match(ctx):
 # ---------------------------------------------------------------------------
 
 def render_alchemy(ctx):
-    """Phiên 5: Luyện Đan - chấm Hán tự để luyện thuốc."""
-    user_id = core.current_user_id()
-    state = core.get_state()
-    idx = ctx["idx"]
-    pool = ctx["pool"]
-    
-    st.markdown("### ⚗️ Luyện Đan")
-    st.caption("Chỉnh sửa công thức và gõ đúng Hán tự để luyện viên thuốc.")
-    
-    # Hiển thị ảnh minh họa
-    lo_dan_path = Path(__file__).parent / "assets" / "hinh tu luyen" / "lo_dan.png"
-    if lo_dan_path.exists():
-        col1, col2 = st.columns([2, 1])
-        with col2:
-            st.image(str(lo_dan_path), use_container_width=True, caption="Lò Luyện Đan")
-    
-    tab_recipes, tab_craft, tab_inventory = st.tabs(["📜 Công Thức", "⚗️ Luyện Viên", "🧪 Kho Đan"])
-    
-    with tab_recipes:
-        st.markdown("#### Công Thức Đan Dược")
-        owned_recipes = core.get_pill_recipes_owned(user_id)
-        
-        for i, recipe in enumerate(cfg.PILL_RECIPES):
-            c1, c2, c3 = st.columns([1, 4, 1])
-            with c1:
-                st.markdown(f"<div style='font-size:32px; text-align:center;'>{recipe.get('emoji', '🧪')}</div>", unsafe_allow_html=True)
-            with c2:
-                st.markdown(f"**{recipe['name']}** · {cfg.MAJOR_REALMS[recipe['min_idx']]} trở lên  \n"
-                           f"{recipe['description']}")
-            with c3:
-                if recipe["code"] in owned_recipes:
-                    st.success("✅ Sở hữu")
-                else:
-                    price = core.pill_price(idx)
-                    if st.button(f"Mua ({price} 💎)", key=f"buy_pill_{recipe['code']}", use_container_width=True):
-                        ok, msg, ls_after = core.buy_pill_recipe(recipe["code"], user_id, state["ls"])
-                        if ok:
-                            st.toast(f"✅ Mua thành công: {recipe['name']}")
-                            st.rerun()
-                        else:
-                            st.toast(f"❌ {msg}", icon="⚠️")
-    
-    with tab_craft:
-        st.markdown("#### Luyện Viên Đan")
-        owned = core.get_pill_recipes_owned(user_id)
-        if not owned:
-            st.info("Hãy mua công thức trước khi luyện viên.")
-        else:
-            selected = st.selectbox("Chọn công thức", 
-                                   [(cfg.PILL_RECIPES_BY_CODE[c]["name"], c) for c in owned],
-                                   format_func=lambda x: x[0],
-                                   key="pill_recipe_select")
-            if selected:
-                recipe_code = selected[1]
-                recipe = cfg.PILL_RECIPES_BY_CODE[recipe_code]
-                
-                st.markdown(f"**{recipe['name']}** — {recipe['description']}")
-                st.info(f"Gõ đúng {recipe['correct_hits_needed']} Hán tự để luyện thành công.")
-                
-                if "pill_hits" not in st.session_state:
-                    st.session_state.pill_hits = 0
-                
-                # Chọn Hán tự ngẫu nhiên từ pool
-                rng = random.Random(f"{user_id}:{recipe_code}:pill")
-                words_to_hit = rng.sample(pool, min(len(pool), recipe["correct_hits_needed"] * 2))
-                current_word = words_to_hit[st.session_state.pill_hits % len(words_to_hit)] if words_to_hit else None
-                
-                if current_word:
-                    st.markdown(f"<div style='text-align:center; font-size:64px; padding:20px;'>{current_word['hanzi']}</div>",
-                               unsafe_allow_html=True)
-                    st.markdown(f"<div style='text-align:center; font-size:14px; color:#999;'>{current_word.get('pinyin', '')}</div>",
-                               unsafe_allow_html=True)
-                    game_ui.speak(current_word["hanzi"])
-                    
-                    user_input = st.text_input("Gõ Hán tự:", key=f"pill_input_{recipe_code}", placeholder="Nhập chữ Hán...")
-                    if user_input:
-                        if gq.check_hanzi_match(user_input, current_word["hanzi"]):
-                            st.session_state.pill_hits += 1
-                            st.toast("✅ Đúng!")
-                            if st.session_state.pill_hits >= recipe["correct_hits_needed"]:
-                                ok, msg, _ = core.craft_pill(recipe_code, user_id, idx)
-                                if ok:
-                                    st.session_state.pill_hits = 0
-                                    st.toast(f"🎉 Luyện thành công: {recipe['name']}!", icon="🎉")
-                                    st.rerun()
-                                else:
-                                    st.toast(f"❌ {msg}", icon="⚠️")
-                            else:
-                                st.progress(st.session_state.pill_hits / recipe["correct_hits_needed"],
-                                           text=f"Tiến độ: {st.session_state.pill_hits}/{recipe['correct_hits_needed']}")
-                        else:
-                            st.error(f"❌ Sai! Đáp án: {current_word['hanzi']}")
-    
-    with tab_inventory:
-        st.markdown("#### Kho Đan Dược")
-        inventory = core.get_pills_inventory(user_id)
-        if not inventory:
-            st.info("Kho đan trống. Hãy luyện viên để tích lũy.")
-        else:
-            cols_per_row = 5
-            for i in range(0, len(inventory), cols_per_row):
-                cols = st.columns(cols_per_row)
-                for j in range(cols_per_row):
-                    idx_item = i + j
-                    if idx_item < len(inventory):
-                        pill = inventory[idx_item]
-                        with cols[j]:
-                            recipe = cfg.PILL_RECIPES_BY_CODE[pill["code"]]
-                            st.markdown(f"""
-                            <div style="border: 2px solid #d4a574; border-radius: 8px; padding: 8px; text-align: center; background: rgba(27,20,36,0.7); height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
-                                <div style="font-size: 32px;">{recipe.get('emoji', '🧪')}</div>
-                                <div style="font-size: 9px; margin-top: 4px;">{recipe['name']}</div>
-                                <div style="position: absolute; bottom: 3px; right: 5px; background: #d4a574; color: #000; font-weight: 700; font-size: 0.7rem; padding: 2px 4px; border-radius: 3px;">×{pill['qty']}</div>
-                            </div>
-                            """, unsafe_allow_html=True)
+    import game_alchemy
+    game_alchemy.render(ctx)
 
 
 # ---------------------------------------------------------------------------
@@ -362,7 +249,7 @@ def render_talisman(ctx):
     pool = ctx["pool"]
     
     st.markdown("### 🪬 Vẽ Phù")
-    st.caption("Chỉnh sửa công thức và gõ đúng Hán tự để vẽ phù bảo hộ.")
+    st.caption("Gõ lại từ đã học theo thứ tự ngẫu nhiên. Đủ số lần gõ đúng sẽ luôn vẽ thành công.")
     
     # Hiển thị ảnh minh họa
     phu_luc_path = Path(__file__).parent / "assets" / "hinh tu luyen" / "phu_luc.png"
@@ -374,26 +261,26 @@ def render_talisman(ctx):
     tab_recipes, tab_craft, tab_inventory = st.tabs(["📜 Công Thức", "🪬 Vẽ Phù", "🧿 Kho Phù"])
     
     with tab_recipes:
-        st.markdown("#### Công Thức Phù Bảo Hộ")
-        owned_recipes = core.get_talisman_recipes_owned(user_id)
+        st.markdown("#### Công Thức Phù Lục")
+        owned_recipes = {r["code"] for r in core.get_talisman_recipes_owned(user_id)}
         
         for i, recipe in enumerate(cfg.TALISMAN_RECIPES):
             c1, c2, c3 = st.columns([1, 4, 1])
             with c1:
                 st.markdown(f"<div style='font-size:32px; text-align:center;'>🪬</div>", unsafe_allow_html=True)
             with c2:
-                effects_text = ", ".join([f"{k}: {v}" for k, v in recipe.get("effects", {}).items()])
                 st.markdown(f"**{recipe['name']}** · {cfg.MAJOR_REALMS[recipe['min_realm']]} trở lên  \n"
                            f"{recipe['description']}  \n"
-                           f"_Hiệu ứng: {effects_text}_")
+                           f"_Cần {recipe['correct_hits_needed']} lần gõ đúng_")
             with c3:
                 if recipe["code"] in owned_recipes:
                     st.success("✅ Sở hữu")
                 else:
-                    price = cfg.TALISMAN_RECIPE_PRICES.get(recipe["code"], 100)
+                    price = cfg.TALISMAN_RECIPE_PRICES[recipe["code"]]
                     if st.button(f"Mua ({price} 💎)", key=f"buy_talisman_{recipe['code']}", use_container_width=True):
                         ok, msg, ls_after = core.buy_talisman_recipe(user_id, recipe["code"])
                         if ok:
+                            core.get_state(force=True)
                             st.toast(f"✅ Mua thành công: {recipe['name']}")
                             st.rerun()
                         else:
@@ -405,24 +292,23 @@ def render_talisman(ctx):
         if not owned:
             st.info("Hãy mua công thức trước khi vẽ phù.")
         else:
-            selected = st.selectbox("Chọn công thức", 
-                                   [(cfg.TALISMAN_RECIPES_BY_CODE[c]["name"], c) for c in owned],
-                                   format_func=lambda x: x[0],
+            selected = st.selectbox("Chọn công thức",
+                                   [recipe["code"] for recipe in owned],
+                                   format_func=lambda code: cfg.TALISMAN_RECIPES_BY_CODE[code]["name"],
                                    key="talisman_recipe_select")
             if selected:
-                recipe_code = selected[1]
+                recipe_code = selected
                 recipe = cfg.TALISMAN_RECIPES_BY_CODE[recipe_code]
                 
                 st.markdown(f"**{recipe['name']}** — {recipe['description']}")
                 st.info(f"Gõ đúng {recipe['correct_hits_needed']} Hán tự để vẽ thành công.")
                 
-                if "talisman_hits" not in st.session_state:
-                    st.session_state.talisman_hits = 0
-                
-                # Chọn Hán tự ngẫu nhiên từ pool
-                rng = random.Random(f"{user_id}:{recipe_code}:talisman")
-                words_to_hit = rng.sample(pool, min(len(pool), recipe["correct_hits_needed"] * 2))
-                current_word = words_to_hit[st.session_state.talisman_hits % len(words_to_hit)] if words_to_hit else None
+                can_draw = idx >= recipe["min_realm"]
+                if not can_draw:
+                    st.warning(f"Cần đạt {cfg.MAJOR_REALMS[recipe['min_realm']]} để vẽ phù này.")
+                hits_key = f"talisman_hits_{user_id}_{active_variant()}_{recipe_code}"
+                hits = st.session_state.get(hits_key, 0)
+                current_word = core.talisman_word(user_id, active_variant(), pool) if pool else None
                 
                 if current_word:
                     st.markdown(f"<div style='text-align:center; font-size:64px; padding:20px;'>{current_word['hanzi']}</div>",
@@ -431,24 +317,26 @@ def render_talisman(ctx):
                                unsafe_allow_html=True)
                     game_ui.speak(current_word["hanzi"])
                     
-                    user_input = st.text_input("Gõ Hán tự:", key=f"talisman_input_{recipe_code}", placeholder="Nhập chữ Hán...")
-                    if user_input:
+                    with st.form(f"talisman_form_{recipe_code}", clear_on_submit=True):
+                        user_input = st.text_input("Gõ Hán tự:", placeholder="Nhập chữ Hán...")
+                        submitted = st.form_submit_button("Xác nhận", disabled=not can_draw)
+                    if submitted:
                         if gq.check_hanzi_match(user_input, current_word["hanzi"]):
-                            st.session_state.talisman_hits += 1
+                            core.talisman_word(user_id, active_variant(), pool, advance=True)
+                            hits += 1
+                            st.session_state[hits_key] = hits
                             st.toast("✅ Đúng!")
-                            if st.session_state.talisman_hits >= recipe["correct_hits_needed"]:
-                                ok, msg = core.craft_talisman(user_id, recipe_code)
-                                if ok:
-                                    st.session_state.talisman_hits = 0
-                                    st.toast(f"🎉 Vẽ thành công: {recipe['name']}!", icon="🎉")
-                                    st.rerun()
-                                else:
-                                    st.toast(f"❌ {msg}", icon="⚠️")
-                            else:
-                                st.progress(st.session_state.talisman_hits / recipe["correct_hits_needed"],
-                                           text=f"Tiến độ: {st.session_state.talisman_hits}/{recipe['correct_hits_needed']}")
+                            if hits >= recipe["correct_hits_needed"]:
+                                result = core.craft_talisman(user_id, recipe_code, ctx["words"])
+                                st.session_state[hits_key] = 0
+                                st.toast(result["message"], icon="🎉" if result["success"] else "⚠️")
+                            st.rerun()
                         else:
                             st.error(f"❌ Sai! Đáp án: {current_word['hanzi']}")
+                    st.progress(hits / recipe["correct_hits_needed"],
+                                text=f"Tiến độ: {hits}/{recipe['correct_hits_needed']}")
+                else:
+                    st.info("Chưa có từ đã học để vẽ phù.")
     
     with tab_inventory:
         st.markdown("#### Kho Phù Bảo Hộ")

@@ -50,6 +50,7 @@ BACKUP_TABLES = {
     # Phiên 6: Vẽ phù
     "game_talismans": ["user_id", "talisman_code", "qty"],
     "game_talisman_recipes": ["user_id", "recipe_code"],
+    "game_talisman_words": ["user_id", "course", "data"],
     # Phiên 8-9: Công pháp & đan điền
     "game_techniques": ["id", "user_id", "technique_code", "dantian_row", "dantian_col", "is_equipped", "acquired_at"],
     "game_techniques_equipped": ["user_id", "technique_slot_1", "technique_slot_2"],
