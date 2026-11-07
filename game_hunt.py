@@ -18,6 +18,18 @@ MAP_FILE = Path(__file__).parent / "assets" / "map" / "map_web.jpg"
 # Hàm thuần của chiến đấu
 # ---------------------------------------------------------------------------
 
+def get_random_technique_name(user_id):
+    """Lấy tên bí pháp ngẫu nhiên từ đan điền, nếu không có thì trả về hỏa cầu thuật."""
+    techniques = core.get_techniques_inventory(user_id)
+    equipped_techniques = [t for t in techniques if t["dantian_row"] is not None]
+    
+    if equipped_techniques:
+        technique = random.choice(equipped_techniques)
+        return technique["name"]
+    else:
+        return "hỏa cầu thuật"
+
+
 def depth_mult(wins):
     return min(cfg.DEPTH_MAX, 1 + cfg.DEPTH_STEP * wins)
 
@@ -223,7 +235,8 @@ def _fight_turn(b, ok, note):
         b["combo"] += 1
         m["hp"] = max(0.0, m["hp"] - dmg)
         crit_tag = " 💥 **Chí mạng!**" if is_crit else ""
-        b["log"].append(f"✅ Bạn sử dụng tuyệt kỹ +{cfg.SKILL_NAME} tấn công **{m['name']}**, "
+        technique_name = get_random_technique_name(core.current_user_id())
+        b["log"].append(f"✅ Bạn sử dụng tuyệt kỹ [ {technique_name} ] tấn công **{m['name']}**, "
                         f"gây **{dmg:.0f}** sát thương + combo {b['combo']}{crit_tag}")
         if m["hp"] <= 0:
             b["over"] = "win"
