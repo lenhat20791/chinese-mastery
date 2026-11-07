@@ -15,9 +15,10 @@ from database import _demon_rows
 
 NAV = {
     "home": "🏯 Động Phủ", "fortune": "🔮 Quẻ Bói", "match": "🃏 Lật Bài",
-    "hunt": "🗺️ Săn Yêu Thú", "market": "🏪 Phường Thị", "techniques": "📜 Công Pháp Các", "badges": "🏅 Huy Hiệu",
+    "hunt": "🗺️ Săn Yêu Thú", "alchemy": "⚗️ Luyện Đan", "talisman": "🪬 Vẽ Phù", 
+    "market": "🏪 Phường Thị", "techniques": "📜 Công Pháp Các", "badges": "🏅 Huy Hiệu",
 }
-UNLOCK_KEY = {"fortune": "fortune", "match": "match", "hunt": "hunt", "techniques": "hunt"}
+UNLOCK_KEY = {"fortune": "fortune", "match": "match", "hunt": "hunt", "alchemy": "hunt", "talisman": "hunt"}
 
 
 def avatar_svg(idx):
@@ -527,7 +528,7 @@ def _body(user, learned_day):
     if page in UNLOCK_KEY and not _unlocked(UNLOCK_KEY[page], realm["idx"], words):
         st.info(f"🔒 {_unlock_text(UNLOCK_KEY[page])} Hiện có {words} từ.")
         return
-    if page in ("fortune", "match", "hunt"):
+    if page in ("fortune", "match", "hunt", "alchemy", "talisman"):
         ctx["mastery"] = _mastery()
     if page == "home":
         _render_home(state, ctx, user)
@@ -537,6 +538,10 @@ def _body(user, learned_day):
         game_minigames.render_match(ctx)
     elif page == "hunt":
         game_hunt.render_hunt(ctx)
+    elif page == "alchemy":
+        game_minigames.render_alchemy(ctx)
+    elif page == "talisman":
+        game_minigames.render_talisman(ctx)
     elif page == "market":
         _render_market(state, ctx)
     elif page == "techniques":

@@ -371,6 +371,10 @@ PILL_RECIPES = [
         "code": "pill_1",
         "name": "Hạ Phẩm Yêu Đan",
         "min_realm": 0,
+        "min_idx": 0,
+        "correct_hits_needed": 10,
+        "description": "Viên đan tăng sát thương cơ bản",
+        "emoji": "🧪",
         "materials": [("r0_0", 2), ("r0_1", 1)],  # 2x Hắc Thiết, 1x Yêu Lang Bì
         "bonus_atk_pct": 2.0,
         "success_rate": 0.80,
@@ -379,6 +383,10 @@ PILL_RECIPES = [
         "code": "pill_2",
         "name": "Trung Phẩm Yêu Đan",
         "min_realm": 3,
+        "min_idx": 3,
+        "correct_hits_needed": 15,
+        "description": "Viên đan tăng sát thương trung bình",
+        "emoji": "🧪",
         "materials": [("r0_3", 2), ("pill_1", 1)],  # 2x Tinh Thiết, 1x Hạ Phẩm Yêu Đan
         "bonus_atk_pct": 5.0,
         "success_rate": 0.70,
@@ -387,6 +395,10 @@ PILL_RECIPES = [
         "code": "pill_3",
         "name": "Thượng Phẩm Yêu Đan",
         "min_realm": 6,
+        "min_idx": 6,
+        "correct_hits_needed": 20,
+        "description": "Viên đan tăng sát thương cao",
+        "emoji": "🧪",
         "materials": [("r1_2", 3), ("r1_4", 2)],  # 3x Huyền Thiết, 2x Xích Tinh Thạch
         "bonus_atk_pct": 8.0,
         "success_rate": 0.60,
@@ -395,6 +407,10 @@ PILL_RECIPES = [
         "code": "pill_4",
         "name": "Tối Thượng Yêu Đan",
         "min_realm": 10,
+        "min_idx": 10,
+        "correct_hits_needed": 25,
+        "description": "Viên đan tăng sát thương rất cao",
+        "emoji": "🧪",
         "materials": [("r2_0", 3), ("r2_4", 2), ("r2_5", 1)],  # 3x Hàn Thiết, 2x Thiên Lôi Mộc, 1x Hàn Ngọc
         "bonus_atk_pct": 12.0,
         "success_rate": 0.50,
@@ -403,6 +419,10 @@ PILL_RECIPES = [
         "code": "pill_5",
         "name": "Tôn Thần Yêu Đan",
         "min_realm": 15,
+        "min_idx": 15,
+        "correct_hits_needed": 30,
+        "description": "Viên đan tăng sát thương tối đa",
+        "emoji": "🧪",
         "materials": [("r3_2", 4), ("r3_4", 3), ("r3_5", 1)],  # 4x Linh Mộc Tâm, 3x Thiên Lôi Mộc, 1x Tiên Duyên
         "bonus_atk_pct": 15.0,
         "success_rate": 0.40,
@@ -477,6 +497,7 @@ TALISMAN_RECIPES = [
         "code": "talisman_1",
         "name": "Bảo Hộ Phù",
         "min_realm": 1,
+        "min_idx": 1,
         "correct_hits_needed": 10,
         "description": "Phù bảo hộ toàn thân, giảm sát thương nhận",
         "effects": {
@@ -488,6 +509,7 @@ TALISMAN_RECIPES = [
         "code": "talisman_2",
         "name": "Tăng Công Phù",
         "min_realm": 3,
+        "min_idx": 3,
         "correct_hits_needed": 15,
         "description": "Phù tăng sát thương, cộng thêm công kích",
         "effects": {
@@ -499,6 +521,7 @@ TALISMAN_RECIPES = [
         "code": "talisman_3",
         "name": "Hồi Phục Phù",
         "min_realm": 5,
+        "min_idx": 5,
         "correct_hits_needed": 20,
         "description": "Phù hồi phục sức khỏe trong trận đấu",
         "effects": {
@@ -510,6 +533,7 @@ TALISMAN_RECIPES = [
         "code": "talisman_4",
         "name": "Phản Công Phù",
         "min_realm": 8,
+        "min_idx": 8,
         "correct_hits_needed": 25,
         "description": "Phù phản công, bất kỳ khi nào bị đánh sẽ phản lại",
         "effects": {
@@ -521,6 +545,7 @@ TALISMAN_RECIPES = [
         "code": "talisman_5",
         "name": "Trúc Chi Phù",
         "min_realm": 11,
+        "min_idx": 11,
         "correct_hits_needed": 30,
         "description": "Phù chính xác, tăng tỉ lệ chí mạng",
         "effects": {
